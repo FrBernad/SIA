@@ -5,8 +5,8 @@ name = "pypi"
 
 [scripts]
 
-
 [packages]
+plotly = "*"
 
 [dev-packages]
 
