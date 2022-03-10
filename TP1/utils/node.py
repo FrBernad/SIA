@@ -1,6 +1,6 @@
 from typing import Optional
 
-from utils.board import State, OBJECTIVE_STATE, get_space_position
+from utils.board import State, OBJECTIVE_STATE
 
 
 class Node:
@@ -13,6 +13,6 @@ class Node:
         return self.state == OBJECTIVE_STATE
 
     def get_next_states(self):
-        space_pos = get_space_position(self.state)
+        space_pos = State.get_space_position(self.state)
 
 

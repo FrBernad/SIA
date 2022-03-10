@@ -6,9 +6,9 @@ name = "pypi"
 [scripts]
 
 [packages]
-plotly = "*"
+numpy = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.9"
+python_version = "3"

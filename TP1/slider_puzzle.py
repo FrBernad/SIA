@@ -1,7 +1,7 @@
-from utils.board import state_generator, Movements
+from utils.board import State
+
 
 if __name__ == '__main__':
-    print(Movements.DOWN.value)
-    # state = state_generator()
-    #
-    # print(state)
+    state = State.generate()
+
+    print(state)
