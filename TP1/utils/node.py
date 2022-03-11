@@ -9,6 +9,10 @@ class Node:
     def __init__(self, state: State, parent: Optional['Node']):
         self.state = state
         self.parent = parent
+        if parent:
+            self.depth = parent.depth + 1
+        else:
+            self.depth = 0
 
     def is_objective(self) -> bool:
         return self.state == OBJECTIVE_STATE
