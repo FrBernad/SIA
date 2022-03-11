@@ -1,5 +1,5 @@
 from collections import deque
-from typing import Optional, List, Deque
+from typing import Optional, List, Deque, Iterable
 
 from utils.board import State, OBJECTIVE_STATE
 
@@ -19,6 +19,18 @@ class Node:
     def get_child_nodes(self) -> List['Node']:
         return list(map(lambda state: Node(state, self), self.get_next_states()))
 
+    def get_tree(self) -> Iterable['Node']:
+        deepest_node = self
+        tree: Deque[Node] = deque([deepest_node])
+
+        while deepest_node.has_parent():
+            deepest_node = deepest_node.parent
+            tree.append(deepest_node)
+
+        tree.reverse()
+
+        return tree
+
     def has_parent(self) -> bool:
         return self.parent is not None
 
@@ -32,12 +44,6 @@ class Node:
         return self.state.__repr__()
 
 
-def print_tree(deepest_node: Node) -> None:
-    tree: Deque[Node] = deque([deepest_node])
-
-    while deepest_node.has_parent():
-        deepest_node = deepest_node.parent
-        tree.append(deepest_node)
-
-    while not tree:
-        print(tree.pop())
+def print_tree(tree: Iterable[Node]) -> None:
+    for node in tree:
+        print(node)
