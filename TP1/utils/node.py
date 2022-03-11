@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from utils.board import State, OBJECTIVE_STATE
 
@@ -12,7 +12,5 @@ class Node:
     def is_objective(self) -> bool:
         return self.state == OBJECTIVE_STATE
 
-    def get_next_states(self):
-        space_pos = State.get_space_position(self.state)
-
-
+    def get_next_states(self) -> List[State]:
+        return list(map(lambda pos: self.state.move_space(pos), self.state.get_possible_positions()))

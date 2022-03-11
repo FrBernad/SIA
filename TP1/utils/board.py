@@ -8,6 +8,8 @@ from numpy.typing import NDArray
 
 Position = NamedTuple('Position', [('i', int), ('j', int)])
 
+BOARD_SIZE = 3
+
 
 class Movements(Enum):
     UP = Position(0, -1)
@@ -19,51 +21,51 @@ class Movements(Enum):
         return Position(pos.i + self.value.i, pos.j + self.value.j)
 
 
-def get_possible_positions(state: 'State') -> List[Position]:
-    space_pos = state.get_space_position()
-    possible_pos = []
-
-    if (p := Movements.add_pos(Movements.UP, space_pos)).j >= 0:
-        possible_pos.append(p)
-
-    if (p := Movements.add_pos(Movements.DOWN, space_pos)).j < BOARD_SIZE:
-        possible_pos.append(p)
-
-    if (p := Movements.add_pos(Movements.LEFT, space_pos)).i >= 0:
-        possible_pos.append(p)
-
-    if (p := Movements.add_pos(Movements.RIGHT, space_pos)).i < BOARD_SIZE:
-        possible_pos.append(p)
-
-    return possible_pos
-
-
 class State:
 
-    def __init__(self, state: NDArray[int]):
+    def __init__(self, state: NDArray[[int]]):
         self.state = state
-        self.space_pos = self.get_space_position()
-
-    @staticmethod
-    def move_space(state: 'State', new_pos: Position) -> 'State':
-        space_pos = state.get_space_position()
-        state = ndarray.copy(state.state)
-        state[space_pos.j][space_pos.i], state[new_pos.j][new_pos.i] = \
-            state[new_pos.j][new_pos.i], state[space_pos.j][space_pos.i]
-        return State(state)
+        self.space_pos = self._get_space_position()
 
     @staticmethod
     def generate(shuffle_count: int = 100) -> 'State':
         rand_state = OBJECTIVE_STATE
 
         for _ in range(shuffle_count):
-            possible_pos = get_possible_positions(rand_state)
+            possible_pos = rand_state.get_possible_positions()
             rand_pos = choice(possible_pos)
-            rand_state = State.move_space(rand_state, rand_pos)
+            rand_state = rand_state.move_space(rand_pos)
 
         return rand_state
 
-    def get_space_position(self) -> Position:
+    def get_possible_positions(self) -> List[Position]:
+        space_pos = self._get_space_position()
+        possible_pos = []
+
+        if (p := Movements.add_pos(Movements.UP, space_pos)).j >= 0:
+            possible_pos.append(p)
+
+        if (p := Movements.add_pos(Movements.DOWN, space_pos)).j < BOARD_SIZE:
+            possible_pos.append(p)
+
+        if (p := Movements.add_pos(Movements.LEFT, space_pos)).i >= 0:
+            possible_pos.append(p)
+
+        if (p := Movements.add_pos(Movements.RIGHT, space_pos)).i < BOARD_SIZE:
+            possible_pos.append(p)
+
+        return possible_pos
+
+    def move_space(self, new_pos: Position) -> 'State':
+        space_pos = self._get_space_position()
+        state = ndarray.copy(self.state)
+
+        state[space_pos.j][space_pos.i], state[new_pos.j][new_pos.i] = \
+            state[new_pos.j][new_pos.i], state[space_pos.j][space_pos.i]
+
+        return State(state)
+
+    def _get_space_position(self) -> Position:
         for i in range(BOARD_SIZE):
             for j in range(BOARD_SIZE):
                 if self.state[i][j] == 0:
@@ -75,8 +77,6 @@ class State:
     def __str__(self):
         return f'{self.state[0]}\n{self.state[1]}\n{self.state[2]}\n'
 
-
-BOARD_SIZE = 3
 
 OBJECTIVE_STATE: State = State(
     np.array(
