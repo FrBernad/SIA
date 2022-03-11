@@ -4,6 +4,7 @@ from typing import List, NamedTuple
 
 import numpy as np
 from numpy import ndarray
+from numpy.core import array_equal
 from numpy.typing import NDArray
 
 Position = NamedTuple('Position', [('i', int), ('j', int)])
@@ -72,10 +73,13 @@ class State:
                     return Position(j, i)
 
     def __eq__(self, other):
-        return isinstance(other, State) and self.state == other.state
+        return isinstance(other, State) and array_equal(self.state, other.state)
 
-    def __str__(self):
-        return f'{self.state[0]}\n{self.state[1]}\n{self.state[2]}\n'
+    def __hash__(self):
+        return hash(self.state.data.tobytes())
+
+    def __repr__(self):
+        return f'{self.state}\n'
 
 
 OBJECTIVE_STATE: State = State(
