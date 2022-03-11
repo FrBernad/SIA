@@ -1,0 +1,17 @@
+---
+#slider puzzle config
+config:
+  #search algorithm to be used by the solver
+  #possible options are:
+  # - bfs
+  # - dfs
+  # - iddfs
+  # - hls
+  # - hgs
+  # - a*
+  algorithm: 'dfs'
+
+  # depth limit for iddfs [ignored for other algorithms]
+  limit: '0'
+
+...
