@@ -1,12 +1,14 @@
 from typing import Optional, Callable, Iterable
 
+import manhattan as manhattan
+
 from algorithms.a_star import a_star
 from algorithms.bfs import bfs
 from algorithms.dfs import dfs
-from algorithms.exceptions import InvalidConfigLimitException, InvalidAlgorithmException, InvalidHeuristicException, \
-    MissingHeuristicException
+from algorithms.exceptions import InvalidConfigLimitException, InvalidAlgorithmException, MissingHeuristicException
 from algorithms.hgs import hgs
 from algorithms.iddfs import iddfs
+from utils.heuristics import manhattan_distance, hamming_distance, overestimated_manhattan_distance
 
 ALGORITHMS = {
     "bfs": bfs,
@@ -18,9 +20,9 @@ ALGORITHMS = {
 }
 
 HEURISTICS = {
-    "manhattan": manhattan,
-    "humming": humming,
-    "overestimated": overestimated
+    "manhattan": manhattan_distance,
+    "hamming": hamming_distance,
+    "overestimated": overestimated_manhattan_distance
 }
 
 
