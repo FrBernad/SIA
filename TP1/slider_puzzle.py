@@ -23,8 +23,12 @@ def main():
 
     tree = config.algorithm(init_state, stats, config)
 
-    plot_graph(tree)
+    for n in tree:
+        print(n)
 
+    print(stats)
+
+    plot_graph(tree)
 
 if __name__ == '__main__':
     # try:

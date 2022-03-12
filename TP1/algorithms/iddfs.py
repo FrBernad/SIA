@@ -1,17 +1,22 @@
+import time
 from collections import deque
 from typing import Set, Deque, Optional
 
+from algorithms.stats import Stats
+from config import Config
 from utils.board import State
 from utils.node import Node
 
 
-def iddfs(init_state: State, depth_step: int = 500) -> Optional[Node]:
+def iddfs(init_state: State, stats: Stats, config: Config, depth_step: int = 500) -> Optional[Node]:
     first: bool = True
     limit_depth: int = 10
 
     visited: Set[Node] = set()
     border: Deque[Node] = deque()
     border.append(Node(init_state, None))
+
+    stats.start_time = time.process_time()
 
     objective_node = None
 
@@ -34,12 +39,12 @@ def iddfs(init_state: State, depth_step: int = 500) -> Optional[Node]:
                 visited.add(current_node)
 
             if current_node.is_objective():
-                objective_node = current_node
-                break
+                return current_node
 
             not_visited_nodes = list(filter(lambda node: node not in visited, current_node.get_child_nodes()))
 
             for n in not_visited_nodes:
                 border.append(n)
 
-    return objective_node
+    stats.end_time = time.process_time()
+    stats.objective_found = False

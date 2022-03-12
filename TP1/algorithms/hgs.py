@@ -23,14 +23,20 @@ def hgs(init_state: State, stats: Stats, config: Config) -> Iterable[Node]:
 
         if current_node not in visited:
             stats.explored_nodes_count += 1
-            stats.end_time = time.process_time()
             visited.add(current_node)
 
         if current_node.is_objective():
+            stats.end_time = time.process_time()
             stats.objective_distance = current_node.depth
+            stats.objective_cost = current_node.depth
+            stats.border_nodes_count = len(border)
+            stats.objective_found = True
             return current_node.get_tree()
 
         not_visited_nodes = list(filter(lambda node: node not in visited, current_node.get_child_nodes()))
 
         for n in not_visited_nodes:
             heapq.heappush(border, n)
+
+    stats.end_time = time.process_time()
+    stats.objective_found = False
