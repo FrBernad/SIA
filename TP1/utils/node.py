@@ -57,17 +57,19 @@ class HeuristicNode(Node):
     def get_child_nodes(self) -> List['HeuristicNode']:
         return list(map(lambda state: HeuristicNode(state, self, self.heuristic), self.get_next_states()))
 
-    def is_objective(self) -> bool:
-        return self.heuristic_value == 0
-
-    def __eq__(self, other):
-        return isinstance(other, HeuristicNode) and self.state == other.state
-
-    def __hash__(self):
-        return hash(self.state)
-
     def __lt__(self, other):
         return self.heuristic_value < other.heuristic_value
+
+
+class CostHeuristicNode(HeuristicNode):
+    def __init__(self, state: State, parent: Optional['HeuristicNode'], heuristic: Callable[[State], int]):
+        super().__init__(state, parent, heuristic)
+
+    def __lt__(self, other):
+        return self.heuristic_value + self.depth < other.heuristic_value + other.depth
+
+    def get_child_nodes(self) -> List['CostHeuristicNode']:
+        return list(map(lambda state: CostHeuristicNode(state, self, self.heuristic), self.get_next_states()))
 
 
 def plot_graph(tree: Iterable[Node]) -> None:
