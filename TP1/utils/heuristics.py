@@ -9,7 +9,7 @@ OBJECTIVE_POSITIONS = {
     6: Position(1, 2),
     7: Position(2, 0),
     8: Position(2, 1),
-    9: Position(2, 2)
+    0: Position(2, 2)
 }
 
 

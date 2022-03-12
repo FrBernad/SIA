@@ -9,7 +9,7 @@ from utils.board import State
 from utils.node import HeuristicNode, Node
 
 
-def hgs(init_state: State, stats: Stats, config: Config) -> Iterable[HeuristicNode]:
+def hgs(init_state: State, stats: Stats, config: Config) -> Iterable[Node]:
     visited: Set[Node] = set()
     border = []
 

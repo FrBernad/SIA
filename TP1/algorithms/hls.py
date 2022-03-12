@@ -8,7 +8,7 @@ from utils.board import State
 from utils.node import HeuristicNode, Node
 
 
-def hls(init_state: State, stats: Stats, config: Config) -> Iterable[HeuristicNode]:
+def hls(init_state: State, stats: Stats, config: Config) -> Iterable[Node]:
     visited: Set[Node] = set()
     border = []
 
@@ -18,9 +18,17 @@ def hls(init_state: State, stats: Stats, config: Config) -> Iterable[HeuristicNo
     heapq.heapify(border)
 
     while border:
-        current_node = border.pop(0)
+        current_node = heapq.heappop(border)
+
+        if current_node not in visited:
+            stats.explored_nodes_count += 1
+            stats.end_time = time.process_time()
+            visited.add(current_node)
 
         if current_node.is_objective():
+            stats.objective_distance = current_node.depth
             return current_node.get_tree()
 
-        border.append(current_node.get_child_nodes())
+        border = list(filter(lambda node: node not in visited, current_node.get_child_nodes()))
+
+        heapq.heapify(border)
