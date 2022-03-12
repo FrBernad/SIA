@@ -1,5 +1,5 @@
-from collections import deque, Iterable
-from typing import Set, Deque
+from collections import deque
+from typing import Set, Deque, Iterable
 
 from algorithms.stats import Stats
 from config import Config
