@@ -1,5 +1,5 @@
 from collections import deque
-from typing import Optional, List, Deque, Iterable
+from typing import Optional, List, Deque, Iterable, Callable
 
 from utils.board import State, OBJECTIVE_STATE
 
@@ -51,3 +51,19 @@ class Node:
 def print_tree(tree: Iterable[Node]) -> None:
     for node in tree:
         print(node)
+
+
+class HeuristicNode(Node):
+    def __init__(self, state: State, parent: Optional['HeuristicNode'], heuristic: Callable[[State], int]):
+        super().__init__(state, parent)
+        self.heuristic = heuristic
+        self.heuristic_value: int = self.heuristic(self.state)
+
+    def get_heuristic_value(self):
+        return self.heuristic_value
+
+    def __eq__(self, other):
+        return isinstance(other, HeuristicNode) and self.heuristic_value == other.heuristic_value
+
+    def __lt__(self, other):
+        return self.heuristic_value < other.heuristic_value
