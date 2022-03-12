@@ -23,6 +23,15 @@ def manhattan_distance(actual_state: State):
     return distance
 
 
+def overestimated_manhattan_distance(actual_state: State):
+    distance = 0
+    for i in range(BOARD_SIZE):
+        for j in range(BOARD_SIZE):
+            actual = actual_state.state[i][j]
+            distance += abs(i - OBJECTIVE_POSITIONS[actual].i) + abs(j - OBJECTIVE_POSITIONS[actual].j)
+    return distance
+
+
 def hamming_distance(actual_state: State):
     n_tiles = 0
     for i in range(BOARD_SIZE):
