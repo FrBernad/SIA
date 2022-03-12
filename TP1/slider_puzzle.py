@@ -1,5 +1,3 @@
-from typing import Callable, Iterable, Dict
-
 import yaml
 
 from algorithms.a_star import a_star

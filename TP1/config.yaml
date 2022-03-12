@@ -9,7 +9,7 @@ config:
   # - hls
   # - hgs
   # - a*
-  algorithm: 'dfs'
+  algorithm: 'bfs'
 
   # depth limit for iddfs [ignored for other algorithms]
   limit: '0'
