@@ -9,9 +9,16 @@ config:
   # - hls
   # - hgs
   # - a*
-  algorithm: 'bfs'
+  algorithm: 'dfs'
 
   # depth limit for iddfs [ignored for other algorithms]
-  limit: '0'
+  # limit: '0'
+
+  # heuristic to be used for informed search algorithms [ignored for other algorithms]
+  #possible options are:
+  # - manhattan
+  # - humming
+  # - overestimated
+  # heuristic: ''
 
 ...

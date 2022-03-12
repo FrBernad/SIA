@@ -3,6 +3,10 @@ from typing import Optional, List, Deque, Iterable, Callable
 
 from utils.board import State, OBJECTIVE_STATE
 
+import networkx as nx
+
+import matplotlib.pyplot as plt
+
 
 class Node:
 
@@ -48,22 +52,31 @@ class Node:
         return self.state.__repr__()
 
 
-def print_tree(tree: Iterable[Node]) -> None:
-    for node in tree:
-        print(node)
-
-
 class HeuristicNode(Node):
     def __init__(self, state: State, parent: Optional['HeuristicNode'], heuristic: Callable[[State], int]):
         super().__init__(state, parent)
         self.heuristic = heuristic
-        self.heuristic_value: int = self.heuristic(self.state)
-
-    def get_heuristic_value(self):
-        return self.heuristic_value
+        self.heuristic_value = self.heuristic(self.state)
 
     def __eq__(self, other):
         return isinstance(other, HeuristicNode) and self.heuristic_value == other.heuristic_value
 
     def __lt__(self, other):
         return self.heuristic_value < other.heuristic_value
+
+
+def plot_graph(tree: Iterable[Node]) -> None:
+    pass
+    # graph = nx.Graph()
+    #
+    # graph.add_nodes_from(map(lambda n: n.__str__(), tree))
+    #
+    # for node in tree:
+    #     if node.has_parent():
+    #         graph.add_edge(node.parent, node)
+    #
+    # plt.plot()
+    # nx.draw(graph, with_labels=True, font_weight='bold')
+    #
+    # plt.show()
+    # print(graph)

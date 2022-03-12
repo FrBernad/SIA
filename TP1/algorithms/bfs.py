@@ -18,9 +18,11 @@ def bfs(init_state: State, stats: Stats, config: Config) -> Iterable[Node]:
         current_node = border.popleft()
 
         if current_node not in visited:
+            stats.explored_nodes_count += 1
             visited.add(current_node)
 
         if current_node.is_objective():
+            stats.objective_distance = current_node.depth
             return current_node.get_tree()
 
         not_visited_nodes = list(filter(lambda node: node not in visited, current_node.get_child_nodes()))

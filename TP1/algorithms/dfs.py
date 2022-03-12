@@ -1,4 +1,5 @@
 from collections import deque
+import time
 from typing import Set, Deque, Iterable
 
 from algorithms.config import Config
@@ -11,15 +12,20 @@ def dfs(init_state: State, stats: Stats, config: Config) -> Iterable[Node]:
     visited: Set[Node] = set()
     border: Deque[Node] = deque()
 
+    stats.start_time = time.process_time()
+
     border.append(Node(init_state, None))
 
     while border:
         current_node = border.pop()
 
         if current_node not in visited:
+            stats.explored_nodes_count += 1
+            stats.end_time = time.process_time()
             visited.add(current_node)
 
         if current_node.is_objective():
+            stats.objective_distance = current_node.depth
             return current_node.get_tree()
 
         not_visited_nodes = list(filter(lambda node: node not in visited, current_node.get_child_nodes()))
