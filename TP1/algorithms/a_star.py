@@ -1,4 +1,4 @@
-from collections import Iterable
+from typing import Iterable
 
 from utils.board import State
 from utils.node import Node

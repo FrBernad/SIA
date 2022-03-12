@@ -9,7 +9,7 @@ config:
   # - hls
   # - hgs
   # - a*
-  algorithm: 'dfs'
+  algorithm: 'hgs'
 
   # depth limit for iddfs [ignored for other algorithms]
   # limit: '0'
@@ -19,6 +19,6 @@ config:
   # - manhattan
   # - humming
   # - overestimated
-  # heuristic: ''
+  heuristic: 'manhattan'
 
 ...

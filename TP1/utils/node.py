@@ -3,10 +3,6 @@ from typing import Optional, List, Deque, Iterable, Callable
 
 from utils.board import State, OBJECTIVE_STATE
 
-import networkx as nx
-
-import matplotlib.pyplot as plt
-
 
 class Node:
 
@@ -58,8 +54,17 @@ class HeuristicNode(Node):
         self.heuristic = heuristic
         self.heuristic_value = self.heuristic(self.state)
 
+    def get_child_nodes(self) -> List['HeuristicNode']:
+        return list(map(lambda state: HeuristicNode(state, self, self.heuristic), self.get_next_states()))
+
+    def is_objective(self) -> bool:
+        return self.heuristic_value == 0
+
     def __eq__(self, other):
-        return isinstance(other, HeuristicNode) and self.heuristic_value == other.heuristic_value
+        return isinstance(other, HeuristicNode) and self.state == other.state
+
+    def __hash__(self):
+        return hash(self.state)
 
     def __lt__(self, other):
         return self.heuristic_value < other.heuristic_value

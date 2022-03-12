@@ -1,14 +1,14 @@
 import yaml
 
-from algorithms.config import Config
 from algorithms.stats import Stats
 from utils.board import State
 from utils.node import plot_graph
+from config import Config
 
 CONFIG_FILE = 'config.yaml'
 
 
-def _get_config() -> Config:
+def _get_config() -> 'Config':
     with open(CONFIG_FILE) as config_file:
         config = yaml.safe_load(config_file)["config"]
         return Config(config.get("algorithm"), config.get("limit"), config.get("heuristic"))
@@ -27,11 +27,11 @@ def main():
 
 
 if __name__ == '__main__':
-    try:
-        main()
-    except OSError:
-        print("Error opening config.yaml file.")
-    except yaml.YAMLError:
-        print("Error parsing config.yaml file.")
-    except Exception as e:
-        print(e)
+    # try:
+    main()
+    # except OSError:
+    #     print("Error opening config.yaml file.")
+    # except yaml.YAMLError:
+    #     print("Error parsing config.yaml file.")
+    # except Exception as e:
+    #     print(e)

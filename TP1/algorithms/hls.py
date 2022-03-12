@@ -1,15 +1,21 @@
-from collections import Iterable
+import heapq
+import time
+from typing import Iterable, Set, Deque
 
-from sortedcontainers import SortedList
-
-from algorithms.config import Config
 from algorithms.stats import Stats
+from config import Config
 from utils.board import State
-from utils.node import HeuristicNode
+from utils.node import HeuristicNode, Node
 
 
 def hls(init_state: State, stats: Stats, config: Config) -> Iterable[HeuristicNode]:
-    border = SortedList([HeuristicNode(init_state, None, config.heuristic)])
+    visited: Set[Node] = set()
+    border = []
+
+    stats.start_time = time.process_time()
+
+    border.append(HeuristicNode(init_state, None, config.heuristic))
+    heapq.heapify(border)
 
     while border:
         current_node = border.pop(0)

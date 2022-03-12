@@ -1,9 +1,8 @@
-from collections import Iterable, deque
-from queue import Queue
-from typing import Set, List, Deque
+from collections import deque, Iterable
+from typing import Set, Deque
 
-from algorithms.config import Config
 from algorithms.stats import Stats
+from config import Config
 from utils.board import State
 from utils.node import Node
 
