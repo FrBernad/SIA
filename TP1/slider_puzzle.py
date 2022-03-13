@@ -1,3 +1,5 @@
+import sys
+
 import yaml
 
 from algorithms.stats import Stats
@@ -8,16 +10,16 @@ from config import Config
 CONFIG_FILE = 'config.yaml'
 
 
-def _get_config() -> 'Config':
-    with open(CONFIG_FILE) as config_file:
-        config = yaml.safe_load(config_file)["config"]
+def _get_config(config_file: str) -> 'Config':
+    with open(config_file) as cf:
+        config = yaml.safe_load(cf)["config"]
         return Config(config.get("algorithm"), config.get("limit"), config.get("heuristic"))
 
 
-def main():
+def main(config_file: str):
     init_state = State.generate()
 
-    config = _get_config()
+    config = _get_config(config_file)
 
     stats = Stats()
 
@@ -30,12 +32,20 @@ def main():
 
     plot_graph(tree)
 
+
+# Run as python3 slider_puzzle.py [config_file_path]
 if __name__ == '__main__':
-    # try:
-    main()
-    # except OSError:
-    #     print("Error opening config.yaml file.")
-    # except yaml.YAMLError:
-    #     print("Error parsing config.yaml file.")
-    # except Exception as e:
-    #     print(e)
+    argv = sys.argv
+
+    config_file = CONFIG_FILE
+    if len(argv) > 1:
+        config_file = argv[1]
+
+    try:
+        main(config_file)
+    except OSError:
+        print("Error opening config file.")
+    except yaml.YAMLError:
+        print("Error parsing config file.")
+    except Exception as e:
+        print(e)

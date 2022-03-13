@@ -9,10 +9,10 @@ config:
   # - hls
   # - hgs
   # - a*
-  algorithm: 'a*'
+  algorithm: 'iddfs'
 
   # depth limit for iddfs [ignored for other algorithms]
-  # limit: '0'
+  limit: '10'
 
   # heuristic to be used for informed search algorithms [ignored for other algorithms]
   #possible options are:

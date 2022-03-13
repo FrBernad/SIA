@@ -39,3 +39,4 @@ def dfs(init_state: State, stats: Stats, config: Config) -> Iterable[Node]:
 
     stats.end_time = time.process_time()
     stats.objective_found = False
+    return []
