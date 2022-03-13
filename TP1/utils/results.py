@@ -1,10 +1,12 @@
 import csv
+from statistics import mean, fmean
 from typing import Iterable, List
 
 from algorithms.stats import Stats
 from config import Config
 from utils.board import OBJECTIVE_STATE, State
 from utils.node import Node
+import matplotlib.pyplot as plt
 
 
 def generate_solution_yaml(tree: Iterable[Node], stats: Stats, config: Config):
@@ -51,7 +53,7 @@ def _generate_csv(file_name: str, results: List[List[str]]):
         writer.writerows(results)
 
 
-def generate_algorithm_results(algorithm: str, init_state: State, file_name=None,
+def generate_algorithm_results(algorithm: str, init_state: State,
                                rounds: int = 50, limit=None, heuristic=None):
     stats = Stats()
     config = Config(algorithm, limit, heuristic)
@@ -74,7 +76,7 @@ def generate_algorithm_results(algorithm: str, init_state: State, file_name=None
     _generate_csv(f'results/{algorithm}.csv', results)
 
 
-if __name__ == '__main__':
+def generate_all_csv():
     init_state = State.generate()
 
     print(f'Generating results for initial state:\n {init_state}')
@@ -93,3 +95,85 @@ if __name__ == '__main__':
     generate_algorithm_results("a_star", init_state, heuristic="manhattan")
     generate_algorithm_results("a_star", init_state, heuristic="hamming")
     generate_algorithm_results("a_star", init_state, heuristic="overestimated")
+
+
+def _plot_uninformed_algorithms():
+    algorithms = ["bfs", "dfs", "iddfs"]
+
+    results = {
+        'bfs': {
+            'time': [],
+            'cost': [],
+        },
+        'dfs': {
+            'time': [],
+            'cost': []
+        },
+        'iddfs': {
+            'time': [],
+            'cost': []
+        }
+    }
+
+    for a in algorithms:
+        with open(f'results/{a}.csv', mode='r') as csv_file:
+            csv_reader = csv.DictReader(csv_file)
+            for row in csv_reader:
+                results[row['algorithm']]['time'].append(float(row['processing_time']))
+                results[row['algorithm']]['cost'].append(int(row['objective_cost']))
+
+    # set width of bar
+    barWidth = 0.25
+    fig = plt.subplots(figsize =(12, 8))
+
+    # set height of bar
+    IT = [12, 30, 1, 8, 22]
+    ECE = [28, 6, 16, 5, 10]
+    CSE = [29, 3, 24, 25, 17]
+
+    # Set position of bar on X axis
+    br1 = np.arange(len(IT))
+    br2 = [x + barWidth for x in br1]
+    br3 = [x + barWidth for x in br2]
+
+    # Make the plot
+    plt.bar(br1, IT, color ='r', width = barWidth,
+            edgecolor ='grey', label ='IT')
+    plt.bar(br2, ECE, color ='g', width = barWidth,
+            edgecolor ='grey', label ='ECE')
+    plt.bar(br3, CSE, color ='b', width = barWidth,
+            edgecolor ='grey', label ='CSE')
+
+    # Adding Xticks
+    plt.xlabel('Branch', fontweight ='bold', fontsize = 15)
+    plt.ylabel('Students passed', fontweight ='bold', fontsize = 15)
+    plt.xticks([r + barWidth for r in range(len(IT))],
+            ['2015', '2016', '2017', '2018', '2019'])
+
+    fig, time = plt.subplots()
+
+    time.set_xlabel('Algorithm')
+    time.set_ylabel('Time (s)')
+
+    time.bar(results.keys(),
+             list(map(lambda algo: fmean(algo['time']), results.values())),
+             color="red")
+
+    cost = time.twinx()
+
+    cost.set_ylabel('Cost')
+
+    cost.bar(results.keys(),
+             list(map(lambda algo: mean(algo['cost']), results.values())),
+             color="blue")
+
+    plt.title('Time and Cost Uninformed Search')
+    plt.show()
+
+
+def plot_results():
+    _plot_uninformed_algorithms()
+
+
+if __name__ == '__main__':
+    plot_results()
