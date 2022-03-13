@@ -1,10 +1,9 @@
-from collections import deque
 import time
+from collections import deque
 from typing import Set, Deque, Iterable
 
 from algorithms.stats import Stats
 from config import Config
-
 from utils.board import State
 from utils.node import Node
 

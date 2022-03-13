@@ -8,17 +8,17 @@ config:
   # - iddfs
   # - hls
   # - hgs
-  # - a*
-  algorithm: 'iddfs'
+  # - a_star
+  algorithm: 'algorithm'
 
   # depth limit for iddfs [ignored for other algorithms]
-  limit: '10'
+  limit: 'limit'
 
   # heuristic to be used for informed search algorithms [ignored for other algorithms]
   #possible options are:
   # - manhattan
   # - hamming
   # - overestimated
-  heuristic: 'manhattan'
+  heuristic: 'heuristic'
 
 ...

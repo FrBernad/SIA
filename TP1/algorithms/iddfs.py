@@ -1,6 +1,6 @@
 import time
 from collections import deque
-from typing import Set, Deque, Optional, Iterable, Dict
+from typing import Deque, Iterable, Dict
 
 from algorithms.stats import Stats
 from config import Config
@@ -25,7 +25,7 @@ def iddfs(init_state: State, stats: Stats, config: Config) -> Iterable[Node]:
     stats.start_time = time.process_time()
 
     while limit_nodes:
-        limit_node = limit_nodes.pop()
+        limit_node = limit_nodes.popleft()
 
         max_depth = limit_node.depth + limit
 

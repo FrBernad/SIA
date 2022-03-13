@@ -4,7 +4,7 @@ from algorithms.exceptions import InvalidAlgorithmException, InvalidConfigLimitE
 
 
 class Config:
-    def __init__(self, algorithm: str, limit: Optional[str], heuristic: Optional[str]):
+    def __init__(self, algorithm: str, limit: Optional[str] = None, heuristic: Optional[str] = None):
 
         self.algorithm = ALGORITHMS.get(algorithm)
         self.algorithm_str = algorithm
@@ -15,13 +15,15 @@ class Config:
             limit = int(limit)
             if limit <= 0:
                 raise InvalidConfigLimitException()
-            self.limit = limit
+
+        self.limit = limit
 
         if heuristic is not None:
             self.heuristic = HEURISTICS.get(heuristic)
             if is_informed(algorithm) and not self.heuristic:
                 raise MissingHeuristicException()
 
+        self.heuristic_str = heuristic
 
 def is_informed(algorithm: str) -> bool:
     return algorithm in ["a*", "hls", "hgs"]
@@ -46,5 +48,5 @@ ALGORITHMS = {
     "iddfs": dfs,
     "hgs": hgs,
     "hls": hls,
-    "a*": a_star,
+    "a_star": a_star,
 }

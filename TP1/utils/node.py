@@ -1,8 +1,7 @@
 from collections import deque
+from functools import total_ordering
 from typing import Optional, List, Deque, Iterable, Callable
 
-from algorithms.stats import Stats
-from config import Config
 from utils.board import State, OBJECTIVE_STATE
 
 
@@ -50,6 +49,7 @@ class Node:
         return self.state.__repr__()
 
 
+@total_ordering
 class HeuristicNode(Node):
     def __init__(self, state: State, parent: Optional['HeuristicNode'], heuristic: Callable[[State], int]):
         super().__init__(state, parent)
@@ -63,6 +63,7 @@ class HeuristicNode(Node):
         return self.heuristic_value < other.heuristic_value
 
 
+@total_ordering
 class CostHeuristicNode(HeuristicNode):
     def __init__(self, state: State, parent: Optional['HeuristicNode'], heuristic: Callable[[State], int]):
         super().__init__(state, parent, heuristic)
@@ -72,33 +73,3 @@ class CostHeuristicNode(HeuristicNode):
 
     def get_child_nodes(self) -> List['CostHeuristicNode']:
         return list(map(lambda state: CostHeuristicNode(state, self, self.heuristic), self.get_next_states()))
-
-
-def generate_solution(tree: Iterable[Node], stats: Stats, config: Config):
-    is_first = True
-    init_node: Node
-    intermediate_nodes = []
-
-    for n in tree:
-        if is_first:
-            is_first = False
-            init_node = n
-        else:
-            intermediate_nodes.append(n)
-
-    solution = {
-        'algorithm': config.algorithm_str,
-        'solution_found': stats.objective_found,
-        'objective_distance': stats.objective_distance,
-        'objective_cost': stats.objective_cost,
-        'explored_nodes': stats.explored_nodes_count,
-        'border_nodes': stats.border_nodes_count,
-        'processing_time': stats.get_processing_time(),
-        'solution': {
-            'init_state': init_node.__str__(),
-            'intermediate_states': list(map(lambda n: n.__str__(), intermediate_nodes)),
-            'final_state': OBJECTIVE_STATE.__str__()
-        }
-    }
-
-    return solution

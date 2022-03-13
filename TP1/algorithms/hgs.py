@@ -4,7 +4,6 @@ from typing import Iterable, Set
 
 from algorithms.stats import Stats
 from config import Config
-
 from utils.board import State
 from utils.node import HeuristicNode, Node
 

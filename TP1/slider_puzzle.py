@@ -3,9 +3,9 @@ import sys
 import yaml
 
 from algorithms.stats import Stats
-from utils.board import State
 from config import Config
-from utils.node import generate_solution
+from utils.board import State
+from utils.results import generate_solution_yaml
 
 CONFIG_FILE = 'config.yaml'
 OUTPUT_FILE = 'solution.yaml'
@@ -23,18 +23,16 @@ def _generate_solution_file(solution, sol_file):
 
 
 def main(config_file: str, output_file: str):
-    init_state = State.generate()
-
     config = _get_config(config_file)
 
     stats = Stats()
 
-    tree = config.algorithm(init_state, stats, config)
+    tree = config.algorithm(State.generate(), stats, config)
 
-    _generate_solution_file(generate_solution(tree, stats, config), output_file)
+    _generate_solution_file(generate_solution_yaml(tree, stats, config), output_file)
 
 
-# Run as python3 slider_puzzle.py [config_file_path] [output_file_path]
+# Run as pipenv run slider_puzzle.py [config_file_path] [output_file_path]
 if __name__ == '__main__':
     argv = sys.argv
 
