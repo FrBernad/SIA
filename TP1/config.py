@@ -7,6 +7,7 @@ class Config:
     def __init__(self, algorithm: str, limit: Optional[str], heuristic: Optional[str]):
 
         self.algorithm = ALGORITHMS.get(algorithm)
+        self.algorithm_str = algorithm
         if not self.algorithm:
             raise InvalidAlgorithmException()
 

@@ -4,10 +4,11 @@ import yaml
 
 from algorithms.stats import Stats
 from utils.board import State
-from utils.node import plot_graph
 from config import Config
+from utils.node import generate_solution
 
 CONFIG_FILE = 'config.yaml'
+OUTPUT_FILE = 'solution.yaml'
 
 
 def _get_config(config_file: str) -> 'Config':
@@ -16,7 +17,12 @@ def _get_config(config_file: str) -> 'Config':
         return Config(config.get("algorithm"), config.get("limit"), config.get("heuristic"))
 
 
-def main(config_file: str):
+def _generate_solution_file(solution, sol_file):
+    with open(sol_file, 'w') as f:
+        yaml.dump(solution, f, sort_keys=False, default_flow_style=False)
+
+
+def main(config_file: str, output_file: str):
     init_state = State.generate()
 
     config = _get_config(config_file)
@@ -25,27 +31,26 @@ def main(config_file: str):
 
     tree = config.algorithm(init_state, stats, config)
 
-    for n in tree:
-        print(n)
-
-    print(stats)
-
-    plot_graph(tree)
+    _generate_solution_file(generate_solution(tree, stats, config), output_file)
 
 
-# Run as python3 slider_puzzle.py [config_file_path]
+# Run as python3 slider_puzzle.py [config_file_path] [output_file_path]
 if __name__ == '__main__':
     argv = sys.argv
 
     config_file = CONFIG_FILE
+    output_file = OUTPUT_FILE
     if len(argv) > 1:
         config_file = argv[1]
 
+    if len(argv) > 2:
+        output_file = argv[2]
+
     try:
-        main(config_file)
+        main(config_file, output_file)
     except OSError:
         print("Error opening config file.")
     except yaml.YAMLError:
-        print("Error parsing config file.")
+        print("Error writing or reading from yaml file.")
     except Exception as e:
         print(e)

@@ -1,6 +1,8 @@
 from collections import deque
 from typing import Optional, List, Deque, Iterable, Callable
 
+from algorithms.stats import Stats
+from config import Config
 from utils.board import State, OBJECTIVE_STATE
 
 
@@ -72,18 +74,31 @@ class CostHeuristicNode(HeuristicNode):
         return list(map(lambda state: CostHeuristicNode(state, self, self.heuristic), self.get_next_states()))
 
 
-def plot_graph(tree: Iterable[Node]) -> None:
-    pass
-    # graph = nx.Graph()
-    #
-    # graph.add_nodes_from(map(lambda n: n.__str__(), tree))
-    #
-    # for node in tree:
-    #     if node.has_parent():
-    #         graph.add_edge(node.parent, node)
-    #
-    # plt.plot()
-    # nx.draw(graph, with_labels=True, font_weight='bold')
-    #
-    # plt.show()
-    # print(graph)
+def generate_solution(tree: Iterable[Node], stats: Stats, config: Config):
+    is_first = True
+    init_node: Node
+    intermediate_nodes = []
+
+    for n in tree:
+        if is_first:
+            is_first = False
+            init_node = n
+        else:
+            intermediate_nodes.append(n)
+
+    solution = {
+        'algorithm': config.algorithm_str,
+        'solution_found': stats.objective_found,
+        'objective_distance': stats.objective_distance,
+        'objective_cost': stats.objective_cost,
+        'explored_nodes': stats.explored_nodes_count,
+        'border_nodes': stats.border_nodes_count,
+        'processing_time': stats.get_processing_time(),
+        'solution': {
+            'init_state': init_node.__str__(),
+            'intermediate_states': list(map(lambda n: n.__str__(), intermediate_nodes)),
+            'final_state': OBJECTIVE_STATE.__str__()
+        }
+    }
+
+    return solution

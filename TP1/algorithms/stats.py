@@ -8,7 +8,7 @@ class Stats:
         self.start_time = 0
         self.end_time = 0
 
-    def get_processing_time(self):
+    def get_processing_time(self) -> float:
         return self.end_time - self.start_time
 
     def __str__(self):

@@ -79,7 +79,7 @@ class State:
         return hash(self.state.data.tobytes())
 
     def __repr__(self):
-        return f'{self.state}\n'
+        return f'[{self.state[0]}{self.state[1]}{self.state[2]}]'
 
 
 OBJECTIVE_STATE: State = State(
