@@ -92,23 +92,24 @@ def generate_all_csv():
 
     print(f'Generating results for initial state:\n {init_state}')
 
-    # generate_algorithm_results("bfs", init_state)
-    # generate_algorithm_results("dfs", init_state)
+    generate_algorithm_results("bfs", init_state)
+    generate_algorithm_results("dfs", init_state)
     generate_algorithm_results("iddfs", init_state, limit=1)
-    generate_algorithm_results("iddfs", init_state, limit=5)
     generate_algorithm_results("iddfs", init_state, limit=10)
     generate_algorithm_results("iddfs", init_state, limit=100)
     generate_algorithm_results("iddfs", init_state, limit=1000)
     generate_algorithm_results("iddfs", init_state, limit=10000)
-    # generate_algorithm_results("hgs", init_state, heuristic="manhattan")
-    # generate_algorithm_results("hgs", init_state, heuristic="hamming")
-    # generate_algorithm_results("hgs", init_state, heuristic="overestimated")
-    # generate_algorithm_results("hls", init_state, heuristic="manhattan")
-    # generate_algorithm_results("hls", init_state, heuristic="hamming")
-    # generate_algorithm_results("hls", init_state, heuristic="overestimated")
-    # generate_algorithm_results("a_star", init_state, heuristic="manhattan")
-    # generate_algorithm_results("a_star", init_state, heuristic="hamming")
-    # generate_algorithm_results("a_star", init_state, heuristic="overestimated")
+    generate_algorithm_results("iddfs", init_state, limit=50000)
+    generate_algorithm_results("hgs", init_state, heuristic="manhattan")
+    generate_algorithm_results("hgs", init_state, heuristic="hamming")
+    generate_algorithm_results("hgs", init_state, heuristic="overestimated")
+    generate_algorithm_results("hls", init_state, heuristic="manhattan")
+    generate_algorithm_results("hls", init_state, heuristic="hamming")
+    generate_algorithm_results("hls", init_state, heuristic="overestimated")
+    generate_algorithm_results("a_star", init_state, heuristic="manhattan")
+    generate_algorithm_results("a_star", init_state, heuristic="hamming")
+    generate_algorithm_results("a_star", init_state, heuristic="overestimated")
+
 
 def _plot_uninformed_algorithms():
     algorithms = ["bfs", "dfs", "iddfs"]
@@ -157,19 +158,19 @@ def _plot_uninformed_algorithms():
                     if row['limit'] == '1':
                         results['iddfs_l1']['time'].append(float(row['processing_time']))
                         results['iddfs_l1']['cost'].append(int(row['objective_cost']))
-                    if row['limit'] == '5':
+                    if row['limit'] == '10':
                         results['iddfs_l2']['time'].append(float(row['processing_time']))
                         results['iddfs_l2']['cost'].append(int(row['objective_cost']))
-                    if row['limit'] == '10':
+                    if row['limit'] == '100':
                         results['iddfs_l3']['time'].append(float(row['processing_time']))
                         results['iddfs_l3']['cost'].append(int(row['objective_cost']))
-                    if row['limit'] == '100':
+                    if row['limit'] == '1000':
                         results['iddfs_l4']['time'].append(float(row['processing_time']))
                         results['iddfs_l4']['cost'].append(int(row['objective_cost']))
-                    if row['limit'] == '1000':
+                    if row['limit'] == '10000':
                         results['iddfs_l5']['time'].append(float(row['processing_time']))
                         results['iddfs_l5']['cost'].append(int(row['objective_cost']))
-                    if row['limit'] == '10000':
+                    if row['limit'] == '50000':
                         results['iddfs_l6']['time'].append(float(row['processing_time']))
                         results['iddfs_l6']['cost'].append(int(row['objective_cost']))
                 else:
@@ -178,55 +179,59 @@ def _plot_uninformed_algorithms():
 
     ### TIEMPO DE BFS, DFS Y TRES LIMITES DE IDDFS ###
 
-    # fig, time = plt.subplots(figsize=(10, 7))
+    fig, time = plt.subplots(figsize=(10, 7))
 
-    # time.set_xlabel('Algorithm')
-    # time.set_ylabel('Time (s)')
+    time.set_xlabel('Algorithm')
+    time.set_ylabel('Time (s)')
 
-    # time_list = [results['bfs']['time'], results['dfs']['time'], results['iddfs_l1']['time'],
-    #             results['iddfs_l2']['time'],
-    #            results['iddfs_l3']['time']]
+    algorithms = ["bfs", "dfs", "iddfs\n(limit 1)", "iddfs\n(limit 100)", "iddfs\n(limit 10000)",
+                  "iddfs\n(limit 50000)"]
 
-    # time.bar(list(map(lambda algo: algo.upper(), algorithms)),
-    #         list(map(lambda time: fmean(time), time_list)),
-    #         color="blue")
+    time_list = [results['bfs']['time'], results['dfs']['time'], results['iddfs_l1']['time'],
+                 results['iddfs_l3']['time'], results['iddfs_l5']['time'], results['iddfs_l6']['time']]
 
-    # plt.show()
+    time.bar(list(map(lambda algo: algo.upper(), algorithms)),
+             list(map(lambda time: fmean(time), time_list)),
+             color="blue")
+
+    plt.show()
 
     ### COSTO DE BFS DFS Y TRES LIMITES IDDFS ###
 
-    # fig, cost = plt.subplots(figsize=(10, 7))
+    fig, cost = plt.subplots(figsize=(10, 7))
 
-    # cost.set_xlabel('Algorithm')
-    # cost.set_ylabel('Cost')
+    cost.set_xlabel('Algorithm')
+    cost.set_ylabel('Cost')
 
-    # cost_list = [results['bfs']['cost], results['dfs']['cost], results['iddfs_l1']['cost],
-    #             results['iddfs_l2']['cost],
-    #            results['iddfs_l3']['cost]]
+    algorithms = ["bfs", "dfs", "iddfs\n(limit 1)", "iddfs\n(limit 100)", "iddfs\n(limit 10000)",
+                  "iddfs\n(limit 50000)"]
 
-    # cost.bar(list(map(lambda algo: algo.upper(), algorithms)),
-    #         list(map(lambda cost: mean(cost), cost_list)),
-    #         color="red")
+    cost_list = [results['bfs']['cost'], results['dfs']['cost'], results['iddfs_l1']['cost'],
+                 results['iddfs_l3']['cost'], results['iddfs_l5']['cost'], results['iddfs_l6']['cost']]
 
-    # plt.show()
+    cost.bar(list(map(lambda algo: algo.upper(), algorithms)),
+             list(map(lambda cost: mean(cost), cost_list)),
+             color="red")
+
+    plt.show()
 
     ### TIEMPO IDDFS CON DISTINTOS LIMITES ###
 
-    # fig, iddfs_time_graph = plt.subplots(figsize=(10, 7))
+    fig, iddfs_time_graph = plt.subplots(figsize=(10, 7))
 
-    # limits = ['L1', 'L2', 'L3', 'L4', 'L5', 'L6']
+    limits = ['1', '10', '100', '1000', '10000', 'L6']
 
-    # iddfs_time_graph.set_xlabel('Limit')
-    # iddfs_time_graph.set_ylabel('Time')
+    iddfs_time_graph.set_xlabel('Limit')
+    iddfs_time_graph.set_ylabel('Time')
 
-    # iddfs_time_list = [results['iddfs_l1']['time'], results['iddfs_l2']['time'], results['iddfs_l3']['time'],
-    #             results['iddfs_l4']['time'], results['iddfs_l5']['time'], results['iddfs_l6']['time']]
+    iddfs_time_list = [results['bfs']['time'], results['dfs']['time'], results['iddfs_l1']['time'],
+                       results['iddfs_l3']['time'], results['iddfs_l5']['time'], results['iddfs_l6']['time']]
 
-    # iddfs_time_graph.bar(limits,
-    #                list(map(lambda limit: fmean(limit), iddfs_time_list)),
-    #                color="blue")
+    iddfs_time_graph.bar(limits,
+                         list(map(lambda limit: fmean(limit), iddfs_time_list)),
+                         color="blue")
 
-    # plt.show()
+    plt.show()
 
     ### COSTO IDDFS CON DISTINTOS LIMITES ###
 
@@ -252,4 +257,4 @@ def plot_results():
 
 
 if __name__ == '__main__':
-    generate_all_csv()
+    plot_results()

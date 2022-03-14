@@ -5,7 +5,8 @@
 
 # SLIDER PUZZLE SOLVER
 This project aims to solve the 3x3 [slider puzzle](https://en.wikipedia.org/wiki/Sliding_puzzle) using 
-different informed and uninformed search algorithms.  
+different informed and uninformed search algorithms. The problem consists of a combination puzzle that 
+challenges a player to slide pieces along certain routes to establish a certain end-configuration. 
 
 # Requirements
 - [Python 3+](https://www.python.org/downloads/)
