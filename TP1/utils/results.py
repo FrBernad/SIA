@@ -8,6 +8,8 @@ from utils.board import OBJECTIVE_STATE, State
 from utils.node import Node
 import matplotlib.pyplot as plt
 
+import numpy as np
+
 
 def generate_solution_yaml(tree: Iterable[Node], stats: Stats, config: Config):
     is_first = True
@@ -77,25 +79,36 @@ def generate_algorithm_results(algorithm: str, init_state: State,
 
 
 def generate_all_csv():
-    init_state = State.generate()
+    init_state = State(
+        np.array(
+            [
+                [7, 3, 0],
+                [1, 5, 2],
+                [8, 4, 6]
+            ],
+            int
+        )
+    )
 
     print(f'Generating results for initial state:\n {init_state}')
 
-    generate_algorithm_results("bfs", init_state)
-    generate_algorithm_results("dfs", init_state)
+    # generate_algorithm_results("bfs", init_state)
+    # generate_algorithm_results("dfs", init_state)
+    generate_algorithm_results("iddfs", init_state, limit=1)
+    generate_algorithm_results("iddfs", init_state, limit=5)
     generate_algorithm_results("iddfs", init_state, limit=10)
-    generate_algorithm_results("iddfs", init_state, limit=50)
     generate_algorithm_results("iddfs", init_state, limit=100)
-    generate_algorithm_results("hgs", init_state, heuristic="manhattan")
-    generate_algorithm_results("hgs", init_state, heuristic="hamming")
-    generate_algorithm_results("hgs", init_state, heuristic="overestimated")
-    generate_algorithm_results("hls", init_state, heuristic="manhattan")
-    generate_algorithm_results("hls", init_state, heuristic="hamming")
-    generate_algorithm_results("hls", init_state, heuristic="overestimated")
-    generate_algorithm_results("a_star", init_state, heuristic="manhattan")
-    generate_algorithm_results("a_star", init_state, heuristic="hamming")
-    generate_algorithm_results("a_star", init_state, heuristic="overestimated")
-
+    generate_algorithm_results("iddfs", init_state, limit=1000)
+    generate_algorithm_results("iddfs", init_state, limit=10000)
+    # generate_algorithm_results("hgs", init_state, heuristic="manhattan")
+    # generate_algorithm_results("hgs", init_state, heuristic="hamming")
+    # generate_algorithm_results("hgs", init_state, heuristic="overestimated")
+    # generate_algorithm_results("hls", init_state, heuristic="manhattan")
+    # generate_algorithm_results("hls", init_state, heuristic="hamming")
+    # generate_algorithm_results("hls", init_state, heuristic="overestimated")
+    # generate_algorithm_results("a_star", init_state, heuristic="manhattan")
+    # generate_algorithm_results("a_star", init_state, heuristic="hamming")
+    # generate_algorithm_results("a_star", init_state, heuristic="overestimated")
 
 def _plot_uninformed_algorithms():
     algorithms = ["bfs", "dfs", "iddfs"]
@@ -124,7 +137,7 @@ def _plot_uninformed_algorithms():
 
     # set width of bar
     barWidth = 0.25
-    fig = plt.subplots(figsize =(12, 8))
+    fig = plt.subplots(figsize=(12, 8))
 
     # set height of bar
     IT = [12, 30, 1, 8, 22]
@@ -137,18 +150,18 @@ def _plot_uninformed_algorithms():
     br3 = [x + barWidth for x in br2]
 
     # Make the plot
-    plt.bar(br1, IT, color ='r', width = barWidth,
-            edgecolor ='grey', label ='IT')
-    plt.bar(br2, ECE, color ='g', width = barWidth,
-            edgecolor ='grey', label ='ECE')
-    plt.bar(br3, CSE, color ='b', width = barWidth,
-            edgecolor ='grey', label ='CSE')
+    plt.bar(br1, IT, color='r', width=barWidth,
+            edgecolor='grey', label='IT')
+    plt.bar(br2, ECE, color='g', width=barWidth,
+            edgecolor='grey', label='ECE')
+    plt.bar(br3, CSE, color='b', width=barWidth,
+            edgecolor='grey', label='CSE')
 
     # Adding Xticks
-    plt.xlabel('Branch', fontweight ='bold', fontsize = 15)
-    plt.ylabel('Students passed', fontweight ='bold', fontsize = 15)
+    plt.xlabel('Branch', fontweight='bold', fontsize=15)
+    plt.ylabel('Students passed', fontweight='bold', fontsize=15)
     plt.xticks([r + barWidth for r in range(len(IT))],
-            ['2015', '2016', '2017', '2018', '2019'])
+               ['2015', '2016', '2017', '2018', '2019'])
 
     fig, time = plt.subplots()
 
@@ -176,4 +189,4 @@ def plot_results():
 
 
 if __name__ == '__main__':
-    plot_results()
+    generate_all_csv()

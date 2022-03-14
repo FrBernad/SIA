@@ -25,6 +25,7 @@ class Config:
 
         self.heuristic_str = heuristic
 
+
 def is_informed(algorithm: str) -> bool:
     return algorithm in ["a*", "hls", "hgs"]
 
@@ -34,6 +35,7 @@ from algorithms.bfs import bfs
 from algorithms.dfs import dfs
 from algorithms.hgs import hgs
 from algorithms.hls import hls
+from algorithms.iddfs import iddfs
 from utils.heuristics import manhattan_distance, hamming_distance, overestimated_manhattan_distance
 
 HEURISTICS = {
@@ -45,7 +47,7 @@ HEURISTICS = {
 ALGORITHMS = {
     "bfs": bfs,
     "dfs": dfs,
-    "iddfs": dfs,
+    "iddfs": iddfs,
     "hgs": hgs,
     "hls": hls,
     "a_star": a_star,
