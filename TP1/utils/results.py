@@ -122,7 +122,28 @@ def _plot_uninformed_algorithms():
             'time': [],
             'cost': []
         },
-        'iddfs': {
+        'iddfs_l1': {
+            'time': [],
+            'cost': []
+        },
+        'iddfs_l2': {
+            'time': [],
+            'cost': []
+        },
+        'iddfs_l3': {
+            'time': [],
+            'cost': []
+        },
+        'iddfs_l4': {
+            'time': [],
+            'cost': []
+        }
+        ,
+        'iddfs_l5': {
+            'time': [],
+            'cost': []
+        },
+        'iddfs_l6': {
             'time': [],
             'cost': []
         }
@@ -132,55 +153,97 @@ def _plot_uninformed_algorithms():
         with open(f'results/{a}.csv', mode='r') as csv_file:
             csv_reader = csv.DictReader(csv_file)
             for row in csv_reader:
-                results[row['algorithm']]['time'].append(float(row['processing_time']))
-                results[row['algorithm']]['cost'].append(int(row['objective_cost']))
+                if a == 'iddfs':
+                    if row['limit'] == '1':
+                        results['iddfs_l1']['time'].append(float(row['processing_time']))
+                        results['iddfs_l1']['cost'].append(int(row['objective_cost']))
+                    if row['limit'] == '5':
+                        results['iddfs_l2']['time'].append(float(row['processing_time']))
+                        results['iddfs_l2']['cost'].append(int(row['objective_cost']))
+                    if row['limit'] == '10':
+                        results['iddfs_l3']['time'].append(float(row['processing_time']))
+                        results['iddfs_l3']['cost'].append(int(row['objective_cost']))
+                    if row['limit'] == '100':
+                        results['iddfs_l4']['time'].append(float(row['processing_time']))
+                        results['iddfs_l4']['cost'].append(int(row['objective_cost']))
+                    if row['limit'] == '1000':
+                        results['iddfs_l5']['time'].append(float(row['processing_time']))
+                        results['iddfs_l5']['cost'].append(int(row['objective_cost']))
+                    if row['limit'] == '10000':
+                        results['iddfs_l6']['time'].append(float(row['processing_time']))
+                        results['iddfs_l6']['cost'].append(int(row['objective_cost']))
+                else:
+                    results[row['algorithm']]['time'].append(float(row['processing_time']))
+                    results[row['algorithm']]['cost'].append(int(row['objective_cost']))
 
-    # set width of bar
-    barWidth = 0.25
-    fig = plt.subplots(figsize=(12, 8))
+    ### TIEMPO DE BFS, DFS Y TRES LIMITES DE IDDFS ###
 
-    # set height of bar
-    IT = [12, 30, 1, 8, 22]
-    ECE = [28, 6, 16, 5, 10]
-    CSE = [29, 3, 24, 25, 17]
+    # fig, time = plt.subplots(figsize=(10, 7))
 
-    # Set position of bar on X axis
-    br1 = np.arange(len(IT))
-    br2 = [x + barWidth for x in br1]
-    br3 = [x + barWidth for x in br2]
+    # time.set_xlabel('Algorithm')
+    # time.set_ylabel('Time (s)')
 
-    # Make the plot
-    plt.bar(br1, IT, color='r', width=barWidth,
-            edgecolor='grey', label='IT')
-    plt.bar(br2, ECE, color='g', width=barWidth,
-            edgecolor='grey', label='ECE')
-    plt.bar(br3, CSE, color='b', width=barWidth,
-            edgecolor='grey', label='CSE')
+    # time_list = [results['bfs']['time'], results['dfs']['time'], results['iddfs_l1']['time'],
+    #             results['iddfs_l2']['time'],
+    #            results['iddfs_l3']['time']]
 
-    # Adding Xticks
-    plt.xlabel('Branch', fontweight='bold', fontsize=15)
-    plt.ylabel('Students passed', fontweight='bold', fontsize=15)
-    plt.xticks([r + barWidth for r in range(len(IT))],
-               ['2015', '2016', '2017', '2018', '2019'])
+    # time.bar(list(map(lambda algo: algo.upper(), algorithms)),
+    #         list(map(lambda time: fmean(time), time_list)),
+    #         color="blue")
 
-    fig, time = plt.subplots()
+    # plt.show()
 
-    time.set_xlabel('Algorithm')
-    time.set_ylabel('Time (s)')
+    ### COSTO DE BFS DFS Y TRES LIMITES IDDFS ###
 
-    time.bar(results.keys(),
-             list(map(lambda algo: fmean(algo['time']), results.values())),
-             color="red")
+    # fig, cost = plt.subplots(figsize=(10, 7))
 
-    cost = time.twinx()
+    # cost.set_xlabel('Algorithm')
+    # cost.set_ylabel('Cost')
 
-    cost.set_ylabel('Cost')
+    # cost_list = [results['bfs']['cost], results['dfs']['cost], results['iddfs_l1']['cost],
+    #             results['iddfs_l2']['cost],
+    #            results['iddfs_l3']['cost]]
 
-    cost.bar(results.keys(),
-             list(map(lambda algo: mean(algo['cost']), results.values())),
-             color="blue")
+    # cost.bar(list(map(lambda algo: algo.upper(), algorithms)),
+    #         list(map(lambda cost: mean(cost), cost_list)),
+    #         color="red")
 
-    plt.title('Time and Cost Uninformed Search')
+    # plt.show()
+
+    ### TIEMPO IDDFS CON DISTINTOS LIMITES ###
+
+    # fig, iddfs_time_graph = plt.subplots(figsize=(10, 7))
+
+    # limits = ['L1', 'L2', 'L3', 'L4', 'L5', 'L6']
+
+    # iddfs_time_graph.set_xlabel('Limit')
+    # iddfs_time_graph.set_ylabel('Time')
+
+    # iddfs_time_list = [results['iddfs_l1']['time'], results['iddfs_l2']['time'], results['iddfs_l3']['time'],
+    #             results['iddfs_l4']['time'], results['iddfs_l5']['time'], results['iddfs_l6']['time']]
+
+    # iddfs_time_graph.bar(limits,
+    #                list(map(lambda limit: fmean(limit), iddfs_time_list)),
+    #                color="blue")
+
+    # plt.show()
+
+    ### COSTO IDDFS CON DISTINTOS LIMITES ###
+
+    fig, iddfs_cost_graph = plt.subplots(figsize=(10, 7))
+
+    limits = ['L1', 'L2', 'L3', 'L4', 'L5', 'L6']
+
+    iddfs_cost_graph.set_xlabel('Limit')
+    iddfs_cost_graph.set_ylabel('Time')
+
+    iddfs_cost_list = [results['iddfs_l1']['cost'], results['iddfs_l2']['cost'], results['iddfs_l3']['cost'],
+                       results['iddfs_l4']['cost'], results['iddfs_l5']['cost'], results['iddfs_l6']['cost']]
+
+    iddfs_cost_graph.bar(limits,
+                         list(map(lambda limit: mean(limit), iddfs_cost_list)),
+                         color="red")
+
     plt.show()
 
 
