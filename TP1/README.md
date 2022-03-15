@@ -71,6 +71,6 @@ border_nodes: "border nodes count when the objective was found"
 processing_time: "algorithm processing time for solution"
 solution:
   init_state: 'initial state matrix'
-  intermediate_states: 'list contining intermediate states matrix'
+  intermediate_states: 'list containing intermediate states matrix'
   final_state: 'final state matrix'
 ```
