@@ -12,9 +12,13 @@ class Config:
             raise InvalidAlgorithmException()
 
         if limit is not None:
-            limit = int(limit)
-            if limit <= 0:
-                raise InvalidConfigLimitException()
+            if need_limit(algorithm):
+                try:
+                    limit = int(limit)
+                    if limit <= 0:
+                        raise InvalidConfigLimitException()
+                except Exception as e:
+                    raise InvalidConfigLimitException()
 
         self.limit = limit
 
@@ -27,7 +31,11 @@ class Config:
 
 
 def is_informed(algorithm: str) -> bool:
-    return algorithm in ["a*", "hls", "hgs"]
+    return algorithm in ["a_star", "hls", "hgs"]
+
+
+def need_limit(algorithm: str) -> bool:
+    return algorithm == "iddfs"
 
 
 from algorithms.a_star import a_star

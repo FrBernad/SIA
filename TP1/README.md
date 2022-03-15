@@ -22,7 +22,8 @@ To run the puzzle solver you **MUST** follow the next steps:
 a default config file (***config.yaml***) explaining all possible parameters value.
 2. Run the solver with the following command.
 ```bash
-  pipenv run slider_puzzle.py [config_file_path] [output_file_path]
+  pipenv shell 
+  python slider_puzzle.py [config_file_path] [output_file_path]
 ```
 Where:
   - config_file_path: specifies the path to a valid yaml configuration file. Defaults to **"config.yaml"**
