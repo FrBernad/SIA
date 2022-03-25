@@ -1,6 +1,11 @@
-from typing import List
+from random import randint, random
+from typing import Set, Tuple
 
-Chromosome = List[bool]
+Chromosome = Tuple[bool, ...]
+Population = Set[Chromosome]
+
+DEFAULT_POPULATION_SIZE = 1000
+DEFAULT_POPULATION_PROBABILITY = 0.005
 
 
 class Backpack(object):
@@ -39,3 +44,20 @@ class Element:
     def __init__(self, benefit, weight):
         self.weight = weight
         self.benefit = benefit
+
+
+def generate_random_population(
+        backpack_capacity: int,
+        size: int = DEFAULT_POPULATION_SIZE,
+        probability: float = DEFAULT_POPULATION_PROBABILITY
+) -> Population:
+    population: Population = set()
+
+    while len(population) < size:
+        chromosome = [False] * backpack_capacity
+        for i in range(backpack_capacity):
+            if random() < probability:
+                chromosome[i] = True
+        population.add(tuple(chromosome))
+
+    return population

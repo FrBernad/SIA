@@ -1,7 +1,7 @@
 import csv
 from typing import List
 
-from utils.backpack import Backpack, Element
+from utils.backpack import Backpack, Element, generate_random_population
 
 CONFIG_FILE = 'config.yaml'
 DATA_FILE = 'Mochila100Elementos.txt'
@@ -48,6 +48,8 @@ def _get_backpack_elements(data_file: str) -> List[Element]:
 def main(data_file: str, config_file: str):
     # config = _get_config(config_file)
     backpack = _get_backpack_data(data_file)
+
+    first_generation = generate_random_population(backpack.max_capacity)
 
 
 if __name__ == '__main__':
