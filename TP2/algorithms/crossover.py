@@ -14,7 +14,7 @@ def multiple_crossover(couple: Tuple[Chromosome, Chromosome], crossover_amount: 
         crossover_points = random.sample(range(0, len(couple[0]) - 1), crossover_amount)
     except ValueError:
         print('Sample size exceeded chromosome size!')
-        return Chromosome
+        return couple
 
     crossover_points.sort()
 
