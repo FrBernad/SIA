@@ -15,7 +15,8 @@ class EndConditionConfig:
 class SelectionMethodConfig:
     def __init__(self, method, **config):
         self.method = method
-        self.k = config.get('k')
+        self.truncation_size = config.get('truncation_size')
+        self.sample_size = config.get('sample_size')
 
 
 class MutationsMethodConfig:
@@ -177,14 +178,20 @@ class Config:
 
         if selection_method_type == 'truncated_selection':
             try:
-                k = int(selection.get(selection_method_type).get('k'))
+                truncation_size = int(selection.get(selection_method_type).get('truncation_size'))
 
-                if k <= 0:
+                if truncation_size <= 0:
+                    raise InvalidSelectionMethod()
+
+                sample_size = int(selection.get(selection_method_type).get('sample_size'))
+
+                if sample_size <= 0:
                     raise InvalidSelectionMethod()
 
                 return SelectionMethodConfig(
                     SELECTION_METHODS.get(selection_method_type),
-                    k=k,
+                    truncation_size=truncation_size,
+                    sample_size=sample_size
                 )
 
             except ValueError:

@@ -28,14 +28,14 @@ def boltzmann_selection(population: Population, backpack: Backpack, config: Sele
 
 def truncated_selection(population: Population, backpack: Backpack, config: SelectionMethodConfig) -> Population:
     population_len = len(population)
-    truncation_index = population_len - truncation_size
+    truncation_index = population_len - config.truncation_size
 
     temp = sorted(population,
                   key=lambda chromosome: backpack.calculate_fitness(chromosome),
                   reverse=True
                   )[0: truncation_index]
 
-    return sample(tuple(temp), k=config.k)
+    return sample(tuple(temp), k=config.sample_size)
 
 
 def tournament_selection(population: Population, backpack: Backpack, selection_size: int) -> Population:

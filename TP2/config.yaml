@@ -72,6 +72,7 @@ config:
 
     #used for truncated_selection type, defines how many chromosomes are discarded from the generation
     truncated_selection:
-      k: 'k' # k>0
+      truncation_size: 'truncation_size' # truncation_size>0
+      sample_size: 'sample_size' # sample_size>0
 
 ...
