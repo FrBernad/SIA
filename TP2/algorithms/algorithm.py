@@ -16,8 +16,10 @@ def genetic_algorithm(
 
     current_generation = generation_zero
 
+    current_generation_pop_size = len(current_generation)
+
     while True:
-        for i in range(len(current_generation)):
+        for i in range(current_generation_pop_size):
             selected_couple = couple_selection(current_generation)
             selected_couple = crossover(selected_couple)
             first_chromosome = mutation(selected_couple[0])
@@ -25,6 +27,6 @@ def genetic_algorithm(
             new_generation.add(first_chromosome)
             new_generation.add(second_chromosome)
 
-        current_generation = selection(new_generation, 1000)
+        current_generation = selection(new_generation, current_generation_pop_size)
         print(current_generation)
 
