@@ -7,6 +7,7 @@ from utils.config import SelectionMethodConfig
 DEFAULT_TOURNAMENT_CHROMOSOME_AMOUNT = 4
 
 
+# FIXME: 1000 hardocdeado
 def elitism_selection(population: Population, backpack: Backpack, config: SelectionMethodConfig) -> Population:
     return sorted(population,
                   key=lambda chromosome: backpack.calculate_fitness(chromosome),
@@ -21,16 +22,13 @@ def roulette_wheel_selection(population: Population, backpack: Backpack, config:
 def rank_selection(population: Population, backpack: Backpack, config: SelectionMethodConfig):
     sorted_population = sorted(population,
                                key=lambda chromosome: backpack.calculate_fitness(chromosome),
-                               reverse=True
-                               )
+                               reverse=True)
 
     population_len = len(population)
     population_weight = []
 
-    for i in range(len(population)):
-        population_weight.append((i + 1) / population_len)
-
-    population_weight.reverse()
+    for i in range(population_len):
+        population_weight.append((population_len - (i + 1)) / population_len)
 
     # FIXME Sacar 1000 hardcodeado
     return random.choices(population=sorted_population, weights=population_weight, k=1000)

@@ -1,10 +1,9 @@
 from utils.backpack import Backpack, Chromosome
 
 
-# FIXME:NO ESTA ANDANDO BIEN
-def benefit_weight_ratio(bp: Backpack, c: Chromosome) -> int:
+def benefit_weight_ratio(bp: Backpack, c: Chromosome) -> float:
     weight = bp.calculate_weight(c)
-    return 0 if not weight else int((float(bp.calculate_benefits(c)) / (bp.calculate_weight(c))) * 10)
+    return 0 if not weight else bp.calculate_benefits(c) / (bp.calculate_weight(c))
 
 
 def no_overweight_fitness(bp: Backpack, c: Chromosome) -> int:

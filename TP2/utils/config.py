@@ -210,7 +210,7 @@ class ConfigException(Exception):
 
 class InvalidEndCondition(ConfigException):
 
-    def __init__(self, message="Invalid end condition"):
+    def __init__(self, message="Invalid end condition config"):
         self.message = message
         super().__init__(self.message)
 
@@ -224,20 +224,20 @@ class InvalidFitnessFunction(ConfigException):
 
 class InvalidCoupleSelectionMethod(ConfigException):
 
-    def __init__(self, message="Invalid couple selection method"):
+    def __init__(self, message="Invalid couple selection method config"):
         self.message = message
         super().__init__(self.message)
 
 
 class InvalidCrossoverMethod(ConfigException):
 
-    def __init__(self, message="Invalid crossover method"):
+    def __init__(self, message="Invalid crossover method config"):
         self.message = message
         super().__init__(self.message)
 
 
 class InvalidSelectionMethod(ConfigException):
 
-    def __init__(self, message="Invalid selection method"):
+    def __init__(self, message="Invalid selection method config"):
         self.message = message
         super().__init__(self.message)

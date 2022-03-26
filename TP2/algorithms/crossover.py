@@ -7,7 +7,10 @@ from utils.config import CrossoverMethodConfig
 UNIFORM_PROBABILITY = 0.5
 
 
-def simple_crossover(couple: Tuple[Chromosome, Chromosome]) -> Tuple[Chromosome, Chromosome]:
+def simple_crossover(
+        couple: Tuple[Chromosome, Chromosome],
+        config: CrossoverMethodConfig = None
+) -> Tuple[Chromosome, Chromosome]:
     return multiple_crossover(couple, CrossoverMethodConfig(simple_crossover, n=1))
 
 
@@ -28,7 +31,10 @@ def multiple_crossover(
     return tuple(s1), tuple(s2)
 
 
-def uniform_crossover(couple: Tuple[Chromosome, Chromosome]) -> Tuple[Chromosome, Chromosome]:
+def uniform_crossover(
+        couple: Tuple[Chromosome, Chromosome],
+        config: CrossoverMethodConfig = None
+) -> Tuple[Chromosome, Chromosome]:
     s1 = list(couple[0])
     s2 = list(couple[1])
 
@@ -47,6 +53,5 @@ def _swap_elements(start_point: int, end_point: int, list1: list, list2: list):
 CROSSOVER_METHODS = {
     'simple_crossover': simple_crossover,
     'multiple_crossover': multiple_crossover,
-    # FIXME: CAMBIAR A UNIFORM
-    'uniform_crossover': multiple_crossover
+    'uniform_crossover': uniform_crossover
 }

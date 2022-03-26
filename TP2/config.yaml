@@ -30,12 +30,12 @@ config:
       percentaje: 'percentage' #(0<p<1)
       generations: 'generations' #generations>0
 
-    #fitness function to be used by the solver
-    #possible options are:
-    # - benefit_weight_ratio
-    # - overweight_fitness
-    # - no_overweight_fitness
-  fitness_function: no_overweight_fitness
+  #fitness function to be used by the solver
+  #possible options are:
+  # - benefit_weight_ratio
+  # - overweight_fitness
+  # - no_overweight_fitness
+  fitness_function: benefit_weight_ratio
 
   #couple selection method to be used by the solver
   #possible options are:
@@ -49,11 +49,11 @@ config:
     # - simple_crossover
     # - multiple_crossover
     # - uniform_crossover
-    type: multiple_crossover
+    type: uniform_crossover
 
     #used for truncated_selection type, defines how many chromosomes are discarded from the generation
     multiple_crossover:
-      n: 5 # n>0
+      n: 10 # n>0
 
   #mutation probability used for mutating chromosomes (0<p<1)
   mutation_probability: 0.005
@@ -68,7 +68,7 @@ config:
     # - tournament_selection
     # - boltzmann_selection
     # - truncated_selection
-    type: elitism_selection
+    type: rank_selection
 
     #used for truncated_selection type, defines how many chromosomes are discarded from the generation
     truncated_selection:
