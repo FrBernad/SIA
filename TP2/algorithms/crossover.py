@@ -1,4 +1,4 @@
-import random
+from random import sample
 from typing import Tuple
 
 from utils.backpack import Chromosome
@@ -12,10 +12,9 @@ def multiple_crossover(
         couple: Tuple[Chromosome, Chromosome],
         crossover_amount: int
 ) -> Tuple[Chromosome, Chromosome]:
-    crossover_points = random.sample(range(1, len(couple[0]) - 1), crossover_amount)
+    crossover_points = sample(range(1, len(couple[0]) - 1), crossover_amount)
     crossover_points.append(len(couple[0]))
     crossover_points.sort()
-    print(crossover_points)
     s1 = list(couple[0])
     s2 = list(couple[1])
 

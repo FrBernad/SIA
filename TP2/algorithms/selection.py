@@ -1,8 +1,10 @@
 from itertools import islice
 
-from utils.backpack import Population
+from utils.backpack import Population, Backpack
 
 
-def elite_selection(population: Population, selection_size: int) -> Population:
-    # falta implementar para que el sorted sortee por fitness
-    return set(sorted(population)[0:selection_size])
+def elite_selection(population: Population, backpack: Backpack, selection_size: int) -> Population:
+    return sorted(population,
+                  key=lambda chromosome: backpack.calculate_fitness(chromosome),
+                  reverse=True
+                  )[0:selection_size]

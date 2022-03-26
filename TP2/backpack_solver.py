@@ -1,6 +1,11 @@
 import csv
 from typing import List
 
+from algorithms.algorithm import genetic_algorithm
+from algorithms.couple_selection import rand_couple_selection
+from algorithms.crossover import simple_crossover, multiple_crossover
+from algorithms.mutation import random_mutation
+from algorithms.selection import elite_selection
 from utils.backpack import Backpack, Element, generate_random_population
 
 CONFIG_FILE = 'config.yaml'
@@ -50,6 +55,8 @@ def main(data_file: str, config_file: str):
     backpack = _get_backpack_data(data_file)
 
     first_generation = generate_random_population(backpack.max_capacity)
+    genetic_algorithm(first_generation, backpack, rand_couple_selection,
+                      multiple_crossover, random_mutation, elite_selection)
 
 
 if __name__ == '__main__':

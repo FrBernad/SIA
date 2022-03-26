@@ -12,21 +12,27 @@ def genetic_algorithm(
         selection: Callable
 ):
     generation_fitness = list(map(lambda chromosome: backpack.calculate_fitness(chromosome), generation_zero))
-    new_generation: Population = set()
 
     current_generation = generation_zero
 
-    current_generation_pop_size = len(current_generation)
+    current_generation_population_size = len(current_generation)
 
-    while True:
-        for i in range(current_generation_pop_size):
+    generation_children = set()
+
+    print(list(map(lambda chr: backpack.calculate_fitness(chr), current_generation)))
+
+    for j in range(0, 10000):
+        for i in range(current_generation_population_size):
             selected_couple = couple_selection(current_generation)
-            selected_couple = crossover(selected_couple)
+            selected_couple = crossover(selected_couple, 10)
             first_chromosome = mutation(selected_couple[0])
             second_chromosome = mutation(selected_couple[1])
-            new_generation.add(first_chromosome)
-            new_generation.add(second_chromosome)
+            generation_children.add(first_chromosome)
+            generation_children.add(second_chromosome)
 
-        current_generation = selection(new_generation, current_generation_pop_size)
-        print(current_generation)
+        current_generation = selection(list(generation_children), backpack, current_generation_population_size)
+        current_generation_population_size = len(current_generation)
+        generation_children = set()
 
+        if j % 100 == 0:
+            print(list(map(lambda chr: backpack.calculate_fitness(chr), current_generation)))

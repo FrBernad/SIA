@@ -1,8 +1,8 @@
 from random import randint, random
-from typing import Set, Tuple
+from typing import Set, Tuple, List
 
 Chromosome = Tuple[bool, ...]
-Population = Set[Chromosome]
+Population = List[Chromosome]
 
 DEFAULT_POPULATION_SIZE = 1000
 DEFAULT_POPULATION_PROBABILITY = 0.005
@@ -39,6 +39,9 @@ class Backpack(object):
     def calculate_fitness(self, chromosome: Chromosome):
         return 0 if self._calculate_weight(chromosome) > self.max_capacity else self._calculate_benefits(chromosome)
 
+    def calculate_fitness2(self, chromosome: Chromosome):
+        return self._calculate_benefits(chromosome)
+
 
 class Element:
     def __init__(self, benefit, weight):
@@ -51,7 +54,7 @@ def generate_random_population(
         size: int = DEFAULT_POPULATION_SIZE,
         probability: float = DEFAULT_POPULATION_PROBABILITY
 ) -> Population:
-    population: Population = set()
+    population = set()
 
     while len(population) < size:
         chromosome = [False] * backpack_capacity
@@ -60,4 +63,4 @@ def generate_random_population(
                 chromosome[i] = True
         population.add(tuple(chromosome))
 
-    return population
+    return list(population)

@@ -2,7 +2,7 @@ from random import random
 
 from utils.backpack import Chromosome
 
-DEFAULT_PROBABILITY = 0.005
+DEFAULT_PROBABILITY = 0.004
 
 
 def random_mutation(
