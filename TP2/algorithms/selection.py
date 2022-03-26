@@ -19,7 +19,21 @@ def roulette_wheel_selection(population: Population, backpack: Backpack, config:
 
 
 def rank_selection(population: Population, backpack: Backpack, config: SelectionMethodConfig):
-    pass
+    sorted_population = sorted(population,
+                               key=lambda chromosome: backpack.calculate_fitness(chromosome),
+                               reverse=True
+                               )
+
+    population_len = len(population)
+    population_weight = []
+
+    for i in range(len(population)):
+        population_weight.append((i + 1) / population_len)
+
+    population_weight.reverse()
+
+    # FIXME Sacar 1000 hardcodeado
+    return random.choices(population=sorted_population, weights=population_weight, k=1000)
 
 
 def boltzmann_selection(population: Population, backpack: Backpack, config: SelectionMethodConfig):
