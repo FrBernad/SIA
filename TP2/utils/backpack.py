@@ -1,11 +1,11 @@
 from random import randint, random
-from typing import Set, Tuple, List
+from typing import Tuple, List, Dict, Callable
 
 Chromosome = Tuple[bool, ...]
 Population = List[Chromosome]
 
 DEFAULT_POPULATION_SIZE = 1000
-DEFAULT_POPULATION_PROBABILITY = 0.005
+DEFAULT_POPULATION_PROBABILITY = 0.05
 
 
 class Backpack(object):
@@ -15,21 +15,22 @@ class Backpack(object):
             cls.instance = super(Backpack, cls).__new__(cls)
         return cls.instance
 
-    def __init__(self, max_capacity, max_weight, elements=None):
+    def __init__(self, max_capacity, max_weight, fitness_function, elements=None):
         if elements is None:
             elements = []
         self.max_weight = max_weight
         self.max_capacity = max_capacity
+        self.fitness_function = fitness_function
         self.elements = elements
 
-    def _calculate_weight(self, chromosome: Chromosome):
+    def calculate_weight(self, chromosome: Chromosome):
         total_weight = 0
         for p, e in zip(chromosome, self.elements):
             if p:
                 total_weight += e.weight
         return total_weight
 
-    def _calculate_benefits(self, chromosome: Chromosome):
+    def calculate_benefits(self, chromosome: Chromosome):
         total_benefits = 0
         for p, e in zip(chromosome, self.elements):
             if p:
@@ -37,10 +38,7 @@ class Backpack(object):
         return total_benefits
 
     def calculate_fitness(self, chromosome: Chromosome):
-        return 0 if self._calculate_weight(chromosome) > self.max_capacity else self._calculate_benefits(chromosome)
-
-    def calculate_fitness2(self, chromosome: Chromosome):
-        return self._calculate_benefits(chromosome)
+        return self.fitness_function(self, chromosome)
 
 
 class Element:
@@ -61,6 +59,7 @@ def generate_random_population(
         for i in range(backpack_capacity):
             if random() < probability:
                 chromosome[i] = True
+        chromosome[randint(0, backpack_capacity - 1)] = True
         population.add(tuple(chromosome))
 
     return list(population)

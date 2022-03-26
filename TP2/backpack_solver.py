@@ -1,12 +1,16 @@
 import csv
 from typing import List
 
+import yaml
+
 from algorithms.algorithm import genetic_algorithm
 from algorithms.couple_selection import rand_couple_selection
-from algorithms.crossover import simple_crossover, multiple_crossover
+from algorithms.crossover import multiple_crossover
+from algorithms.fitness_functions import FITNESS_FUNCTIONS
 from algorithms.mutation import random_mutation
-from algorithms.selection import elite_selection
+from algorithms.selection import elitism_selection
 from utils.backpack import Backpack, Element, generate_random_population
+from utils.config import Config
 
 CONFIG_FILE = 'config.yaml'
 DATA_FILE = 'Mochila100Elementos.txt'
@@ -27,7 +31,8 @@ def _get_backpack_data(data_file: str) -> Backpack:
 
         backpack_data = csv_reader.__next__()
 
-        return Backpack(int(backpack_data[MAX_CAPACITY]), int(backpack_data[MAX_WEIGHT]), backpack_elements)
+        return Backpack(int(backpack_data[MAX_CAPACITY]), int(backpack_data[MAX_WEIGHT]),
+                        FITNESS_FUNCTIONS['benefit_weight_ratio'], backpack_elements)
 
 
 def _get_backpack_elements(data_file: str) -> List[Element]:
@@ -44,19 +49,21 @@ def _get_backpack_elements(data_file: str) -> List[Element]:
         return elements
 
 
-# def _get_config(config_file: str) -> 'Config':
-#     with open(config_file) as cf:
-#         config = yaml.safe_load(cf)["config"]
-#         return Config(config.get("algorithm"), config.get("limit"), config.get("heuristic"))
+def _get_config(config_file: str) -> 'Config':
+    with open(config_file) as cf:
+        config = yaml.safe_load(cf)["config"]
+        return Config.generate(config)
 
 
 def main(data_file: str, config_file: str):
-    # config = _get_config(config_file)
+    config = _get_config(config_file)
     backpack = _get_backpack_data(data_file)
 
     first_generation = generate_random_population(backpack.max_capacity)
+
     genetic_algorithm(first_generation, backpack, rand_couple_selection,
-                      multiple_crossover, random_mutation, elite_selection)
+                      multiple_crossover, random_mutation, elitism_selection,
+                      config)
 
 
 if __name__ == '__main__':

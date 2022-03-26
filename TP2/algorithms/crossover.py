@@ -2,19 +2,20 @@ from random import sample, random
 from typing import Tuple
 
 from utils.backpack import Chromosome
+from utils.config import CrossoverMethodConfig
 
 UNIFORM_PROBABILITY = 0.5
 
 
 def simple_crossover(couple: Tuple[Chromosome, Chromosome]) -> Tuple[Chromosome, Chromosome]:
-    return multiple_crossover(couple, 1)
+    return multiple_crossover(couple, CrossoverMethodConfig(simple_crossover, n=1))
 
 
 def multiple_crossover(
         couple: Tuple[Chromosome, Chromosome],
-        crossover_amount: int
+        config: CrossoverMethodConfig = None
 ) -> Tuple[Chromosome, Chromosome]:
-    crossover_points = sample(range(1, len(couple[0]) - 1), crossover_amount)
+    crossover_points = sample(range(1, len(couple[0]) - 1), config.n)
     crossover_points.append(len(couple[0]))
     crossover_points.sort()
     s1 = list(couple[0])
@@ -22,7 +23,7 @@ def multiple_crossover(
 
     for i in range(len(crossover_points)):
         if i % 2 != 0:
-            swap_elements(crossover_points[i - 1], crossover_points[i], s1, s2)
+            _swap_elements(crossover_points[i - 1], crossover_points[i], s1, s2)
 
     return tuple(s1), tuple(s2)
 
@@ -38,6 +39,14 @@ def uniform_crossover(couple: Tuple[Chromosome, Chromosome]) -> Tuple[Chromosome
     return tuple(s1), tuple(s2)
 
 
-def swap_elements(start_point: int, end_point: int, list1: list, list2: list):
+def _swap_elements(start_point: int, end_point: int, list1: list, list2: list):
     list1[start_point:end_point], list2[start_point:end_point] = \
         list2[start_point:end_point], list1[start_point:end_point]
+
+
+CROSSOVER_METHODS = {
+    'simple_crossover': simple_crossover,
+    'multiple_crossover': multiple_crossover,
+    # FIXME: CAMBIAR A UNIFORM
+    'uniform_crossover': multiple_crossover
+}

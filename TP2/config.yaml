@@ -1,0 +1,77 @@
+---
+#backpack problem config
+config:
+
+  #end condition to be used by the solver
+  end_condition:
+
+    #possible types are:
+    # - generations_count_condition
+    # - time_condition
+    # - structure_condition
+    # - fitness_condition
+    type: generations_count_condition
+
+    #used for generations_count type, defines how many generations should be generated before ending
+    generations_count: 5000 #generations_count>0
+
+    #used for time type, defines how many seconds should pass before ending
+    time: 'time' #time>0
+
+    #used for structure type, defines how many consecutive generations should be generated
+    #with a percentage of equal individuals before ending
+    structure:
+      percentaje: 'percentage' #(0<p<1)
+      generations: 'generations' #generations>0
+
+    #used for fitness type, defines how many consecutive generations should be generated
+    #with a percentage of individuals with equal fitness before ending
+    fitness:
+      percentaje: 'percentage' #(0<p<1)
+      generations: 'generations' #generations>0
+
+    #fitness function to be used by the solver
+    #possible options are:
+    # - benefit_weight_ratio
+    # - overweight_fitness
+    # - no_overweight_fitness
+  fitness_function: benefit_weight_ratio
+
+  #couple selection method to be used by the solver
+  #possible options are:
+  # - rand_couple_selection
+  # - fitness_couple_selection
+  couple_selection: rand_couple_selection
+
+  #crossover method to be used by the solver
+  crossover:
+    #possible types are:
+    # - simple_crossover
+    # - multiple_crossover
+    # - uniform_crossover
+    type: multiple_crossover
+
+    #used for truncated_selection type, defines how many chromosomes are discarded from the generation
+    multiple_crossover:
+      n: 5 # n>0
+
+  #mutation probability used for mutating chromosomes (0<p<1)
+  mutation_probability: 0.005
+
+  #selection method to be used by the solver
+  selection:
+
+    #possible types are:
+    # - elitism_selection
+    # - roulette_wheel_selection
+    # - rank_selection
+    # - tournament_selection
+    # - boltzmann_selection
+    # - truncated_selection
+    type: elitism_selection
+
+    #used for truncated_selection type, defines how many chromosomes are discarded from the generation
+    truncated_selection:
+      k: 'k' # k>0
+
+...
