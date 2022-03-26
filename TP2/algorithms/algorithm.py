@@ -14,8 +14,12 @@ def genetic_algorithm(
         config: Config
 ):
     generation_fitness = list(map(lambda chromosome: backpack.calculate_fitness(chromosome), generation_zero))
-
     current_generation = generation_zero
+
+    print(list(map(lambda chr: backpack.calculate_fitness(chr), current_generation)))
+    print(list(map(lambda chr: backpack.calculate_benefits(chr), current_generation)))
+    print(list(map(lambda chr: backpack.calculate_weight(chr), current_generation)))
+    print('\n')
 
     current_generation_population_size = len(current_generation)
 
@@ -24,9 +28,9 @@ def genetic_algorithm(
     for j in range(0, 10000):
         for i in range(current_generation_population_size):
             selected_couple = couple_selection(current_generation)
-            selected_couple = crossover(selected_couple, config = config.crossover_method_config)
-            first_chromosome = mutation(selected_couple[0], config.mutation_probability)
-            second_chromosome = mutation(selected_couple[1], config.mutation_probability)
+            selected_couple = crossover(selected_couple, config=config.crossover_method_config)
+            first_chromosome = mutation(selected_couple[0], config.mutation_method_config.probability)
+            second_chromosome = mutation(selected_couple[1], config.mutation_method_config.probability)
             generation_children.add(first_chromosome)
             generation_children.add(second_chromosome)
 
@@ -34,7 +38,9 @@ def genetic_algorithm(
         current_generation_population_size = len(current_generation)
         generation_children = set()
 
-        # if j % 100 == 0:
-        #     print(list(map(lambda chr: backpack.calculate_fitness(chr), current_generation)))
+        if j % 100 == 0:
+            print(list(map(lambda chr: backpack.calculate_fitness(chr), current_generation)))
+            print(list(map(lambda chr: backpack.calculate_weight(chr), current_generation)))
+            print('\n')
 
     print(current_generation)

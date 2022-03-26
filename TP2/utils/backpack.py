@@ -5,7 +5,7 @@ Chromosome = Tuple[bool, ...]
 Population = List[Chromosome]
 
 DEFAULT_POPULATION_SIZE = 1000
-DEFAULT_POPULATION_PROBABILITY = 0.05
+DEFAULT_POPULATION_PROBABILITY = 0.005
 
 
 class Backpack(object):
@@ -48,18 +48,24 @@ class Element:
 
 
 def generate_random_population(
-        backpack_capacity: int,
+        backpack: Backpack,
         size: int = DEFAULT_POPULATION_SIZE,
         probability: float = DEFAULT_POPULATION_PROBABILITY
 ) -> Population:
     population = set()
 
     while len(population) < size:
-        chromosome = [False] * backpack_capacity
-        for i in range(backpack_capacity):
-            if random() < probability:
-                chromosome[i] = True
-        chromosome[randint(0, backpack_capacity - 1)] = True
+        chromosome = [False] * backpack.max_capacity
+        generated = False
+
+        while not generated:
+            random_index = randint(0, backpack.max_capacity - 1)
+
+            chromosome[random_index] = True
+            if backpack.calculate_weight(chromosome) > backpack.max_weight:
+                generated = True
+                chromosome[random_index] = False
+
         population.add(tuple(chromosome))
 
     return list(population)

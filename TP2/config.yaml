@@ -35,7 +35,7 @@ config:
     # - benefit_weight_ratio
     # - overweight_fitness
     # - no_overweight_fitness
-  fitness_function: benefit_weight_ratio
+  fitness_function: no_overweight_fitness
 
   #couple selection method to be used by the solver
   #possible options are:

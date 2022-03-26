@@ -1,5 +1,7 @@
 from typing import Dict, Callable
 
+from algorithms.mutation import random_mutation
+
 
 class EndConditionConfig:
     def __init__(self, condition, **config):
@@ -16,6 +18,12 @@ class SelectionMethodConfig:
         self.k = config.get('k')
 
 
+class MutationsMethodConfig:
+    def __init__(self, method, **config):
+        self.method = method
+        self.probability = config.get('probability')
+
+
 class CrossoverMethodConfig:
     def __init__(self, method, **config):
         self.method = method
@@ -30,15 +38,15 @@ from algorithms.selection import SELECTION_METHODS
 
 
 class Config:
-    def __init__(self, endConditionConfig, fitness_function,
-                 couple_selection_method, crossover_method_config,
-                 mutation_probability, selection_method_config):
+    def __init__(self, endConditionConfig: EndConditionConfig, fitness_function: Callable,
+                 couple_selection_method: Callable, crossover_method_config: CrossoverMethodConfig,
+                 mutation_method_config: MutationsMethodConfig, selection_method_config: SelectionMethodConfig):
 
         self.endConditionConfig = endConditionConfig
         self.fitness_function = fitness_function
         self.couple_selection_method = couple_selection_method
         self.crossover_method_config = crossover_method_config
-        self.mutation_probability = mutation_probability
+        self.mutation_method_config = mutation_method_config
         self.selection_method_config = selection_method_config
 
     @staticmethod
@@ -48,7 +56,7 @@ class Config:
             Config._get_fitness_function(config_dict['fitness_function']),
             Config._get_couple_selection_method(config_dict['couple_selection']),
             Config._get_crossover_method_config(config_dict['crossover']),
-            Config._get_mutation_probability(config_dict['mutation_probability']),
+            Config._get_mutation_method_config(config_dict['mutation_probability']),
             Config._get_selection_method_config(config_dict['selection'])
         )
 
@@ -146,7 +154,7 @@ class Config:
             )
 
     @staticmethod
-    def _get_mutation_probability(mutation_probability: str) -> float:
+    def _get_mutation_method_config(mutation_probability: str) -> MutationsMethodConfig:
         if not mutation_probability:
             raise InvalidCrossoverMethod()
 
@@ -156,7 +164,7 @@ class Config:
             if probability <= 0 or probability >= 1:
                 raise InvalidCrossoverMethod()
 
-            return probability
+            return MutationsMethodConfig(random_mutation, probability=probability)
 
         except ValueError:
             raise InvalidCrossoverMethod()

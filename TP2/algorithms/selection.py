@@ -4,11 +4,10 @@ from random import sample
 from utils.backpack import Population, Backpack, Chromosome
 from utils.config import SelectionMethodConfig
 
-CHROMOSOME_AMOUNT = 4
+DEFAULT_TOURNAMENT_CHROMOSOME_AMOUNT = 4
+
 
 def elitism_selection(population: Population, backpack: Backpack, config: SelectionMethodConfig) -> Population:
-
-def elite_selection(population: Population, backpack: Backpack, selection_size: int) -> Population:
     return sorted(population,
                   key=lambda chromosome: backpack.calculate_fitness(chromosome),
                   reverse=True
@@ -23,30 +22,11 @@ def rank_selection(population: Population, backpack: Backpack, config: Selection
     pass
 
 
-def tournament_selection(population: Population, backpack: Backpack, config: SelectionMethodConfig):
-    pass
-
-
 def boltzmann_selection(population: Population, backpack: Backpack, config: SelectionMethodConfig):
     pass
 
 
-def truncated_selection(population: Population, backpack: Backpack, config: SelectionMethodConfig):
-    pass
-
-
-SELECTION_METHODS = {
-    'elitism_selection': elitism_selection,
-    'roulette_wheel_selection': roulette_wheel_selection,
-    'rank_selection': rank_selection,
-    'tournament_selection': tournament_selection,
-    'boltzmann_selection': boltzmann_selection,
-    'truncated_selection': truncated_selection
-}
-
-
-def truncation_selection(population: Population, backpack: Backpack, truncation_size: int,
-                         selection_size: int) -> Population:
+def truncated_selection(population: Population, backpack: Backpack, config: SelectionMethodConfig) -> Population:
     population_len = len(population)
     truncation_index = population_len - truncation_size
 
@@ -55,13 +35,13 @@ def truncation_selection(population: Population, backpack: Backpack, truncation_
                   reverse=True
                   )[0: truncation_index]
 
-    return sample(tuple(temp), k=selection_size)
+    return sample(tuple(temp), k=config.k)
 
 
 def tournament_selection(population: Population, backpack: Backpack, selection_size: int) -> Population:
     new_population = []
     for i in range(selection_size):
-        couples = sample(tuple(population), k=CHROMOSOME_AMOUNT)
+        couples = sample(tuple(population), k=DEFAULT_TOURNAMENT_CHROMOSOME_AMOUNT)
 
         first_pick = _tournament_picker(backpack, couples[0], couples[1])
 
@@ -89,3 +69,13 @@ def _tournament_picker(backpack: Backpack, first: Chromosome, second: Chromosome
             return first
         else:
             return second
+
+
+SELECTION_METHODS = {
+    'elitism_selection': elitism_selection,
+    'roulette_wheel_selection': roulette_wheel_selection,
+    'rank_selection': rank_selection,
+    'tournament_selection': tournament_selection,
+    'boltzmann_selection': boltzmann_selection,
+    'truncated_selection': truncated_selection
+}
