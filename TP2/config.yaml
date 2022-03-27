@@ -2,33 +2,28 @@
 #backpack problem config
 config:
 
+  #initial population size (n>5)
+  initial_population: 5
+
   #end condition to be used by the solver
   end_condition:
 
-    #possible types are:
-    # - generations_count_condition
-    # - time_condition
-    # - structure_condition
-    # - fitness_condition
-    type: generations_count_condition
-
     #used for generations_count type, defines how many generations should be generated before ending
-    generations_count: 5000 #generations_count>0
+    generations_count: 1000 #generations_count>=500, defaults to 500
 
     #used for time type, defines how many seconds should pass before ending
-    time: 'time' #time>0
+    time: 'time' #time>0, defaults to 5*60
 
     #used for structure type, defines how many consecutive generations should be generated
     #with a percentage of equal individuals before ending
     structure:
-      percentaje: 'percentage' #(0<p<1)
-      generations: 'generations' #generations>0
+      percentaje: 'percentage' #(0<p<1), defaults to 0.8
+      generations: 'generations' #generations>=10, defaults to 10
 
     #used for fitness type, defines how many consecutive generations should be generated
-    #with a percentage of individuals with equal fitness before ending
+    #with the same best fitness
     fitness:
-      percentaje: 'percentage' #(0<p<1)
-      generations: 'generations' #generations>0
+      generations: 'generations' #generations>=10, defaults to 10
 
   #fitness function to be used by the solver
   #possible options are:
@@ -49,7 +44,7 @@ config:
     # - simple_crossover
     # - multiple_crossover
     # - uniform_crossover
-    type: uniform_crossover
+    type: simple_crossover
 
     #used for truncated_selection type, defines how many chromosomes are discarded from the generation
     multiple_crossover:
@@ -68,9 +63,10 @@ config:
     # - tournament_selection
     # - boltzmann_selection
     # - truncated_selection
-    type: rank_selection
+    type: elitism_selection
 
-    #used for truncated_selection type, defines how many chromosomes are discarded from the generation
+    #used for truncated_selection type, defines how many chromosomes are discarded from the generation and the
+    #sample size to extract on each iteration
     truncated_selection:
       truncation_size: 'truncation_size' # truncation_size>0
       sample_size: 'sample_size' # sample_size>0

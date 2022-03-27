@@ -1,15 +1,23 @@
 from typing import Dict, Callable
 
+from algorithms.end_conditions import EndConditionStats
 from algorithms.mutation import random_mutation
+
+DEFAULT_GENERATIONS_COUNT = 500
+DEFAULT_TIME = 5 * 60
+DEFAULT_FITNESS_CONSECUTIVE_GENERATIONS = 10
+DEFAULT_PERCENTAGE = 0.8
+DEFAULT_STRUCTURE_CONSECUTIVE_GENERATIONS = 10
 
 
 class EndConditionConfig:
-    def __init__(self, condition, **config):
-        self.condition = condition
+    def __init__(self, **config):
         self.generations_count = config.get('generations_count')
         self.time = config.get('time')
         self.percentage = config.get('percentage')
-        self.generations = config.get('generations')
+        self.fitness_consecutive_generations = config.get('fitness_consecutive_generations')
+        self.structure_consecutive_generations = config.get('structure_consecutive_generations')
+        self.stats = EndConditionStats()
 
 
 class SelectionMethodConfig:
@@ -33,16 +41,16 @@ class CrossoverMethodConfig:
 
 from algorithms.couple_selection import COUPLE_SELECTION_METHODS
 from algorithms.crossover import CROSSOVER_METHODS
-from algorithms.end_conditions import END_CONDITIONS
 from algorithms.fitness_functions import FITNESS_FUNCTIONS
 from algorithms.selection import SELECTION_METHODS
 
 
 class Config:
-    def __init__(self, endConditionConfig: EndConditionConfig, fitness_function: Callable,
+    def __init__(self, initial_population_size, endConditionConfig: EndConditionConfig, fitness_function: Callable,
                  couple_selection_method: Callable, crossover_method_config: CrossoverMethodConfig,
                  mutation_method_config: MutationsMethodConfig, selection_method_config: SelectionMethodConfig):
 
+        self.initial_population_size = initial_population_size
         self.endConditionConfig = endConditionConfig
         self.fitness_function = fitness_function
         self.couple_selection_method = couple_selection_method
@@ -53,6 +61,7 @@ class Config:
     @staticmethod
     def generate(config_dict: Dict) -> 'Config':
         return Config(
+            Config._get_initial_population_size(config_dict['initial_population']),
             Config._get_end_condition_config(config_dict['end_condition']),
             Config._get_fitness_function(config_dict['fitness_function']),
             Config._get_couple_selection_method(config_dict['couple_selection']),
@@ -63,56 +72,49 @@ class Config:
 
     @staticmethod
     def _get_end_condition_config(end_condition: Dict) -> EndConditionConfig:
-        end_cond_type = end_condition.get("type")
-        if not end_cond_type or end_cond_type not in END_CONDITIONS.keys():
-            raise InvalidEndCondition()
-
-        elif end_cond_type == 'generations_count_condition':
-            try:
-                generations_count = int(end_condition.get("generations_count"))
-                if generations_count <= 0:
-                    raise InvalidEndCondition()
-
-                return EndConditionConfig(
-                    END_CONDITIONS.get(end_cond_type),
-                    generations_count=generations_count,
-                )
-
-            except ValueError:
+        generations_count = DEFAULT_GENERATIONS_COUNT
+        try:
+            generations_count = int(end_condition.get('generations_count'))
+            if generations_count < 500:
                 raise InvalidEndCondition()
 
-        elif end_cond_type == 'time_condition':
-            try:
-                time = int(end_condition.get("time"))
-                if time <= 0:
-                    raise InvalidEndCondition()
-
-                return EndConditionConfig(
-                    END_CONDITIONS.get(end_cond_type),
-                    time=time,
-                )
-
-            except ValueError:
+        except ValueError:
+            pass
+        time = DEFAULT_TIME
+        try:
+            time = int(end_condition.get('time'))
+            if time <= 0:
                 raise InvalidEndCondition()
 
-        else:
-            try:
-                percentage = float(end_condition.get(end_cond_type).get("percentage"))
-                if percentage <= 0 or percentage >= 1:
-                    raise InvalidEndCondition()
+        except ValueError:
+            pass
 
-                generations = int(end_condition.get(end_cond_type).get("generations"))
-                if generations <= 0:
-                    raise InvalidEndCondition()
-
-                return EndConditionConfig(
-                    END_CONDITIONS.get(end_cond_type),
-                    percentage=percentage,
-                    generations=generations
-                )
-
-            except ValueError:
+        fitness_consecutive_generations = DEFAULT_FITNESS_CONSECUTIVE_GENERATIONS
+        try:
+            fitness_consecutive_generations = int(end_condition.get('fitness').get('generations'))
+            if fitness_consecutive_generations <= 0:
                 raise InvalidEndCondition()
+
+        except ValueError:
+            pass
+
+        percentage = DEFAULT_PERCENTAGE
+        structure_consecutive_generations = DEFAULT_STRUCTURE_CONSECUTIVE_GENERATIONS
+        try:
+            percentage = float(end_condition.get('structure').get('percentage'))
+            if percentage <= 0 or percentage >= 1:
+                raise InvalidEndCondition()
+
+            structure_consecutive_generations = int(end_condition.get('structure').get('generations'))
+            if structure_consecutive_generations <= 0:
+                raise InvalidEndCondition()
+
+        except (ValueError, TypeError):
+            pass
+
+        return EndConditionConfig(generations_count=generations_count, percentage=percentage,
+                                  time=time, fitness_consecutive_generations=fitness_consecutive_generations,
+                                  structure_consecutive_generations=structure_consecutive_generations)
 
     @staticmethod
     def _get_fitness_function(fitness_function: str) -> Callable:
@@ -120,6 +122,17 @@ class Config:
             raise InvalidFitnessFunction()
 
         return FITNESS_FUNCTIONS[fitness_function]
+
+    @staticmethod
+    def _get_initial_population_size(initial_population: str) -> int:
+        try:
+            size = int(initial_population)
+            if size <= 0:
+                raise InvalidEndCondition()
+
+            return size
+        except (ValueError, TypeError):
+            raise InvalidInitialPopulationSize()
 
     @staticmethod
     def _get_couple_selection_method(couple_selection: str) -> Callable:
@@ -130,7 +143,7 @@ class Config:
 
     @staticmethod
     def _get_crossover_method_config(crossover: Dict) -> CrossoverMethodConfig:
-        crossover_type = crossover.get("type")
+        crossover_type = crossover.get('type')
 
         if not crossover_type or crossover_type not in CROSSOVER_METHODS.keys():
             raise InvalidCrossoverMethod()
@@ -146,7 +159,7 @@ class Config:
                     n=n,
                 )
 
-            except ValueError:
+            except (ValueError, TypeError):
                 raise InvalidCrossoverMethod()
 
         else:
@@ -167,12 +180,12 @@ class Config:
 
             return MutationsMethodConfig(random_mutation, probability=probability)
 
-        except ValueError:
+        except (ValueError, TypeError):
             raise InvalidCrossoverMethod()
 
     @staticmethod
     def _get_selection_method_config(selection: Dict) -> SelectionMethodConfig:
-        selection_method_type = selection.get("type")
+        selection_method_type = selection.get('type')
         if not selection_method_type or selection_method_type not in SELECTION_METHODS.keys():
             raise InvalidEndCondition()
 
@@ -194,7 +207,7 @@ class Config:
                     sample_size=sample_size
                 )
 
-            except ValueError:
+            except (ValueError, TypeError):
                 raise InvalidCrossoverMethod()
 
         else:
@@ -210,34 +223,41 @@ class ConfigException(Exception):
 
 class InvalidEndCondition(ConfigException):
 
-    def __init__(self, message="Invalid end condition config"):
+    def __init__(self, message='Invalid end condition config'):
         self.message = message
         super().__init__(self.message)
 
 
 class InvalidFitnessFunction(ConfigException):
 
-    def __init__(self, message="Invalid fitness function"):
+    def __init__(self, message='Invalid fitness function'):
+        self.message = message
+        super().__init__(self.message)
+
+
+class InvalidInitialPopulationSize(ConfigException):
+
+    def __init__(self, message='Invalid initial population size'):
         self.message = message
         super().__init__(self.message)
 
 
 class InvalidCoupleSelectionMethod(ConfigException):
 
-    def __init__(self, message="Invalid couple selection method config"):
+    def __init__(self, message='Invalid couple selection method config'):
         self.message = message
         super().__init__(self.message)
 
 
 class InvalidCrossoverMethod(ConfigException):
 
-    def __init__(self, message="Invalid crossover method config"):
+    def __init__(self, message='Invalid crossover method config'):
         self.message = message
         super().__init__(self.message)
 
 
 class InvalidSelectionMethod(ConfigException):
 
-    def __init__(self, message="Invalid selection method config"):
+    def __init__(self, message='Invalid selection method config'):
         self.message = message
         super().__init__(self.message)

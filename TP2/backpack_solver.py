@@ -4,11 +4,6 @@ from typing import List
 import yaml
 
 from algorithms.algorithm import genetic_algorithm
-from algorithms.couple_selection import rand_couple_selection
-from algorithms.crossover import multiple_crossover
-from algorithms.fitness_functions import FITNESS_FUNCTIONS
-from algorithms.mutation import random_mutation
-from algorithms.selection import elitism_selection
 from utils.backpack import Backpack, Element, generate_random_population
 from utils.config import Config
 
@@ -49,7 +44,7 @@ def _get_backpack_elements(data_file: str) -> List[Element]:
         return elements
 
 
-def _get_config(config_file: str) -> 'Config':
+def _get_config(config_file: str) -> Config:
     with open(config_file) as cf:
         config = yaml.safe_load(cf)["config"]
         return Config.generate(config)
@@ -59,7 +54,7 @@ def main(data_file: str, config_file: str):
     config = _get_config(config_file)
     backpack = _get_backpack_data(data_file, config)
 
-    first_generation = generate_random_population(backpack)
+    first_generation = generate_random_population(backpack, config.initial_population_size)
 
     genetic_algorithm(first_generation, backpack, config.couple_selection_method,
                       config.crossover_method_config.method, config.mutation_method_config.method,
@@ -70,9 +65,9 @@ if __name__ == '__main__':
     config_file = CONFIG_FILE
     data_file = DATA_FILE
 
-    main(data_file, config_file)
-# try:
-# except OSError:
-#     print("Error opening config file.")
-# except Exception as e:
-#     print(e)
+    try:
+        main(data_file, config_file)
+    except OSError:
+        print("Error opening config file.")
+    except Exception as e:
+        print(e)

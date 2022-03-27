@@ -1,5 +1,6 @@
 from typing import Callable
 
+from algorithms.end_conditions import check_end_condition, update_end_condition
 from utils.backpack import Population, Backpack
 from utils.config import Config
 
@@ -20,9 +21,11 @@ def genetic_algorithm(
 
     generation_children = set()
 
-    for j in range(0, 10000):
+    j = 0
 
-        if j % 100 == 0:
+    while check_end_condition(config.endConditionConfig):
+
+        if j % 10 == 0:
             print(f'Generation {j}')
             print("Fitness-Benefit-Weight")
             print(list(map(lambda chr: backpack.calculate_fitness(chr), current_generation)))
@@ -30,16 +33,26 @@ def genetic_algorithm(
             print(list(map(lambda chr: backpack.calculate_weight(chr), current_generation)))
             print('\n')
 
+        j += 1
+
+        # FIXME: REPETIDOS
         for i in range(current_generation_population_size):
             selected_couple = couple_selection(current_generation)
             selected_couple = crossover(selected_couple, config=config.crossover_method_config)
             first_chromosome = mutation(selected_couple[0], config.mutation_method_config.probability)
             second_chromosome = mutation(selected_couple[1], config.mutation_method_config.probability)
+            # FIXME: CUIDADO Q AGREGUE DE MAS
             generation_children.add(first_chromosome)
             generation_children.add(second_chromosome)
 
         current_generation = selection(list(generation_children), backpack, current_generation_population_size)
         current_generation_population_size = len(current_generation)
         generation_children = set()
+        update_end_condition(config.endConditionConfig, current_generation, backpack)
 
-    print(current_generation)
+    print(f'Generation {j}')
+    print("Fitness-Benefit-Weight")
+    print(list(map(lambda chr: backpack.calculate_fitness(chr), current_generation)))
+    print(list(map(lambda chr: backpack.calculate_benefits(chr), current_generation)))
+    print(list(map(lambda chr: backpack.calculate_weight(chr), current_generation)))
+    print('\n')
