@@ -17,11 +17,6 @@ def elitism_selection(
                   reverse=True
                   )[0:population_size]
 
-
-def roulette_wheel_selection(population: Population, backpack: Backpack, config: SelectionMethodConfig):
-    pass
-
-
 # FIXME: la seleccion esta mal
 def rank_selection(
         population: Population, backpack: Backpack,
@@ -91,7 +86,7 @@ def _tournament_picker(backpack: Backpack, first: Chromosome, second: Chromosome
             return second
 
 
-def roulette_wheel_selection(population: Population, backpack: Backpack, selection_size: int) -> Population:
+def roulette_wheel_selection(population: Population, backpack: Backpack, selection_size: int, config: SelectionMethodConfig) -> Population:
     selected_ones = set()
     max_val: float = sum(backpack.calculate_fitness(chromosome) for chromosome in population)
     fitneses_values = list()
