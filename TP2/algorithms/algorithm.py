@@ -17,15 +17,13 @@ def genetic_algorithm(
     generation_fitness = list(map(lambda chromosome: backpack.calculate_fitness(chromosome), generation_zero))
     current_generation = generation_zero
 
-    current_generation_population_size = len(current_generation)
-
     generation_children = set()
 
     j = 0
 
-    while check_end_condition(config.endConditionConfig):
+    while not check_end_condition(config.endConditionConfig):
 
-        if j % 10 == 0:
+        if j % 100 == 0:
             print(f'Generation {j}')
             print("Fitness-Benefit-Weight")
             print(list(map(lambda chr: backpack.calculate_fitness(chr), current_generation)))
@@ -35,24 +33,31 @@ def genetic_algorithm(
 
         j += 1
 
-        # FIXME: REPETIDOS
-        for i in range(current_generation_population_size):
+        while len(generation_children) < 2 * config.initial_population_size:
             selected_couple = couple_selection(current_generation)
             selected_couple = crossover(selected_couple, config=config.crossover_method_config)
             first_chromosome = mutation(selected_couple[0], config.mutation_method_config.probability)
             second_chromosome = mutation(selected_couple[1], config.mutation_method_config.probability)
-            # FIXME: CUIDADO Q AGREGUE DE MAS
             generation_children.add(first_chromosome)
-            generation_children.add(second_chromosome)
+            if len(generation_children) < 2 * config.initial_population_size:
+                generation_children.add(second_chromosome)
 
-        current_generation = selection(list(generation_children), backpack, current_generation_population_size)
-        current_generation_population_size = len(current_generation)
+        current_generation = selection(list(generation_children), backpack,
+                                       config.initial_population_size, config.selection_method_config)
+
         generation_children = set()
         update_end_condition(config.endConditionConfig, current_generation, backpack)
 
     print(f'Generation {j}')
     print("Fitness-Benefit-Weight")
-    print(list(map(lambda chr: backpack.calculate_fitness(chr), current_generation)))
-    print(list(map(lambda chr: backpack.calculate_benefits(chr), current_generation)))
-    print(list(map(lambda chr: backpack.calculate_weight(chr), current_generation)))
+
+    sol = sorted(current_generation,
+                 key=lambda chromosome: backpack.calculate_weight(chromosome),
+                 reverse=True
+                 )
+    print(list(map(lambda chr: backpack.calculate_fitness(chr), sol)))
+    print(list(map(lambda chr: backpack.calculate_benefits(chr), sol)))
+    print(list(map(lambda chr: backpack.calculate_weight(chr), sol)))
     print('\n')
+
+    print(config.endConditionConfig.stats.a[-config.endConditionConfig.fitness_consecutive_generations::])

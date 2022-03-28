@@ -15,8 +15,11 @@ class EndConditionConfig:
         self.generations_count = config.get('generations_count')
         self.time = config.get('time')
         self.percentage = config.get('percentage')
+        self.acceptable_solution_generation_count = config.get('acceptable_solution_generation_count')
         self.fitness_consecutive_generations = config.get('fitness_consecutive_generations')
+        self.fitness_min_generations = config.get('fitness_min_generations')
         self.structure_consecutive_generations = config.get('structure_consecutive_generations')
+        self.structure_min_generations = config.get('structure_min_generations')
         self.stats = EndConditionStats()
 
 
@@ -24,7 +27,6 @@ class SelectionMethodConfig:
     def __init__(self, method, **config):
         self.method = method
         self.truncation_size = config.get('truncation_size')
-        self.sample_size = config.get('sample_size')
 
 
 class MutationsMethodConfig:
@@ -80,6 +82,16 @@ class Config:
 
         except ValueError:
             pass
+
+        acceptable_solution_generation_count = DEFAULT_GENERATIONS_COUNT
+        try:
+            acceptable_solution_generation_count = int(end_condition.get('acceptable_solution_generation_count'))
+            if acceptable_solution_generation_count < 500:
+                raise InvalidEndCondition()
+
+        except ValueError:
+            pass
+
         time = DEFAULT_TIME
         try:
             time = int(end_condition.get('time'))
@@ -98,13 +110,26 @@ class Config:
         except ValueError:
             pass
 
+        fitness_min_generations = DEFAULT_GENERATIONS_COUNT
+        try:
+            fitness_min_generations = int(end_condition.get('fitness').get('min_generations'))
+            if fitness_min_generations < 500:
+                raise InvalidEndCondition()
+
+        except ValueError:
+            pass
+
         percentage = DEFAULT_PERCENTAGE
-        structure_consecutive_generations = DEFAULT_STRUCTURE_CONSECUTIVE_GENERATIONS
         try:
             percentage = float(end_condition.get('structure').get('percentage'))
             if percentage <= 0 or percentage >= 1:
                 raise InvalidEndCondition()
 
+        except (ValueError, TypeError):
+            pass
+
+        structure_consecutive_generations = DEFAULT_STRUCTURE_CONSECUTIVE_GENERATIONS
+        try:
             structure_consecutive_generations = int(end_condition.get('structure').get('generations'))
             if structure_consecutive_generations <= 0:
                 raise InvalidEndCondition()
@@ -112,9 +137,21 @@ class Config:
         except (ValueError, TypeError):
             pass
 
+        structure_min_generations = DEFAULT_GENERATIONS_COUNT
+        try:
+            structure_min_generations = int(end_condition.get('structure').get('min_generations'))
+            if structure_min_generations < 500:
+                raise InvalidEndCondition()
+
+        except (ValueError, TypeError):
+            pass
+
         return EndConditionConfig(generations_count=generations_count, percentage=percentage,
                                   time=time, fitness_consecutive_generations=fitness_consecutive_generations,
-                                  structure_consecutive_generations=structure_consecutive_generations)
+                                  structure_consecutive_generations=structure_consecutive_generations,
+                                  acceptable_solution_generation_count=acceptable_solution_generation_count,
+                                  fitness_min_generations=fitness_min_generations,
+                                  structure_min_generations=structure_min_generations)
 
     @staticmethod
     def _get_fitness_function(fitness_function: str) -> Callable:
@@ -196,15 +233,9 @@ class Config:
                 if truncation_size <= 0:
                     raise InvalidSelectionMethod()
 
-                sample_size = int(selection.get(selection_method_type).get('sample_size'))
-
-                if sample_size <= 0:
-                    raise InvalidSelectionMethod()
-
                 return SelectionMethodConfig(
                     SELECTION_METHODS.get(selection_method_type),
-                    truncation_size=truncation_size,
-                    sample_size=sample_size
+                    truncation_size=truncation_size
                 )
 
             except (ValueError, TypeError):

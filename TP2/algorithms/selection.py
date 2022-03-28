@@ -8,15 +8,26 @@ from utils.config import SelectionMethodConfig
 DEFAULT_TOURNAMENT_CHROMOSOME_AMOUNT = 4
 
 
-# FIXME: 1000 hardocdeado
-def elitism_selection(population: Population, backpack: Backpack, config: SelectionMethodConfig) -> Population:
+def elitism_selection(
+        population: Population, backpack: Backpack,
+        population_size: int, config: SelectionMethodConfig
+) -> Population:
     return sorted(population,
                   key=lambda chromosome: backpack.calculate_fitness(chromosome),
                   reverse=True
-                  )[0:1000]
+                  )[0:population_size]
 
 
-def rank_selection(population: Population, backpack: Backpack, config: SelectionMethodConfig):
+def roulette_wheel_selection(population: Population, backpack: Backpack, config: SelectionMethodConfig):
+    pass
+
+
+# FIXME: la seleccion esta mal
+def rank_selection(
+        population: Population, backpack: Backpack,
+        population_size: int,
+        config: SelectionMethodConfig
+):
     sorted_population = sorted(population,
                                key=lambda chromosome: backpack.calculate_fitness(chromosome),
                                reverse=True)

@@ -65,9 +65,9 @@ if __name__ == '__main__':
     config_file = CONFIG_FILE
     data_file = DATA_FILE
 
-    try:
-        main(data_file, config_file)
-    except OSError:
-        print("Error opening config file.")
-    except Exception as e:
-        print(e)
+    main(data_file, config_file)
+    # try:
+    # except OSError:
+    #     print("Error opening config file.")
+    # except Exception as e:
+    #     print(e)

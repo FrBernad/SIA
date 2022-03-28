@@ -3,32 +3,36 @@
 config:
 
   #initial population size (n>5)
-  initial_population: 5
+  initial_population: 10
 
   #end condition to be used by the solver
   end_condition:
 
-    #used for generations_count type, defines how many generations should be generated before ending
-    generations_count: 1000 #generations_count>=500, defaults to 500
+    #defines how many generations should be generated before ending
+    generations_count: 20000 #generations_count>=500, defaults to 500
+
+    #defines how many generations should be generated at least before ending via acceptable solution
+    acceptable_solution_generation_count: 10000 #acceptable_solution_generation_count>=500, defaults to 500
 
     #used for time type, defines how many seconds should pass before ending
     time: 'time' #time>0, defaults to 5*60
 
-    #used for structure type, defines how many consecutive generations should be generated
+    #defines how many consecutive generations should be generated
     #with a percentage of equal individuals before ending
     structure:
       percentaje: 'percentage' #(0<p<1), defaults to 0.8
       generations: 'generations' #generations>=10, defaults to 10
+      min_generations: 'min_generations' #min_generations>=500, defaults to 500
 
-    #used for fitness type, defines how many consecutive generations should be generated
+    #defines how many consecutive generations should be generated
     #with the same best fitness
     fitness:
-      generations: 'generations' #generations>=10, defaults to 10
+      generations: 20 #generations>=10, defaults to 10
+      min_generations: 10000 #min_generations>=500, defaults to 500
 
   #fitness function to be used by the solver
   #possible options are:
   # - benefit_weight_ratio
-  # - overweight_fitness
   # - no_overweight_fitness
   fitness_function: benefit_weight_ratio
 
@@ -69,6 +73,5 @@ config:
     #sample size to extract on each iteration
     truncated_selection:
       truncation_size: 'truncation_size' # truncation_size>0
-      sample_size: 'sample_size' # sample_size>0
 
 ...
