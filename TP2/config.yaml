@@ -63,7 +63,7 @@ config:
     # - tournament_selection
     # - boltzmann_selection
     # - truncated_selection
-    type: elitism_selection
+    type: roulette_wheel_selection
 
     #used for truncated_selection type, defines how many chromosomes are discarded from the generation and the
     #sample size to extract on each iteration

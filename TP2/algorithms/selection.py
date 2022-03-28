@@ -1,5 +1,6 @@
 import random
 from random import sample
+from typing import List
 
 from utils.backpack import Population, Backpack, Chromosome
 from utils.config import SelectionMethodConfig
@@ -13,10 +14,6 @@ def elitism_selection(population: Population, backpack: Backpack, config: Select
                   key=lambda chromosome: backpack.calculate_fitness(chromosome),
                   reverse=True
                   )[0:1000]
-
-
-def roulette_wheel_selection(population: Population, backpack: Backpack, config: SelectionMethodConfig):
-    pass
 
 
 def rank_selection(population: Population, backpack: Backpack, config: SelectionMethodConfig):
@@ -81,6 +78,29 @@ def _tournament_picker(backpack: Backpack, first: Chromosome, second: Chromosome
             return first
         else:
             return second
+
+
+def roulette_wheel_selection(population: Population, backpack: Backpack, selection_size: int) -> Population:
+    selected_ones = set()
+    max_val: float = sum(backpack.calculate_fitness(chromosome) for chromosome in population)
+    fitneses_values = list()
+
+    for chrm in population:
+        fitneses_values.append(backpack.calculate_fitness(chrm))
+
+    while len(selected_ones) < selection_size:
+        selected_ones.add(roulette_algorithm(population, max_val, fitneses_values))
+
+    return list(selected_ones)
+
+
+def roulette_algorithm(population: Population, max_val: float, fitnesses_values: List[int]) -> Chromosome:
+    current: int = 0
+    pick: float = random.uniform(0, max_val)
+    for chromosome in population:
+        current += fitnesses_values[population.index(chromosome)]
+        if current > pick:
+            return chromosome
 
 
 SELECTION_METHODS = {
