@@ -14,7 +14,6 @@ def genetic_algorithm(
         selection: Callable,
         config: Config
 ):
-    generation_fitness = list(map(lambda chromosome: backpack.calculate_fitness(chromosome), generation_zero))
     current_generation = generation_zero
 
     generation_children = set()
@@ -35,7 +34,7 @@ def genetic_algorithm(
         j += 1
 
         while len(generation_children) < config.initial_population_size:
-            selected_couple = couple_selection(current_generation)
+            selected_couple = couple_selection(current_generation, backpack)
             selected_couple = crossover(selected_couple, config=config.crossover_method_config)
             first_chromosome = mutation(selected_couple[0], config.mutation_method_config.probability)
             second_chromosome = mutation(selected_couple[1], config.mutation_method_config.probability)
@@ -63,4 +62,3 @@ def genetic_algorithm(
     print('\n')
 
     print(config.endConditionConfig.stats.a[-config.endConditionConfig.fitness_consecutive_generations::])
-

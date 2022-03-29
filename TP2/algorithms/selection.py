@@ -49,13 +49,15 @@ def rank_selection(
     for i in range(population_len):
         accum_prob.append((population_len - (i + 1)) / population_len)
 
+    # FIXME: esto esta raro hay q ver q suban el arreglo a slack
     return _rank_accumulated_selection(sorted_population, selection_size, accum_prob)
 
 
 def tournament_selection(
         population: Population,
         backpack: Backpack,
-        selection_size: int
+        selection_size: int,
+        config: SelectionMethodConfig
 ) -> Population:
     new_population = set()
 
@@ -78,17 +80,18 @@ def boltzmann_selection(population: Population, backpack: Backpack, config: Sele
 def truncated_selection(
         population: Population,
         backpack: Backpack,
+        selection_size: int,
         config: SelectionMethodConfig
 ) -> Population:
     population_len = len(population)
     truncation_index = population_len - config.truncation_size
 
-    temp = sorted(population,
-                  key=lambda chromosome: backpack.calculate_fitness(chromosome),
-                  reverse=True
-                  )[0: truncation_index]
+    truncated_population = sorted(population,
+                                  key=lambda chromosome: backpack.calculate_fitness(chromosome),
+                                  reverse=True
+                                  )[0: truncation_index]
 
-    return sample(tuple(temp), k=population_len)
+    return sample(truncated_population, k=selection_size)
 
 
 def _tournament_picker(backpack: Backpack, first: Chromosome, second: Chromosome) -> Chromosome:
@@ -144,7 +147,7 @@ def _rank_accumulated_selection(
         accum_probabilities: List[float]
 ) -> Population:
     new_population = set()
-    # 0,5 0.54 0.6 .55
+
     while len(new_population) < selection_size:
         r = random()
 
