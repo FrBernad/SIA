@@ -1,11 +1,11 @@
-from random import choice, choices
+from random import sample
 from typing import Tuple
 
 from utils.backpack import Population, Chromosome
 
 
 def rand_couple_selection(population: Population) -> Tuple[Chromosome, Chromosome]:
-    return tuple(choices(tuple(population), k=2))
+    return tuple(sample(tuple(population), k=2))
 
 
 def fitness_couple_selection(population: Population) -> Tuple[Chromosome, Chromosome]:

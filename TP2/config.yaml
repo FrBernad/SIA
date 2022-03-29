@@ -9,7 +9,7 @@ config:
   end_condition:
 
     #defines how many generations should be generated before ending
-    generations_count: 20000 #generations_count>=500, defaults to 500
+    generations_count: 10000 #generations_count>=500, defaults to 500
 
     #defines how many generations should be generated at least before ending via acceptable solution
     acceptable_solution_generation_count: 10000 #acceptable_solution_generation_count>=500, defaults to 500
@@ -33,7 +33,6 @@ config:
   #fitness function to be used by the solver
   #possible options are:
   # - benefit_weight_ratio
-  # - no_overweight_fitness
   fitness_function: benefit_weight_ratio
 
   #couple selection method to be used by the solver
@@ -55,7 +54,7 @@ config:
       n: 10 # n>0
 
   #mutation probability used for mutating chromosomes (0<p<1)
-  mutation_probability: 0.005
+  mutation_probability: 0.05
 
   #selection method to be used by the solver
   selection:
@@ -67,7 +66,7 @@ config:
     # - tournament_selection
     # - boltzmann_selection
     # - truncated_selection
-    type: roulette_wheel_selection
+    type: elitism_selection
 
     #used for truncated_selection type, defines how many chromosomes are discarded from the generation and the
     #sample size to extract on each iteration

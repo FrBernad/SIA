@@ -4,8 +4,6 @@ from typing import Tuple
 from utils.backpack import Chromosome
 from utils.config import CrossoverMethodConfig
 
-UNIFORM_PROBABILITY = 0.5
-
 
 def simple_crossover(
         couple: Tuple[Chromosome, Chromosome],
@@ -29,6 +27,9 @@ def multiple_crossover(
             _swap_elements(crossover_points[i - 1], crossover_points[i], s1, s2)
 
     return tuple(s1), tuple(s2)
+
+
+UNIFORM_PROBABILITY = 0.5
 
 
 def uniform_crossover(
