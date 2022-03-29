@@ -7,6 +7,7 @@ class EndConditionStats:
         self.generation: Population
         self.is_acceptable = False
         self.generations_count = 0
+        # FIXME: SACAR
         self.a = []
         self.start_time = 0
         self.fitness = {
@@ -29,7 +30,7 @@ def check_end_condition(config: EndConditionConfig) -> bool:
 def update_end_condition(config: EndConditionConfig, current_generation: Population, backpack: Backpack):
     config.stats.generation = current_generation
     config.stats.generations_count += 1
-    _update_best_fitness(config.stats.fitness, backpack, current_generation)
+    _update_best_fitness(config, backpack, current_generation)
     config.stats.a.append(config.stats.fitness['best'])
     config.stats.is_acceptable = _check_acceptable_solution(config, backpack, current_generation)
 
@@ -53,26 +54,29 @@ def _fitness_condition(config: EndConditionConfig) -> bool:
     if config.stats.generations_count < config.fitness_min_generations:
         return False
 
-    condition = config.fitness_consecutive_generations == config.stats.fitness['consecutive']
+    condition = config.stats.fitness['consecutive'] >= config.fitness_consecutive_generations
     if condition:
         print('Fitness Condition')
     return condition
 
 
-def _update_best_fitness(fitness: Dict, backpack: Backpack, generation: Population):
-    best_fitness = backpack.calculate_fitness(generation[0])
+def _update_best_fitness(config: EndConditionConfig, backpack: Backpack, generation: Population):
+    if config.stats.generations_count < config.fitness_min_generations:
+        return False
+
+    best_fitness = 0
 
     for chromosome in generation:
         aux = backpack.calculate_fitness(chromosome)
         if aux > best_fitness:
             best_fitness = aux
 
-    current_best = fitness['best']
+    current_best = config.stats.fitness['best']
     if best_fitness != current_best:
-        fitness['best'] = best_fitness
-        fitness['consecutive'] = 0
+        config.stats.fitness['best'] = best_fitness
+        config.stats.fitness['consecutive'] = 0
     else:
-        fitness['consecutive'] += 1
+        config.stats.fitness['consecutive'] += 1
 
 
 def _check_acceptable_solution(config: EndConditionConfig, backpack: Backpack, generation: Population) -> bool:

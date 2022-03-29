@@ -9,10 +9,10 @@ config:
   end_condition:
 
     #defines how many generations should be generated before ending
-    generations_count: 10000 #generations_count>=500, defaults to 500
+    generations_count: 15000 #generations_count>=500, defaults to 500
 
     #defines how many generations should be generated at least before ending via acceptable solution
-    acceptable_solution_generation_count: 10000 #acceptable_solution_generation_count>=500, defaults to 500
+    acceptable_solution_generation_count: 15000 #acceptable_solution_generation_count>=500, defaults to 500
 
     #used for time type, defines how many seconds should pass before ending
     time: 'time' #time>0, defaults to 5*60
@@ -27,8 +27,8 @@ config:
     #defines how many consecutive generations should be generated
     #with the same best fitness
     fitness:
-      generations: 20 #generations>=10, defaults to 10
-      min_generations: 10000 #min_generations>=500, defaults to 500
+      generations: 15 #generations>=10, defaults to 10
+      min_generations: 7000 #min_generations>=500, defaults to 500
 
   #fitness function to be used by the solver
   #possible options are:

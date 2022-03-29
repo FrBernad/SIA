@@ -17,6 +17,7 @@ def elitism_selection(
                   reverse=True
                   )[0:population_size]
 
+
 # FIXME: la seleccion esta mal
 def rank_selection(
         population: Population, backpack: Backpack,
@@ -50,7 +51,7 @@ def truncated_selection(population: Population, backpack: Backpack, config: Sele
                   reverse=True
                   )[0: truncation_index]
 
-    return sample(tuple(temp), k=config.sample_size)
+    return sample(tuple(temp), k=population_len)
 
 
 def tournament_selection(population: Population, backpack: Backpack, selection_size: int) -> Population:
@@ -86,7 +87,8 @@ def _tournament_picker(backpack: Backpack, first: Chromosome, second: Chromosome
             return second
 
 
-def roulette_wheel_selection(population: Population, backpack: Backpack, selection_size: int, config: SelectionMethodConfig) -> Population:
+def roulette_wheel_selection(population: Population, backpack: Backpack, selection_size: int,
+                             config: SelectionMethodConfig) -> Population:
     selected_ones = set()
     max_val: float = sum(backpack.calculate_fitness(chromosome) for chromosome in population)
     fitneses_values = list()
