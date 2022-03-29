@@ -1,6 +1,6 @@
 from typing import Callable
 
-from algorithms.end_conditions import check_end_condition, update_end_condition
+from algorithms.end_conditions import init_end_conditions, check_end_conditions, update_end_conditions
 from utils.backpack import Population, Backpack
 from utils.config import Config
 
@@ -20,8 +20,9 @@ def genetic_algorithm(
     generation_children = set()
 
     j = 0
+    init_end_conditions(config.endConditionConfig, current_generation)
 
-    while not check_end_condition(config.endConditionConfig):
+    while not check_end_conditions(config.endConditionConfig):
 
         if j % 100 == 0:
             print(f'Generation {j}')
@@ -47,7 +48,7 @@ def genetic_algorithm(
                                        config.initial_population_size, config.selection_method_config)
 
         generation_children = set()
-        update_end_condition(config.endConditionConfig, current_generation, backpack)
+        update_end_conditions(config.endConditionConfig, current_generation, backpack)
 
     print(f'Generation {j}')
     print("Fitness-Benefit-Weight")
@@ -62,3 +63,4 @@ def genetic_algorithm(
     print('\n')
 
     print(config.endConditionConfig.stats.a[-config.endConditionConfig.fitness_consecutive_generations::])
+

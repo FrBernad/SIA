@@ -62,12 +62,13 @@ class Config:
 
     @staticmethod
     def generate(config_dict: Dict) -> 'Config':
+        init_population = Config._get_initial_population_size(config_dict['initial_population'])
         return Config(
-            Config._get_initial_population_size(config_dict['initial_population']),
+            init_population,
             Config._get_end_condition_config(config_dict['end_condition']),
             Config._get_fitness_function(config_dict['fitness_function']),
             Config._get_couple_selection_method(config_dict['couple_selection']),
-            Config._get_crossover_method_config(config_dict['crossover']),
+            Config._get_crossover_method_config(config_dict['crossover'], init_population),
             Config._get_mutation_method_config(config_dict['mutation_probability']),
             Config._get_selection_method_config(config_dict['selection'])
         )
@@ -179,7 +180,7 @@ class Config:
         return COUPLE_SELECTION_METHODS[couple_selection]
 
     @staticmethod
-    def _get_crossover_method_config(crossover: Dict) -> CrossoverMethodConfig:
+    def _get_crossover_method_config(crossover: Dict, initial_population: int) -> CrossoverMethodConfig:
         crossover_type = crossover.get('type')
 
         if not crossover_type or crossover_type not in CROSSOVER_METHODS.keys():
@@ -188,7 +189,7 @@ class Config:
         if crossover_type == 'multiple_crossover':
             try:
                 n = int(crossover.get(crossover_type).get('n'))
-                if n <= 0:
+                if n <= 0 or n >= initial_population:
                     raise InvalidCrossoverMethod()
 
                 return CrossoverMethodConfig(

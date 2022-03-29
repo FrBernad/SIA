@@ -20,15 +20,15 @@ config:
     #defines how many consecutive generations should be generated
     #with a percentage of equal individuals before ending
     structure:
-      percentaje: 'percentage' #(0<p<1), defaults to 0.8
-      generations: 'generations' #generations>=10, defaults to 10
-      min_generations: 'min_generations' #min_generations>=500, defaults to 500
+      percentaje: 0.98 #(0<p<1), defaults to 0.8
+      generations: 10 #generations>=10, defaults to 10
+      min_generations: 5000 #min_generations>=500, defaults to 500
 
     #defines how many consecutive generations should be generated
     #with the same best fitness
     fitness:
       generations: 15 #generations>=10, defaults to 10
-      min_generations: 7000 #min_generations>=500, defaults to 500
+      min_generations: 5000 #min_generations>=500, defaults to 500
 
   #fitness function to be used by the solver
   #possible options are:
@@ -47,11 +47,11 @@ config:
     # - simple_crossover
     # - multiple_crossover
     # - uniform_crossover
-    type: simple_crossover
+    type: uniform_crossover
 
     #used for truncated_selection type, defines how many chromosomes are discarded from the generation
     multiple_crossover:
-      n: 10 # n>0
+      n: 10 # 0<n<initial_population
 
   #mutation probability used for mutating chromosomes (0<p<1)
   mutation_probability: 0.05
