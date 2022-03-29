@@ -9,6 +9,7 @@ def rand_couple_selection(population: Population) -> Tuple[Chromosome, Chromosom
 
 
 def fitness_couple_selection(population: Population) -> Tuple[Chromosome, Chromosome]:
+    # FIXME:
     pass
 
 
