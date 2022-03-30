@@ -1,4 +1,5 @@
-from random import sample, uniform, random
+from math import exp
+from random import sample, choices, uniform, random
 from typing import List
 
 from utils.backpack import Population, Backpack, Chromosome
@@ -82,9 +83,23 @@ def boltzmann_selection(
         population: Population,
         generation_count: int,
         backpack: Backpack,
+        selection_size: int,
         config: SelectionMethodConfig
 ):
-    pass
+    fitness = list(map(lambda chromosome: backpack.calculate_fitness(chromosome)/100, population))
+    tc = config.Tc
+    t0 = config.T0
+    k = config.k
+
+    temp: float = tc + (t0 - tc) * exp(-k * generation_count)
+    ve_num_values = list(map(lambda f: exp(f / temp), fitness))
+
+    ve = list(map(lambda num: num / sum(ve_num_values[:ve_num_values.index(num) + 1]), ve_num_values))
+    total_ve = sum(ve)
+
+    relative_ve = list(map(lambda v: v / total_ve, ve))
+
+    return _roulette_accumulated_selection(population, selection_size, _calculate_accumulated_probability(relative_ve))
 
 
 def truncated_selection(
