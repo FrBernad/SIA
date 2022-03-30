@@ -1,5 +1,5 @@
 ---
-#backpack problem config
+#knapsack problem config
 config:
 
   #initial population size (n>5)
@@ -66,7 +66,7 @@ config:
     # - tournament_selection
     # - boltzmann_selection
     # - truncated_selection
-    type: truncated_selection
+    type: elitism_selection
 
     #used for boltzmann_selection type, defines temperature function parameters
     boltzmann_selection:

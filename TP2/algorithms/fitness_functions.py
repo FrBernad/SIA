@@ -1,7 +1,7 @@
-from utils.backpack import Backpack, Chromosome
+from utils.knapsack import Knapsack, Chromosome
 
 
-def benefit_weight_ratio(bp: Backpack, c: Chromosome) -> float:
+def benefit_weight_ratio(bp: Knapsack, c: Chromosome) -> float:
     weight = bp.calculate_weight(c)
     benefit = bp.calculate_benefit(c)
     if weight > bp.max_weight:

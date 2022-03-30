@@ -51,10 +51,11 @@ from algorithms.selection import SELECTION_METHODS
 
 
 class Config:
-    def __init__(self, initial_population_size, end_condition_config: EndConditionConfig, fitness_function: Callable,
+    def __init__(self, config_dict, initial_population_size, end_condition_config: EndConditionConfig, fitness_function: Callable,
                  couple_selection_method: Callable, crossover_method_config: CrossoverMethodConfig,
                  mutation_method_config: MutationMethodConfig, selection_method_config: SelectionMethodConfig):
 
+        self.config_dict = config_dict
         self.initial_population_size = initial_population_size
         self.end_condition_config = end_condition_config
         self.fitness_function = fitness_function
@@ -67,6 +68,7 @@ class Config:
     def generate(config_dict: Dict) -> 'Config':
         init_population = Config._get_initial_population_size(config_dict['initial_population'])
         return Config(
+            config_dict,
             init_population,
             Config._get_end_condition_config(config_dict['end_condition']),
             Config._get_fitness_function(config_dict['fitness_function']),

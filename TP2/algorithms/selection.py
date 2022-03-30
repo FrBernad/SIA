@@ -2,7 +2,7 @@ from math import exp
 from random import sample, choices, uniform, random
 from typing import List
 
-from utils.backpack import Population, Backpack, Chromosome
+from utils.knapsack import Population, Knapsack, Chromosome
 from utils.config import SelectionMethodConfig
 
 DEFAULT_TOURNAMENT_CHROMOSOME_AMOUNT = 4
@@ -11,12 +11,12 @@ DEFAULT_TOURNAMENT_CHROMOSOME_AMOUNT = 4
 def elitism_selection(
         population: Population,
         generation_count: int,
-        backpack: Backpack,
+        knapsack: Knapsack,
         selection_size: int,
         config: SelectionMethodConfig
 ) -> Population:
     return sorted(population,
-                  key=lambda chromosome: backpack.calculate_fitness(chromosome),
+                  key=lambda chromosome: knapsack.calculate_fitness(chromosome),
                   reverse=True
                   )[0:selection_size]
 
@@ -24,11 +24,11 @@ def elitism_selection(
 def roulette_wheel_selection(
         population: Population,
         generation_count: int,
-        backpack: Backpack,
+        knapsack: Knapsack,
         selection_size: int,
         config: SelectionMethodConfig
 ) -> Population:
-    fitness = list(map(lambda chromosome: backpack.calculate_fitness(chromosome), population))
+    fitness = list(map(lambda chromosome: knapsack.calculate_fitness(chromosome), population))
     total_fitness = sum(fitness)
 
     relative_fitness = list(map(lambda f: f / total_fitness, fitness))
@@ -40,12 +40,12 @@ def roulette_wheel_selection(
 def rank_selection(
         population: Population,
         generation_count: int,
-        backpack: Backpack,
+        knapsack: Knapsack,
         selection_size: int,
         config: SelectionMethodConfig
 ):
     sorted_population = sorted(population,
-                               key=lambda chromosome: backpack.calculate_fitness(chromosome),
+                               key=lambda chromosome: knapsack.calculate_fitness(chromosome),
                                reverse=True)
 
     population_len = len(population)
@@ -61,7 +61,7 @@ def rank_selection(
 def tournament_selection(
         population: Population,
         generation_count: int,
-        backpack: Backpack,
+        knapsack: Knapsack,
         selection_size: int,
         config: SelectionMethodConfig
 ) -> Population:
@@ -72,10 +72,10 @@ def tournament_selection(
         u = uniform(0, 1)
         r = random()
 
-        first_pick = _tournament_picker(backpack, couples[0], couples[1],u,r)
+        first_pick = _tournament_picker(knapsack, couples[0], couples[1],u,r)
 
-        second_pick = _tournament_picker(backpack, couples[2], couples[3],u,r)
-        winner = _tournament_picker(backpack, first_pick, second_pick,u,r)
+        second_pick = _tournament_picker(knapsack, couples[2], couples[3],u,r)
+        winner = _tournament_picker(knapsack, first_pick, second_pick,u,r)
 
         new_population.add(winner)
 
@@ -85,11 +85,11 @@ def tournament_selection(
 def boltzmann_selection(
         population: Population,
         generation_count: int,
-        backpack: Backpack,
+        knapsack: Knapsack,
         selection_size: int,
         config: SelectionMethodConfig
 ):
-    fitness = list(map(lambda chromosome: backpack.calculate_fitness(chromosome) / 100, population))
+    fitness = list(map(lambda chromosome: knapsack.calculate_fitness(chromosome) / 100, population))
     tc = config.Tc
     t0 = config.T0
     k = config.k
@@ -108,21 +108,21 @@ def boltzmann_selection(
 def truncated_selection(
         population: Population,
         generation_count: int,
-        backpack: Backpack,
+        knapsack: Knapsack,
         selection_size: int,
         config: SelectionMethodConfig
 ) -> Population:
     truncated_population = sorted(population,
-                                  key=lambda chromosome: backpack.calculate_fitness(chromosome),
+                                  key=lambda chromosome: knapsack.calculate_fitness(chromosome),
                                   )[config.truncation_size - 1::]
 
     return sample(truncated_population, k=selection_size)
 
 
-def _tournament_picker(backpack: Backpack, first: Chromosome, second: Chromosome, u: float, r:float) -> Chromosome:
+def _tournament_picker(knapsack: Knapsack, first: Chromosome, second: Chromosome, u: float, r:float) -> Chromosome:
 
-    first_fitness = backpack.calculate_fitness(first)
-    second_fitness = backpack.calculate_fitness(second)
+    first_fitness = knapsack.calculate_fitness(first)
+    second_fitness = knapsack.calculate_fitness(second)
 
     if r < u:
         if max(first_fitness, second_fitness) == first_fitness:

@@ -6,9 +6,9 @@ from algorithms.crossover import uniform_crossover
 from algorithms.fitness_functions import benefit_weight_ratio
 from algorithms.mutation import random_mutation
 from algorithms.selection import elitism_selection
-from knapsack_solver import _get_backpack_data
+from knapsack_solver import _get_knapsack_data
 from utils.argument_parser import DEFAULT_DATA_FILE
-from utils.backpack import generate_random_population
+from utils.knapsack import generate_random_population
 from utils.config import Config, EndConditionConfig, CrossoverMethodConfig, MutationMethodConfig, SelectionMethodConfig
 
 if __name__ == '__main__':
@@ -27,16 +27,16 @@ if __name__ == '__main__':
     mutation_method_config = MutationMethodConfig(random_mutation, probability=0.05)
     selection_method_config = SelectionMethodConfig(elitism_selection)
 
-    config = Config(initial_population_size, end_condition_config,
+    config = Config({}, initial_population_size, end_condition_config,
                     fitness_function, couple_selection_method,
                     crossover_method_config, mutation_method_config,
                     selection_method_config)
 
-    backpack = _get_backpack_data("../" + DEFAULT_DATA_FILE, config.fitness_function)
+    knapsack = _get_knapsack_data("../" + DEFAULT_DATA_FILE, config.fitness_function)
 
-    first_generation = generate_random_population(backpack, config.initial_population_size)
+    first_generation = generate_random_population(knapsack, config.initial_population_size)
 
-    stats = genetic_algorithm(first_generation, backpack, config.couple_selection_method,
+    stats = genetic_algorithm(first_generation, knapsack, config.couple_selection_method,
                               config.crossover_method_config.method, config.mutation_method_config.method,
                               config.selection_method_config.method, config)
 

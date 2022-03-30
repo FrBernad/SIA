@@ -5,11 +5,11 @@ Chromosome = Tuple[bool, ...]
 Population = List[Chromosome]
 
 
-class Backpack(object):
+class Knapsack(object):
 
     def __new__(cls, *args, **kwargs):
         if not hasattr(cls, 'instance'):
-            cls.instance = super(Backpack, cls).__new__(cls)
+            cls.instance = super(Knapsack, cls).__new__(cls)
         return cls.instance
 
     def __init__(self, max_capacity, max_weight, fitness_function, elements=None):
@@ -45,20 +45,20 @@ class Element:
 
 
 def generate_random_population(
-        backpack: Backpack,
+        knapsack: Knapsack,
         size: int,
 ) -> Population:
     population = set()
 
     while len(population) < size:
-        chromosome = [False] * backpack.max_capacity
+        chromosome = [False] * knapsack.max_capacity
         generated = False
 
         while not generated:
-            random_index = randint(0, backpack.max_capacity - 1)
+            random_index = randint(0, knapsack.max_capacity - 1)
 
             chromosome[random_index] = True
-            if backpack.calculate_weight(chromosome) > backpack.max_weight:
+            if knapsack.calculate_weight(chromosome) > knapsack.max_weight:
                 generated = True
                 chromosome[random_index] = False
 

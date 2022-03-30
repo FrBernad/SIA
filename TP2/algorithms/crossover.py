@@ -1,7 +1,7 @@
 from random import sample, random
 from typing import Tuple
 
-from utils.backpack import Chromosome
+from utils.knapsack import Chromosome
 from utils.config import CrossoverMethodConfig
 
 

@@ -1,6 +1,6 @@
 from random import random
 
-from utils.backpack import Chromosome
+from utils.knapsack import Chromosome
 
 
 def random_mutation(

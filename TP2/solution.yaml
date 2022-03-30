@@ -1,0 +1,12 @@
+initial_population: 50
+end_condition: generation_count
+fitness_function: benefit_weight_ratio
+couple_selection: rand_couple_selection
+crossover: uniform_crossover
+mutation_probability: 0.05
+selection: elitism_selection
+solution:
+  genes: '0000001000101000000000000100001000001110000000001000010000001000000000000000000000000000000000000000'
+  fitness: 8145
+  weight: 966
+  benefit: 8145

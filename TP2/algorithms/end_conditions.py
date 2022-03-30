@@ -2,7 +2,7 @@ import time
 from enum import Enum
 from typing import List
 
-from utils.backpack import Population, Backpack, Chromosome
+from utils.knapsack import Population, Knapsack, Chromosome
 
 
 class EndConditionType(Enum):
@@ -34,16 +34,16 @@ from utils.config import EndConditionConfig
 
 
 class Stats:
-    def __init__(self, config: EndConditionConfig, population: Population, backpack: Backpack):
+    def __init__(self, config: EndConditionConfig, population: Population, knapsack: Knapsack):
         self.best_solutions: List[Chromosome] = []
-        self.backpack = backpack
+        self.knapsack = knapsack
         self.generation_count = 0
         self.update(config, population)
 
     def update(self, config: EndConditionConfig, generation: Population):
 
         if self.generation_count % 100 == 0:
-            self.best_solutions.append(max(generation, key=lambda chr: self.backpack.calculate_fitness(chr)))
+            self.best_solutions.append(max(generation, key=lambda chr: self.knapsack.calculate_fitness(chr)))
 
         self.generation_count += 1
         if _generations_count_condition(config):
@@ -62,9 +62,9 @@ class Stats:
         for sol in self.best_solutions:
             best_sols.append({
                 'genes': sol,
-                'fitness': self.backpack.calculate_fitness(sol),
-                'weight': self.backpack.calculate_weight(sol),
-                'benefit': self.backpack.calculate_benefit(sol)
+                'fitness': self.knapsack.calculate_fitness(sol),
+                'weight': self.knapsack.calculate_weight(sol),
+                'benefit': self.knapsack.calculate_benefit(sol)
             })
         return best_sols
 
@@ -118,23 +118,23 @@ def init_end_conditions(config: EndConditionConfig, current_generation: Populati
     config.stats.structure['current'] = current_generation
 
 
-def update_end_conditions(config: EndConditionConfig, current_generation: Population, backpack: Backpack):
+def update_end_conditions(config: EndConditionConfig, current_generation: Population, knapsack: Knapsack):
     config.stats.generation = current_generation
     config.stats.generations_count += 1
-    _update_best_fitness(config, backpack, current_generation)
+    _update_best_fitness(config, knapsack, current_generation)
     _update_structure(config, current_generation)
     config.stats.current_time = time.time()
-    config.stats.is_acceptable = _check_acceptable_solution(config, backpack, current_generation)
+    config.stats.is_acceptable = _check_acceptable_solution(config, knapsack, current_generation)
 
 
-def _update_best_fitness(config: EndConditionConfig, backpack: Backpack, generation: Population):
+def _update_best_fitness(config: EndConditionConfig, knapsack: Knapsack, generation: Population):
     if config.stats.generations_count < config.fitness_min_generations:
         return False
 
     best_fitness = 0
 
     for chromosome in generation:
-        aux = backpack.calculate_fitness(chromosome)
+        aux = knapsack.calculate_fitness(chromosome)
         if aux > best_fitness:
             best_fitness = aux
 
@@ -146,11 +146,11 @@ def _update_best_fitness(config: EndConditionConfig, backpack: Backpack, generat
         config.stats.fitness['consecutive'] += 1
 
 
-def _check_acceptable_solution(config: EndConditionConfig, backpack: Backpack, generation: Population) -> bool:
+def _check_acceptable_solution(config: EndConditionConfig, knapsack: Knapsack, generation: Population) -> bool:
     if config.stats.generations_count < config.acceptable_solution_generation_count:
         return False
     for chromosome in generation:
-        if backpack.calculate_weight(chromosome) < backpack.max_weight:
+        if knapsack.calculate_weight(chromosome) < knapsack.max_weight:
             print("Acceptable Condition")
             return True
 
