@@ -1,4 +1,5 @@
-from random import sample, uniform, random
+from math import exp
+from random import sample, choices, uniform, random
 from typing import List
 
 from utils.backpack import Population, Backpack, Chromosome
@@ -68,12 +69,15 @@ def tournament_selection(
 
     while len(new_population) < selection_size:
         couples = sample(tuple(population), k=DEFAULT_TOURNAMENT_CHROMOSOME_AMOUNT)
+        u = uniform(0, 1)
+        r = random()
 
-        first_pick = _tournament_picker(backpack, couples[0], couples[1])
+        first_pick = _tournament_picker(backpack, couples[0], couples[1],u,r)
 
-        second_pick = _tournament_picker(backpack, couples[2], couples[3])
+        second_pick = _tournament_picker(backpack, couples[2], couples[3],u,r)
+        winner = _tournament_picker(backpack, first_pick, second_pick,u,r)
 
-        new_population.add(_tournament_picker(backpack, first_pick, second_pick))
+        new_population.add(winner)
 
     return list(new_population)
 
@@ -82,9 +86,23 @@ def boltzmann_selection(
         population: Population,
         generation_count: int,
         backpack: Backpack,
+        selection_size: int,
         config: SelectionMethodConfig
 ):
-    pass
+    fitness = list(map(lambda chromosome: backpack.calculate_fitness(chromosome) / 100, population))
+    tc = config.Tc
+    t0 = config.T0
+    k = config.k
+
+    temp: float = tc + (t0 - tc) * exp(-k * generation_count)
+    ve_num_values = list(map(lambda f: exp(f / temp), fitness))
+
+    ve = list(map(lambda num: num / sum(ve_num_values[:ve_num_values.index(num) + 1]), ve_num_values))
+    total_ve = sum(ve)
+
+    relative_ve = list(map(lambda v: v / total_ve, ve))
+
+    return _roulette_accumulated_selection(population, selection_size, _calculate_accumulated_probability(relative_ve))
 
 
 def truncated_selection(
@@ -101,9 +119,7 @@ def truncated_selection(
     return sample(truncated_population, k=selection_size)
 
 
-def _tournament_picker(backpack: Backpack, first: Chromosome, second: Chromosome) -> Chromosome:
-    u = uniform(0.5, 1)
-    r = random()
+def _tournament_picker(backpack: Backpack, first: Chromosome, second: Chromosome, u: float, r:float) -> Chromosome:
 
     first_fitness = backpack.calculate_fitness(first)
     second_fitness = backpack.calculate_fitness(second)
