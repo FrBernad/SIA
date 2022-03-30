@@ -169,7 +169,7 @@ class Config:
         try:
             size = int(initial_population)
             if size <= 0:
-                raise InvalidEndCondition()
+                raise InvalidInitialPopulationSize()
 
             return size
         except (ValueError, TypeError):
@@ -211,24 +211,24 @@ class Config:
     @staticmethod
     def _get_mutation_method_config(mutation_probability: str) -> MutationsMethodConfig:
         if not mutation_probability:
-            raise InvalidCrossoverMethod()
+            raise InvalidMutationProbability()
 
         try:
             probability = float(mutation_probability)
 
             if probability <= 0 or probability >= 1:
-                raise InvalidCrossoverMethod()
+                raise InvalidMutationProbability()
 
             return MutationsMethodConfig(random_mutation, probability=probability)
 
         except (ValueError, TypeError):
-            raise InvalidCrossoverMethod()
+            raise InvalidMutationProbability()
 
     @staticmethod
     def _get_selection_method_config(selection: Dict) -> SelectionMethodConfig:
         selection_method_type = selection.get('type')
         if not selection_method_type or selection_method_type not in SELECTION_METHODS.keys():
-            raise InvalidEndCondition()
+            raise InvalidSelectionMethod()
 
         if selection_method_type == 'truncated_selection':
             try:
@@ -243,7 +243,7 @@ class Config:
                 )
 
             except (ValueError, TypeError):
-                raise InvalidCrossoverMethod()
+                raise InvalidSelectionMethod()
 
         elif selection_method_type == 'boltzmann_selection':
             try:
@@ -312,5 +312,12 @@ class InvalidCrossoverMethod(ConfigException):
 class InvalidSelectionMethod(ConfigException):
 
     def __init__(self, message='Invalid selection method config'):
+        self.message = message
+        super().__init__(self.message)
+
+
+class InvalidMutationProbability(ConfigException):
+
+    def __init__(self, message='Invalid mutation config'):
         self.message = message
         super().__init__(self.message)
