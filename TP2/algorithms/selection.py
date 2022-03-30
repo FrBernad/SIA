@@ -9,6 +9,7 @@ DEFAULT_TOURNAMENT_CHROMOSOME_AMOUNT = 4
 
 def elitism_selection(
         population: Population,
+        generation_count: int,
         backpack: Backpack,
         selection_size: int,
         config: SelectionMethodConfig
@@ -21,7 +22,9 @@ def elitism_selection(
 
 def roulette_wheel_selection(
         population: Population,
-        backpack: Backpack, selection_size: int,
+        generation_count: int,
+        backpack: Backpack,
+        selection_size: int,
         config: SelectionMethodConfig
 ) -> Population:
     fitness = list(map(lambda chromosome: backpack.calculate_fitness(chromosome), population))
@@ -35,6 +38,7 @@ def roulette_wheel_selection(
 
 def rank_selection(
         population: Population,
+        generation_count: int,
         backpack: Backpack,
         selection_size: int,
         config: SelectionMethodConfig
@@ -55,6 +59,7 @@ def rank_selection(
 
 def tournament_selection(
         population: Population,
+        generation_count: int,
         backpack: Backpack,
         selection_size: int,
         config: SelectionMethodConfig
@@ -73,23 +78,25 @@ def tournament_selection(
     return list(new_population)
 
 
-def boltzmann_selection(population: Population, backpack: Backpack, config: SelectionMethodConfig):
+def boltzmann_selection(
+        population: Population,
+        generation_count: int,
+        backpack: Backpack,
+        config: SelectionMethodConfig
+):
     pass
 
 
 def truncated_selection(
         population: Population,
+        generation_count: int,
         backpack: Backpack,
         selection_size: int,
         config: SelectionMethodConfig
 ) -> Population:
-    population_len = len(population)
-    truncation_index = population_len - config.truncation_size
-
     truncated_population = sorted(population,
                                   key=lambda chromosome: backpack.calculate_fitness(chromosome),
-                                  reverse=True
-                                  )[0: truncation_index]
+                                  )[config.truncation_size - 1::]
 
     return sample(truncated_population, k=selection_size)
 

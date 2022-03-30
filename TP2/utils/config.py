@@ -73,7 +73,7 @@ class Config:
             Config._get_couple_selection_method(config_dict['couple_selection']),
             Config._get_crossover_method_config(config_dict['crossover'], init_population),
             Config._get_mutation_method_config(config_dict['mutation_probability']),
-            Config._get_selection_method_config(config_dict['selection'])
+            Config._get_selection_method_config(config_dict['selection'], init_population)
         )
 
     @staticmethod
@@ -225,7 +225,7 @@ class Config:
             raise InvalidMutationProbability()
 
     @staticmethod
-    def _get_selection_method_config(selection: Dict) -> SelectionMethodConfig:
+    def _get_selection_method_config(selection: Dict, initial_population: int) -> SelectionMethodConfig:
         selection_method_type = selection.get('type')
         if not selection_method_type or selection_method_type not in SELECTION_METHODS.keys():
             raise InvalidSelectionMethod()
@@ -234,7 +234,7 @@ class Config:
             try:
                 truncation_size = int(selection.get(selection_method_type).get('truncation_size'))
 
-                if truncation_size <= 0:
+                if truncation_size > initial_population or truncation_size <= 0:
                     raise InvalidSelectionMethod()
 
                 return SelectionMethodConfig(

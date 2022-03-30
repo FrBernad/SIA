@@ -12,7 +12,7 @@ config:
     generations_count: 50000 #generations_count>=500, defaults to 500
 
     #defines how many generations should be generated at least before ending via acceptable solution
-    acceptable_solution_generation_count: 5000 #acceptable_solution_generation_count>=500, defaults to 500
+    acceptable_solution_generation_count: 10000 #acceptable_solution_generation_count>=500, defaults to 500
 
     #used for time type, defines how many seconds should pass before ending
     time: 'time' #time>0, defaults to 5*60
@@ -39,7 +39,7 @@ config:
   #possible options are:
   # - rand_couple_selection
   # - fitness_couple_selection
-  couple_selection: fitness_couple_selection
+  couple_selection: rand_couple_selection
 
   #crossover method to be used by the solver
   crossover:
@@ -76,6 +76,6 @@ config:
 
     #used for truncated_selection type, defines how many chromosomes are discarded from the generation
     truncated_selection:
-      truncation_size: 3 # truncation_size>0
+      truncation_size: 5 # 0<truncation_size<=population_size
 
 ...

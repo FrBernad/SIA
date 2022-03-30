@@ -43,8 +43,11 @@ def genetic_algorithm(
             if len(generation_children) < config.initial_population_size and second_chromosome not in current_generation:
                 generation_children.add(second_chromosome)
 
-        current_generation = selection(list(generation_children) + current_generation, backpack,
-                                       config.initial_population_size, config.selection_method_config)
+        current_generation = selection(list(generation_children) + current_generation,
+                                       config.endConditionConfig.stats.generations_count,
+                                       backpack,
+                                       config.initial_population_size, config.selection_method_config
+                                       )
 
         generation_children = set()
         update_end_conditions(config.endConditionConfig, current_generation, backpack)
@@ -68,4 +71,3 @@ def _print_solution(sol, j, backpack, config):
     print(list(map(lambda chr: backpack.calculate_benefit(chr), sol)))
     print(list(map(lambda chr: backpack.calculate_weight(chr), sol)))
     print('\n')
-
