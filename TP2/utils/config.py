@@ -249,7 +249,7 @@ class Config:
             try:
                 T0 = float(selection.get(selection_method_type).get('T0'))
                 Tc = float(selection.get(selection_method_type).get('Tc'))
-                k = int(selection.get(selection_method_type).get('k'))
+                k = float(selection.get(selection_method_type).get('k'))
 
                 if T0 < Tc or Tc <= 0 or Tc > T0 or k <= 0:
                     raise InvalidSelectionMethod()
@@ -261,7 +261,7 @@ class Config:
                     k=k
                 )
             except (ValueError, TypeError):
-                raise InvalidCrossoverMethod()
+                raise InvalidSelectionMethod()
 
         else:
             return SelectionMethodConfig(

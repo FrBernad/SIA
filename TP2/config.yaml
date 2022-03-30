@@ -66,13 +66,13 @@ config:
     # - tournament_selection
     # - boltzmann_selection
     # - truncated_selection
-    type: roulette_wheel_selection
+    type: boltzmann_selection
 
     #used for boltzmann_selection type, defines temperature function parameters
     boltzmann_selection:
-      Tc: 'Tc' # 0<Tc<T0
-      T0: 'T0' # T0>Tc
-      k: 'k' # k>0
+      Tc: '10' # 0<Tc<T0
+      T0: '300' # T0>Tc
+      k: '0.5' # k>0
 
     #used for truncated_selection type, defines how many chromosomes are discarded from the generation
     truncated_selection:
