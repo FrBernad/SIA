@@ -37,11 +37,15 @@ class Stats:
     def __init__(self, config: EndConditionConfig, population: Population, backpack: Backpack):
         self.best_solutions: List[Chromosome] = []
         self.backpack = backpack
+        self.generation_count = 0
         self.update(config, population)
 
     def update(self, config: EndConditionConfig, generation: Population):
-        self.best_solutions.append(max(generation, key=lambda chr: self.backpack.calculate_fitness(chr)))
 
+        if self.generation_count % 100 == 0:
+            self.best_solutions.append(max(generation, key=lambda chr: self.backpack.calculate_fitness(chr)))
+
+        self.generation_count += 1
         if _generations_count_condition(config):
             self.end_condition = EndConditionType.GENERATIONS_COUNT
         elif _time_condition(config):

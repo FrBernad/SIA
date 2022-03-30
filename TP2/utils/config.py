@@ -32,7 +32,7 @@ class SelectionMethodConfig:
         self.Tc = config.get('Tc')
 
 
-class MutationsMethodConfig:
+class MutationMethodConfig:
     def __init__(self, method, **config):
         self.method = method
         self.probability = config.get('probability')
@@ -51,12 +51,12 @@ from algorithms.selection import SELECTION_METHODS
 
 
 class Config:
-    def __init__(self, initial_population_size, endConditionConfig: EndConditionConfig, fitness_function: Callable,
+    def __init__(self, initial_population_size, end_condition_config: EndConditionConfig, fitness_function: Callable,
                  couple_selection_method: Callable, crossover_method_config: CrossoverMethodConfig,
-                 mutation_method_config: MutationsMethodConfig, selection_method_config: SelectionMethodConfig):
+                 mutation_method_config: MutationMethodConfig, selection_method_config: SelectionMethodConfig):
 
         self.initial_population_size = initial_population_size
-        self.endConditionConfig = endConditionConfig
+        self.end_condition_config = end_condition_config
         self.fitness_function = fitness_function
         self.couple_selection_method = couple_selection_method
         self.crossover_method_config = crossover_method_config
@@ -209,7 +209,7 @@ class Config:
             )
 
     @staticmethod
-    def _get_mutation_method_config(mutation_probability: str) -> MutationsMethodConfig:
+    def _get_mutation_method_config(mutation_probability: str) -> MutationMethodConfig:
         if not mutation_probability:
             raise InvalidMutationProbability()
 
@@ -219,7 +219,7 @@ class Config:
             if probability <= 0 or probability >= 1:
                 raise InvalidMutationProbability()
 
-            return MutationsMethodConfig(random_mutation, probability=probability)
+            return MutationMethodConfig(random_mutation, probability=probability)
 
         except (ValueError, TypeError):
             raise InvalidMutationProbability()

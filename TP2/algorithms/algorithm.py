@@ -17,19 +17,19 @@ def genetic_algorithm(
     current_generation = generation_zero
     generation_children = set()
 
-    stats = Stats(config.endConditionConfig, current_generation, backpack)
-    init_end_conditions(config.endConditionConfig, current_generation)
+    stats = Stats(config.end_condition_config, current_generation, backpack)
+    init_end_conditions(config.end_condition_config, current_generation)
 
     j = 0
-    while not check_end_conditions(config.endConditionConfig):
+    while not check_end_conditions(config.end_condition_config):
 
-        if j % 100 == 0:
-            print(f'Generation {j}')
-            print("Fitness-Benefit-Weight")
-            print(list(map(lambda chr: backpack.calculate_fitness(chr), current_generation)))
-            print(list(map(lambda chr: backpack.calculate_benefit(chr), current_generation)))
-            print(list(map(lambda chr: backpack.calculate_weight(chr), current_generation)))
-            print('\n')
+        # if j % 100 == 0:
+        #     print(f'Generation {j}')
+        #     print("Fitness-Benefit-Weight")
+        #     print(list(map(lambda chr: backpack.calculate_fitness(chr), current_generation)))
+        #     print(list(map(lambda chr: backpack.calculate_benefit(chr), current_generation)))
+        #     print(list(map(lambda chr: backpack.calculate_weight(chr), current_generation)))
+        #     print('\n')
 
         j += 1
 
@@ -44,14 +44,14 @@ def genetic_algorithm(
                 generation_children.add(second_chromosome)
 
         current_generation = selection(list(generation_children) + current_generation,
-                                       config.endConditionConfig.stats.generations_count,
+                                       config.end_condition_config.stats.generations_count,
                                        backpack,
                                        config.initial_population_size, config.selection_method_config
                                        )
 
         generation_children = set()
-        update_end_conditions(config.endConditionConfig, current_generation, backpack)
-        stats.update(config.endConditionConfig, current_generation)
+        update_end_conditions(config.end_condition_config, current_generation, backpack)
+        stats.update(config.end_condition_config, current_generation)
 
     sol = sorted(current_generation,
                  key=lambda chromosome: backpack.calculate_weight(chromosome),
