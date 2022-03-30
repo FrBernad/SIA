@@ -27,6 +27,9 @@ class SelectionMethodConfig:
     def __init__(self, method, **config):
         self.method = method
         self.truncation_size = config.get('truncation_size')
+        self.k = config.get('k')
+        self.T0 = config.get('T0')
+        self.Tc = config.get('Tc')
 
 
 class MutationsMethodConfig:
@@ -239,6 +242,24 @@ class Config:
                     truncation_size=truncation_size
                 )
 
+            except (ValueError, TypeError):
+                raise InvalidCrossoverMethod()
+
+        elif selection_method_type == 'boltzmann_selection':
+            try:
+                T0 = float(selection.get(selection_method_type).get('T0'))
+                Tc = float(selection.get(selection_method_type).get('Tc'))
+                k = int(selection.get(selection_method_type).get('k'))
+
+                if T0 < Tc or Tc <= 0 or Tc > T0 or k <= 0:
+                    raise InvalidSelectionMethod()
+
+                return SelectionMethodConfig(
+                    SELECTION_METHODS.get(selection_method_type),
+                    T0=T0,
+                    Tc=Tc,
+                    k=k
+                )
             except (ValueError, TypeError):
                 raise InvalidCrossoverMethod()
 

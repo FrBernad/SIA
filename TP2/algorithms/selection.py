@@ -1,4 +1,4 @@
-from random import sample, choices, uniform, random
+from random import sample, uniform, random
 from typing import List
 
 from utils.backpack import Population, Backpack, Chromosome

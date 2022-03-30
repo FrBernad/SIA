@@ -1,5 +1,5 @@
-from random import randint, random
-from typing import Tuple, List, Dict, Callable
+from random import randint
+from typing import Tuple, List
 
 Chromosome = Tuple[bool, ...]
 Population = List[Chromosome]

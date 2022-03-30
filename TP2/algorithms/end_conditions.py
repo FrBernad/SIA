@@ -1,4 +1,5 @@
 import time
+
 from utils.backpack import Population, Backpack
 
 
