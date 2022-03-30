@@ -4,9 +4,6 @@ from typing import Tuple, List
 Chromosome = Tuple[bool, ...]
 Population = List[Chromosome]
 
-DEFAULT_POPULATION_SIZE = 20
-DEFAULT_POPULATION_PROBABILITY = 0.005
-
 
 class Backpack(object):
 
@@ -49,7 +46,7 @@ class Element:
 
 def generate_random_population(
         backpack: Backpack,
-        size: int = DEFAULT_POPULATION_SIZE,
+        size: int,
 ) -> Population:
     population = set()
 

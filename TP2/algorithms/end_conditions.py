@@ -1,6 +1,16 @@
 import time
+from enum import Enum
+from typing import List
 
-from utils.backpack import Population, Backpack
+from utils.backpack import Population, Backpack, Chromosome
+
+
+class EndConditionType(Enum):
+    GENERATIONS_COUNT = 'generation_count'
+    TIME = 'time'
+    STRUCTURE = 'structure'
+    FITNESS = 'fitness'
+    ACCEPTABLE_SOLUTION = 'acceptable_solution'
 
 
 class EndConditionStats:
@@ -23,6 +33,26 @@ class EndConditionStats:
 
 
 from utils.config import EndConditionConfig
+
+
+class Stats:
+    def __init__(self, config: EndConditionConfig, population: Population, backpack: Backpack):
+        self.best_solutions: List[Chromosome] = []
+        self.update(config, population, backpack)
+
+    def update(self, config: EndConditionConfig, generation: Population, backpack: Backpack):
+        self.best_solutions.append(max(generation, key=lambda chr: backpack.calculate_fitness(chr)))
+
+        if _generations_count_condition(config):
+            self.end_condition = EndConditionType.GENERATIONS_COUNT
+        elif _time_condition(config):
+            self.end_condition = EndConditionType.TIME
+        elif _structure_condition(config):
+            self.end_condition = EndConditionType.STRUCTURE
+        elif _fitness_condition(config):
+            self.end_condition = EndConditionType.FITNESS
+        elif _acceptable_solution_condition(config):
+            self.end_condition = EndConditionType.ACCEPTABLE_SOLUTION
 
 
 def check_end_conditions(config: EndConditionConfig) -> bool:

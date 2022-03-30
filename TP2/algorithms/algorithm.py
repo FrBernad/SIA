@@ -1,6 +1,6 @@
 from typing import Callable
 
-from algorithms.end_conditions import init_end_conditions, check_end_conditions, update_end_conditions
+from algorithms.end_conditions import init_end_conditions, check_end_conditions, update_end_conditions, Stats
 from utils.backpack import Population, Backpack
 from utils.config import Config
 
@@ -8,19 +8,20 @@ from utils.config import Config
 def genetic_algorithm(
         generation_zero: Population,
         backpack: Backpack,
+        fitness_function: Callable,
         couple_selection: Callable,
         crossover: Callable,
         mutation: Callable,
         selection: Callable,
         config: Config
-):
+) -> Stats:
     current_generation = generation_zero
-
     generation_children = set()
 
-    j = 0
+    stats = Stats(config.endConditionConfig, current_generation, backpack)
     init_end_conditions(config.endConditionConfig, current_generation)
 
+    j = 0
     while not check_end_conditions(config.endConditionConfig):
 
         if j % 100 == 0:
@@ -48,14 +49,22 @@ def genetic_algorithm(
 
         generation_children = set()
         update_end_conditions(config.endConditionConfig, current_generation, backpack)
-
-    print(f'Generation {j}')
-    print("Fitness-Benefit-Weight")
+        stats.update(config.endConditionConfig, current_generation, backpack)
 
     sol = sorted(current_generation,
                  key=lambda chromosome: backpack.calculate_weight(chromosome),
                  reverse=True
                  )
+
+    _print_solution(sol, j, backpack, config)
+
+    return stats
+
+
+def _print_solution(sol, j, backpack, config):
+    print(f'Generation {j}')
+    print("Fitness-Benefit-Weight")
+
     print(list(map(lambda chr: backpack.calculate_fitness(chr), sol)))
     print(list(map(lambda chr: backpack.calculate_benefits(chr), sol)))
     print(list(map(lambda chr: backpack.calculate_weight(chr), sol)))

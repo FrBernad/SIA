@@ -56,7 +56,7 @@ def main(data_file: str, config_file: str):
 
     first_generation = generate_random_population(backpack, config.initial_population_size)
 
-    genetic_algorithm(first_generation, backpack, config.couple_selection_method,
+    genetic_algorithm(first_generation, backpack, config.fitness_function, config.couple_selection_method,
                       config.crossover_method_config.method, config.mutation_method_config.method,
                       config.selection_method_config.method, config)
 
@@ -65,9 +65,9 @@ if __name__ == '__main__':
     config_file = CONFIG_FILE
     data_file = DATA_FILE
 
-    try:
-        main(data_file, config_file)
-    except OSError:
-        print("Error opening config file.")
-    except Exception as e:
-        print(e)
+    main(data_file, config_file)
+    # try:
+    # except OSError:
+    #     print("Error opening config file.")
+    # except Exception as e:
+    #     print(e)
