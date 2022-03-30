@@ -19,8 +19,6 @@ class EndConditionStats:
         self.generations_count = 0
         self.start_time = 0
         self.current_time = 0
-        self.a = []
-        # FIXME: SACAR
         self.fitness = {
             'consecutive': 0,
             'best': 0
@@ -38,10 +36,11 @@ from utils.config import EndConditionConfig
 class Stats:
     def __init__(self, config: EndConditionConfig, population: Population, backpack: Backpack):
         self.best_solutions: List[Chromosome] = []
-        self.update(config, population, backpack)
+        self.backpack = backpack
+        self.update(config, population)
 
-    def update(self, config: EndConditionConfig, generation: Population, backpack: Backpack):
-        self.best_solutions.append(max(generation, key=lambda chr: backpack.calculate_fitness(chr)))
+    def update(self, config: EndConditionConfig, generation: Population):
+        self.best_solutions.append(max(generation, key=lambda chr: self.backpack.calculate_fitness(chr)))
 
         if _generations_count_condition(config):
             self.end_condition = EndConditionType.GENERATIONS_COUNT
@@ -53,6 +52,17 @@ class Stats:
             self.end_condition = EndConditionType.FITNESS
         elif _acceptable_solution_condition(config):
             self.end_condition = EndConditionType.ACCEPTABLE_SOLUTION
+
+    def get_best_solutions_stats(self):
+        best_sols = []
+        for sol in self.best_solutions:
+            best_sols.append({
+                'genes': sol,
+                'fitness': self.backpack.calculate_fitness(sol),
+                'weight': self.backpack.calculate_weight(sol),
+                'benefit': self.backpack.calculate_benefit(sol)
+            })
+        return best_sols
 
 
 def check_end_conditions(config: EndConditionConfig) -> bool:
@@ -111,7 +121,6 @@ def update_end_conditions(config: EndConditionConfig, current_generation: Popula
     _update_structure(config, current_generation)
     config.stats.current_time = time.time()
     config.stats.is_acceptable = _check_acceptable_solution(config, backpack, current_generation)
-    config.stats.a.append(config.stats.fitness['best'])
 
 
 def _update_best_fitness(config: EndConditionConfig, backpack: Backpack, generation: Population):

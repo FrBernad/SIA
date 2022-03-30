@@ -12,7 +12,7 @@ config:
     generations_count: 50000 #generations_count>=500, defaults to 500
 
     #defines how many generations should be generated at least before ending via acceptable solution
-    acceptable_solution_generation_count: 50000 #acceptable_solution_generation_count>=500, defaults to 500
+    acceptable_solution_generation_count: 5000 #acceptable_solution_generation_count>=500, defaults to 500
 
     #used for time type, defines how many seconds should pass before ending
     time: 'time' #time>0, defaults to 5*60
@@ -66,7 +66,7 @@ config:
     # - tournament_selection
     # - boltzmann_selection
     # - truncated_selection
-    type: elitism_selection
+    type: truncated_selection
 
     #used for boltzmann_selection type, defines temperature function parameters
     boltzmann_selection:

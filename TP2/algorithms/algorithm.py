@@ -8,7 +8,6 @@ from utils.config import Config
 def genetic_algorithm(
         generation_zero: Population,
         backpack: Backpack,
-        fitness_function: Callable,
         couple_selection: Callable,
         crossover: Callable,
         mutation: Callable,
@@ -28,7 +27,7 @@ def genetic_algorithm(
             print(f'Generation {j}')
             print("Fitness-Benefit-Weight")
             print(list(map(lambda chr: backpack.calculate_fitness(chr), current_generation)))
-            print(list(map(lambda chr: backpack.calculate_benefits(chr), current_generation)))
+            print(list(map(lambda chr: backpack.calculate_benefit(chr), current_generation)))
             print(list(map(lambda chr: backpack.calculate_weight(chr), current_generation)))
             print('\n')
 
@@ -49,7 +48,7 @@ def genetic_algorithm(
 
         generation_children = set()
         update_end_conditions(config.endConditionConfig, current_generation, backpack)
-        stats.update(config.endConditionConfig, current_generation, backpack)
+        stats.update(config.endConditionConfig, current_generation)
 
     sol = sorted(current_generation,
                  key=lambda chromosome: backpack.calculate_weight(chromosome),
@@ -66,8 +65,7 @@ def _print_solution(sol, j, backpack, config):
     print("Fitness-Benefit-Weight")
 
     print(list(map(lambda chr: backpack.calculate_fitness(chr), sol)))
-    print(list(map(lambda chr: backpack.calculate_benefits(chr), sol)))
+    print(list(map(lambda chr: backpack.calculate_benefit(chr), sol)))
     print(list(map(lambda chr: backpack.calculate_weight(chr), sol)))
     print('\n')
 
-    print(config.endConditionConfig.stats.a[-config.endConditionConfig.fitness_consecutive_generations::])

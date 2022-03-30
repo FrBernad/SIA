@@ -27,7 +27,7 @@ class Backpack(object):
                 total_weight += e.weight
         return total_weight
 
-    def calculate_benefits(self, chromosome: Chromosome):
+    def calculate_benefit(self, chromosome: Chromosome):
         total_benefits = 0
         for p, e in zip(chromosome, self.elements):
             if p:
