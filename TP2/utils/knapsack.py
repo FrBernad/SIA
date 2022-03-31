@@ -1,7 +1,3 @@
-from random import randint
-from typing import Tuple, List
-
-
 class Knapsack(object):
 
     def __new__(cls, *args, **kwargs):

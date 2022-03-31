@@ -14,6 +14,12 @@ class Chromosome:
         self.weight = weight
         self.genes = genes
 
+    def __hash__(self):
+        return hash(self.genes)
+
+    def __eq__(self, other):
+        return isinstance(other, Chromosome) and self.genes == other.genes
+
 
 class ChromosomeFactory:
     def __init__(self, knapsack: Knapsack, fitness_function: Callable):

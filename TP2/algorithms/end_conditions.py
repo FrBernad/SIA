@@ -1,5 +1,6 @@
 import time
 from enum import Enum
+from statistics import mean
 from typing import List
 
 from utils.chromosome_factory import Chromosome, Population
@@ -37,13 +38,15 @@ from utils.config import EndConditionConfig
 class Stats:
     def __init__(self, config: EndConditionConfig, population: Population):
         self.best_solutions: List[Chromosome] = []
+        self.avg_fitness: List[float] = []
         self.generation_count = 0
         self.update(config, population)
 
     def update(self, config: EndConditionConfig, generation: Population):
 
-        if self.generation_count % 100 == 0:
+        if self.generation_count % 10 == 0:
             self.best_solutions.append(max(generation, key=lambda chr: chr.fitness))
+            self.avg_fitness.append(mean(list(map(lambda c: c.fitness, generation))))
 
         self.generation_count += 1
         if _generations_count_condition(config):

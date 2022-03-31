@@ -2,7 +2,6 @@ from typing import Callable
 
 from algorithms.end_conditions import init_end_conditions, check_end_conditions, update_end_conditions, Stats
 from utils.chromosome_factory import ChromosomeFactory, Population
-from utils.knapsack import Knapsack
 from utils.config import Config
 
 
@@ -24,13 +23,13 @@ def genetic_algorithm(
     j = 0
     while not check_end_conditions(config.end_condition_config):
 
-        if j % 100 == 0:
-            print(f'Generation {j}')
-            print("Fitness-Benefit-Weight")
-            print(list(map(lambda chr: chr.fitness, current_generation)))
-            print(list(map(lambda chr: chr.benefit, current_generation)))
-            print(list(map(lambda chr: chr.weight, current_generation)))
-            print('\n')
+        # if j % 100 == 0:
+        #     print(f'Generation {j}')
+        #     print("Fitness-Benefit-Weight")
+        #     print(list(map(lambda chr: chr.fitness, current_generation)))
+        #     print(list(map(lambda chr: chr.benefit, current_generation)))
+        #     print(list(map(lambda chr: chr.weight, current_generation)))
+        #     print('\n')
 
         j += 1
 

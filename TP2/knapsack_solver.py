@@ -1,14 +1,14 @@
 import csv
 import sys
-from typing import List, Callable
+from typing import List
 
 import yaml
 
 from algorithms.algorithm import genetic_algorithm
 from utils.argument_parser import parse_arguments
 from utils.chromosome_factory import ChromosomeFactory
-from utils.knapsack import Knapsack, Element
 from utils.config import Config
+from utils.knapsack import Knapsack, Element
 from utils.results import generate_solution_yaml
 
 DATA_FILE_DELIMITER = ' '
@@ -20,7 +20,7 @@ DATA_FILE_ELEMENTS_FIELDS = [BENEFIT, WEIGHT]
 DATA_FILE_KNAPSACK_FIELDS = [MAX_CAPACITY, MAX_WEIGHT]
 
 
-def _get_knapsack_data(data_file: str, fitness_function: Callable) -> Knapsack:
+def _get_knapsack_data(data_file: str) -> Knapsack:
     knapsack_elements = _get_knapsack_elements(data_file)
 
     with open(data_file) as df:
