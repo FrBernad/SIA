@@ -8,7 +8,7 @@ from algorithms.mutation import random_mutation
 from algorithms.selection import elitism_selection
 from knapsack_solver import _get_knapsack_data
 from utils.argument_parser import DEFAULT_DATA_FILE
-from utils.knapsack import generate_random_population
+from utils.chromosome_factory import ChromosomeFactory
 from utils.config import Config, EndConditionConfig, CrossoverMethodConfig, MutationMethodConfig, SelectionMethodConfig
 
 if __name__ == '__main__':
@@ -34,9 +34,11 @@ if __name__ == '__main__':
 
     knapsack = _get_knapsack_data("../" + DEFAULT_DATA_FILE, config.fitness_function)
 
-    first_generation = generate_random_population(knapsack, config.initial_population_size)
+    chromosome_factory = ChromosomeFactory(knapsack, config.fitness_function)
 
-    stats = genetic_algorithm(first_generation, knapsack, config.couple_selection_method,
+    first_generation = chromosome_factory.generate_random_population(config.initial_population_size)
+
+    stats = genetic_algorithm(first_generation, chromosome_factory, config.couple_selection_method,
                               config.crossover_method_config.method, config.mutation_method_config.method,
                               config.selection_method_config.method, config)
 
@@ -46,12 +48,12 @@ if __name__ == '__main__':
         go.Scatter(
             name='fitness',
             x=list(x),
-            y=list(map(lambda s: s['fitness'], stats.get_best_solutions_stats())),
+            y=list(map(lambda c: c.fitness, stats.best_solutions)),
         ),
         go.Scatter(
             name='weight',
             x=list(x),
-            y=list(map(lambda s: s['weight'], stats.get_best_solutions_stats())),
+            y=list(map(lambda c: c.weight, stats.best_solutions)),
         )
     ]
     )
