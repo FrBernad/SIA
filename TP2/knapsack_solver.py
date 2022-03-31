@@ -58,7 +58,7 @@ def _generate_solution_file(solution, sol_file):
 
 def main(data_file: str, config_file: str, output_file: str):
     config = _get_config(config_file)
-    knapsack = _get_knapsack_data(data_file, config.fitness_function)
+    knapsack = _get_knapsack_data(data_file)
 
     chromosome_factory = ChromosomeFactory(knapsack, config.fitness_function)
     first_generation = chromosome_factory.generate_random_population(config.initial_population_size)
