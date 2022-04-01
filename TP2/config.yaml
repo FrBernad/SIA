@@ -3,16 +3,16 @@
 config:
 
   #initial population size (n>5)
-  initial_population: 50
+  initial_population: 100
 
   #end condition to be used by the solver
   end_condition:
 
     #defines how many generations should be generated before ending
-    generations_count: 10500 #generations_count>=500, defaults to 500
+    generations_count: 5050 #generations_count>=500, defaults to 500
 
     #defines how many generations should be generated at least before ending via acceptable solution
-    acceptable_solution_generation_count: 10000 #acceptable_solution_generation_count>=500, defaults to 500
+    acceptable_solution_generation_count: 1000 #acceptable_solution_generation_count>=500, defaults to 500
 
     #used for time type, defines how many seconds should pass before ending
     time: 'time' #time>0, defaults to 5*60
@@ -22,13 +22,13 @@ config:
     structure:
       percentaje: 0.7 #(0<p<1), defaults to 0.8
       generations: 15 #generations>=10, defaults to 10
-      min_generations: 10000 #min_generations>=500, defaults to 500
+      min_generations: 1000 #min_generations>=500, defaults to 500
 
     #defines how many consecutive generations should be generated
     #with the same best fitness
     fitness:
       generations: 15 #generations>=10, defaults to 10
-      min_generations: 10000 #min_generations>=500, defaults to 500
+      min_generations: 1000 #min_generations>=500, defaults to 500
 
   #fitness function to be used by the solver
   #possible options are:
@@ -47,11 +47,11 @@ config:
     # - simple_crossover
     # - multiple_crossover
     # - uniform_crossover
-    type: uniform_crossover
+    type: multiple_crossover
 
     #used for truncated_selection type, defines how many chromosomes are discarded from the generation
     multiple_crossover:
-      n: 10 # 0<n<initial_population
+      n: 4 # 0<n<initial_population
 
   #mutation probability used for mutating chromosomes (0<p<1)
   mutation_probability: 0.005
@@ -70,17 +70,17 @@ config:
 
     #used for tournament_selection type, defines the selection threshold
     tournament_selection:
-      threshold: 0.9 # (0.5<threshold<1)
+      threshold: 0.7 # (0.5<threshold<1)
 
     #used for boltzmann_selection type, defines temperature function parameters
     boltzmann_selection:
-      Tc: '50' # 0<Tc<T0
-      T0: '100' # T0>Tc
-      k: '0.3' # k>0
+      Tc: 10 # 0<Tc<T0
+      T0: 200 # T0>Tc
+      k: 0.5 # k>0
 
     #used for truncated_selection type, defines how many chromosomes are discarded from the generation
     truncated_selection:
-      truncation_size: 10 # 0<truncation_size<=population_size
+      truncation_size: 50 # 0<truncation_size<=population_size
 
 
 ...

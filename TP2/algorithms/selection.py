@@ -55,9 +55,7 @@ def rank_selection(
 
     relative_prob = list(map(lambda f: f / total_fitness, rank_fitness))
 
-    accum_prob = _calculate_accumulated_probability(relative_prob)
-
-    return _accumulated_selection(sorted_population, selection_size, accum_prob)
+    return _accumulated_selection(sorted_population, selection_size, _calculate_accumulated_probability(relative_prob))
 
 
 def tournament_selection(
@@ -72,10 +70,10 @@ def tournament_selection(
     while len(new_population) < selection_size:
         couples = sample(tuple(population), k=DEFAULT_TOURNAMENT_CHROMOSOME_AMOUNT)
 
-        first_pick = _tournament_picker(couples[0], couples[1], u, random())
+        first_pick = _tournament_picker(couples[0], couples[1], u)
+        second_pick = _tournament_picker(couples[2], couples[3], u)
 
-        second_pick = _tournament_picker(couples[2], couples[3], u, random())
-        winner = _tournament_picker(first_pick, second_pick, u, random())
+        winner = _tournament_picker(first_pick, second_pick, u)
 
         new_population.add(winner)
 
@@ -87,21 +85,19 @@ def boltzmann_selection(
         generation_count: int,
         selection_size: int,
         config: SelectionMethodConfig
-):
+) -> Population:
     fitness = list(map(lambda chromosome: chromosome.fitness / 100, population))
     tc = config.Tc
     t0 = config.T0
     k = config.k
 
     temp: float = tc + (t0 - tc) * exp(-k * generation_count)
-    ve_num_values = list(map(lambda f: exp(f / temp), fitness))
+    exp_fitness_temp = list(map(lambda f: exp(f / temp), fitness))
+    exp_fitness_temp_sum = sum(exp_fitness_temp)
 
-    ve = list(map(lambda num: num / sum(ve_num_values[:ve_num_values.index(num) + 1]), ve_num_values))
-    total_ve = sum(ve)
+    ve = list(map(lambda eft: eft / exp_fitness_temp_sum, exp_fitness_temp))
 
-    relative_ve = list(map(lambda v: v / total_ve, ve))
-
-    return _accumulated_selection(population, selection_size, _calculate_accumulated_probability(relative_ve))
+    return _accumulated_selection(population, selection_size, _calculate_accumulated_probability(ve))
 
 
 def truncated_selection(
@@ -117,17 +113,19 @@ def truncated_selection(
     return sample(truncated_population, k=selection_size)
 
 
-def _tournament_picker(first: Chromosome, second: Chromosome, u: float, r: float) -> Chromosome:
+def _tournament_picker(first: Chromosome, second: Chromosome, u: float) -> Chromosome:
+    r = random()
+
     first_fitness = first.fitness
     second_fitness = second.fitness
 
     if r < u:
-        if max(first_fitness, second_fitness) == first_fitness:
+        if first_fitness > second_fitness:
             return first
         else:
             return second
     else:
-        if min(first_fitness, second_fitness) == first_fitness:
+        if first_fitness < second_fitness:
             return first
         else:
             return second

@@ -20,18 +20,7 @@ def genetic_algorithm(
     stats = Stats(config.end_condition_config, current_generation)
     init_end_conditions(config.end_condition_config, current_generation)
 
-    j = 0
     while not check_end_conditions(config.end_condition_config):
-
-        # if j % 100 == 0:
-        #     print(f'Generation {j}')
-        #     print("Fitness-Benefit-Weight")
-        #     print(list(map(lambda chr: chr.fitness, current_generation)))
-        #     print(list(map(lambda chr: chr.benefit, current_generation)))
-        #     print(list(map(lambda chr: chr.weight, current_generation)))
-        #     print('\n')
-
-        j += 1
 
         while len(generation_children) < config.initial_population_size:
             selected_couple = couple_selection(current_generation)
@@ -50,25 +39,8 @@ def genetic_algorithm(
                                        config.initial_population_size, config.selection_method_config
                                        )
 
-        generation_children.clear()
+        generation_children = set()
         update_end_conditions(config.end_condition_config, current_generation, chromosome_factory.knapsack)
         stats.update(config.end_condition_config, current_generation)
 
-    sol = sorted(current_generation,
-                 key=lambda chromosome: chromosome.weight,
-                 reverse=True
-                 )
-
-    _print_solution(sol, j)
-
     return stats
-
-
-def _print_solution(sol, j):
-    print(f'Generation {j}')
-    print("Fitness-Benefit-Weight")
-
-    print(list(map(lambda chr: chr.fitness, sol)))
-    print(list(map(lambda chr: chr.benefit, sol)))
-    print(list(map(lambda chr: chr.weight, sol)))
-    print('\n')

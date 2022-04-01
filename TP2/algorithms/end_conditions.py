@@ -39,14 +39,15 @@ class Stats:
     def __init__(self, config: EndConditionConfig, population: Population):
         self.best_solutions: List[Chromosome] = []
         self.avg_fitness: List[float] = []
+        self.worst_solutions: List[Chromosome] = []
         self.generation_count = 0
         self.update(config, population)
 
     def update(self, config: EndConditionConfig, generation: Population):
 
-        if self.generation_count % 10 == 0:
-            self.best_solutions.append(max(generation, key=lambda chr: chr.fitness))
-            self.avg_fitness.append(mean(list(map(lambda c: c.fitness, generation))))
+        self.best_solutions.append(max(generation, key=lambda chr: chr.fitness))
+        self.avg_fitness.append(mean(list(map(lambda c: c.fitness, generation))))
+        self.worst_solutions.append(min(generation, key=lambda chr: chr.fitness))
 
         self.generation_count += 1
         if _generations_count_condition(config):
@@ -74,34 +75,22 @@ def _fitness_condition(config: EndConditionConfig) -> bool:
     if config.stats.generations_count < config.fitness_min_generations:
         return False
 
-    condition = config.stats.fitness['consecutive'] >= config.fitness_consecutive_generations
-    if condition:
-        print('Fitness Condition')
-    return condition
+    return config.stats.fitness['consecutive'] >= config.fitness_consecutive_generations
 
 
 def _structure_condition(config: EndConditionConfig) -> bool:
     if config.stats.generations_count < config.structure_min_generations:
         return False
 
-    condition = config.stats.structure['consecutive'] >= config.structure_consecutive_generations
-    if condition:
-        print('Structure Condition')
-    return condition
+    return config.stats.structure['consecutive'] >= config.structure_consecutive_generations
 
 
 def _time_condition(config: EndConditionConfig) -> bool:
-    condition = (config.stats.current_time - config.stats.start_time) > config.time
-    if condition:
-        print('Time Condition')
-    return condition
+    return (config.stats.current_time - config.stats.start_time) > config.time
 
 
 def _generations_count_condition(config: EndConditionConfig) -> bool:
-    condition = config.stats.generations_count >= config.generations_count
-    if condition:
-        print('Generations Count Condition')
-    return condition
+    return config.stats.generations_count >= config.generations_count
 
 
 def init_end_conditions(config: EndConditionConfig, current_generation: Population):
@@ -143,7 +132,6 @@ def _check_acceptable_solution(config: EndConditionConfig, knapsack: Knapsack, g
         return False
     for chromosome in generation:
         if chromosome.weight < knapsack.max_weight:
-            print("Acceptable Condition")
             return True
 
     return False
