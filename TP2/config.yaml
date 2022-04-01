@@ -74,9 +74,9 @@ config:
 
     #used for boltzmann_selection type, defines temperature function parameters
     boltzmann_selection:
-      Tc: 10 # 0<Tc<T0
-      T0: 200 # T0>Tc
-      k: 0.5 # k>0
+      Tc: 20 # 0<Tc<T0
+      T0: 5000 # T0>Tc
+      k: 50 # k>0
 
     #used for truncated_selection type, defines how many chromosomes are discarded from the generation
     truncated_selection:

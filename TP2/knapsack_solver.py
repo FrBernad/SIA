@@ -77,6 +77,7 @@ def main(data_file: str, config_file: str, output_file: str):
 
     print('generating output file...')
     _generate_solution_file(generate_solution_yaml(stats, config), output_file)
+    print(f'\nSolution generated, find it inside {output_file} file')
 
 
 if __name__ == '__main__':
