@@ -113,6 +113,10 @@ config:
     # - boltzmann_selection
     # - truncated_selection
     type: 'type'
+    
+    #used for tournament_selection type, defines the selection threshold
+    tournament_selection:
+      threshold: 0.9 # (0.5<threshold<1)
 
     #used for boltzmann_selection type, defines temperature function parameters
     boltzmann_selection:

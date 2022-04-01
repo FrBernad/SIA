@@ -1,10 +1,11 @@
-from utils.knapsack import Knapsack, Chromosome
+from utils.chromosome_factory import Chromosome
+from utils.knapsack import Knapsack
 
 
-def benefit_weight_ratio(bp: Knapsack, c: Chromosome) -> float:
-    weight = bp.calculate_weight(c)
-    benefit = bp.calculate_benefit(c)
-    if weight > bp.max_weight:
+def benefit_weight_ratio(knapsack: Knapsack, c: Chromosome) -> float:
+    weight = c.weight
+    benefit = c.benefit
+    if weight > knapsack.max_weight:
         return 0 if not weight else round(benefit / weight, 2)
     return benefit
 

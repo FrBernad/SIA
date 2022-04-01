@@ -1,8 +1,8 @@
 from math import exp
-from random import sample, choices, uniform, random
+from random import sample, random
 from typing import List
 
-from utils.knapsack import Population, Knapsack, Chromosome
+from utils.chromosome_factory import Population, Chromosome
 from utils.config import SelectionMethodConfig
 
 DEFAULT_TOURNAMENT_CHROMOSOME_AMOUNT = 4
@@ -11,12 +11,11 @@ DEFAULT_TOURNAMENT_CHROMOSOME_AMOUNT = 4
 def elitism_selection(
         population: Population,
         generation_count: int,
-        knapsack: Knapsack,
         selection_size: int,
         config: SelectionMethodConfig
 ) -> Population:
     return sorted(population,
-                  key=lambda chromosome: knapsack.calculate_fitness(chromosome),
+                  key=lambda chromosome: chromosome.fitness,
                   reverse=True
                   )[0:selection_size]
 
@@ -24,58 +23,59 @@ def elitism_selection(
 def roulette_wheel_selection(
         population: Population,
         generation_count: int,
-        knapsack: Knapsack,
         selection_size: int,
         config: SelectionMethodConfig
 ) -> Population:
-    fitness = list(map(lambda chromosome: knapsack.calculate_fitness(chromosome), population))
+    fitness = list(map(lambda chromosome: chromosome.fitness, population))
     total_fitness = sum(fitness)
 
     relative_fitness = list(map(lambda f: f / total_fitness, fitness))
 
-    return _roulette_accumulated_selection(population, selection_size,
-                                           _calculate_accumulated_probability(relative_fitness))
+    return _accumulated_selection(population, selection_size,
+                                  _calculate_accumulated_probability(relative_fitness))
 
 
 def rank_selection(
         population: Population,
         generation_count: int,
-        knapsack: Knapsack,
         selection_size: int,
         config: SelectionMethodConfig
 ):
     sorted_population = sorted(population,
-                               key=lambda chromosome: knapsack.calculate_fitness(chromosome),
+                               key=lambda chromosome: chromosome.fitness,
                                reverse=True)
 
     population_len = len(population)
-    accum_prob = [1]
+    rank_fitness = []
 
     for i in range(population_len):
-        accum_prob.append((population_len - (i + 1)) / population_len)
+        rank_fitness.append((population_len - (i + 1)) / population_len)
 
-    # FIXME: esto esta raro hay q ver q suban el arreglo a slack
-    return _rank_accumulated_selection(sorted_population, selection_size, accum_prob)
+    total_fitness = sum(rank_fitness)
+
+    relative_prob = list(map(lambda f: f / total_fitness, rank_fitness))
+
+    accum_prob = _calculate_accumulated_probability(relative_prob)
+
+    return _accumulated_selection(sorted_population, selection_size, accum_prob)
 
 
 def tournament_selection(
         population: Population,
         generation_count: int,
-        knapsack: Knapsack,
         selection_size: int,
         config: SelectionMethodConfig
 ) -> Population:
     new_population = set()
 
+    u = config.threshold
     while len(new_population) < selection_size:
         couples = sample(tuple(population), k=DEFAULT_TOURNAMENT_CHROMOSOME_AMOUNT)
-        u = uniform(0, 1)
-        r = random()
 
-        first_pick = _tournament_picker(knapsack, couples[0], couples[1],u,r)
+        first_pick = _tournament_picker(couples[0], couples[1], u, random())
 
-        second_pick = _tournament_picker(knapsack, couples[2], couples[3],u,r)
-        winner = _tournament_picker(knapsack, first_pick, second_pick,u,r)
+        second_pick = _tournament_picker(couples[2], couples[3], u, random())
+        winner = _tournament_picker(first_pick, second_pick, u, random())
 
         new_population.add(winner)
 
@@ -85,11 +85,10 @@ def tournament_selection(
 def boltzmann_selection(
         population: Population,
         generation_count: int,
-        knapsack: Knapsack,
         selection_size: int,
         config: SelectionMethodConfig
 ):
-    fitness = list(map(lambda chromosome: knapsack.calculate_fitness(chromosome) / 100, population))
+    fitness = list(map(lambda chromosome: chromosome.fitness / 100, population))
     tc = config.Tc
     t0 = config.T0
     k = config.k
@@ -102,27 +101,25 @@ def boltzmann_selection(
 
     relative_ve = list(map(lambda v: v / total_ve, ve))
 
-    return _roulette_accumulated_selection(population, selection_size, _calculate_accumulated_probability(relative_ve))
+    return _accumulated_selection(population, selection_size, _calculate_accumulated_probability(relative_ve))
 
 
 def truncated_selection(
         population: Population,
         generation_count: int,
-        knapsack: Knapsack,
         selection_size: int,
         config: SelectionMethodConfig
 ) -> Population:
     truncated_population = sorted(population,
-                                  key=lambda chromosome: knapsack.calculate_fitness(chromosome),
-                                  )[config.truncation_size - 1::]
+                                  key=lambda chromosome: chromosome.fitness,
+                                  )[config.truncation_size::]
 
     return sample(truncated_population, k=selection_size)
 
 
-def _tournament_picker(knapsack: Knapsack, first: Chromosome, second: Chromosome, u: float, r:float) -> Chromosome:
-
-    first_fitness = knapsack.calculate_fitness(first)
-    second_fitness = knapsack.calculate_fitness(second)
+def _tournament_picker(first: Chromosome, second: Chromosome, u: float, r: float) -> Chromosome:
+    first_fitness = first.fitness
+    second_fitness = second.fitness
 
     if r < u:
         if max(first_fitness, second_fitness) == first_fitness:
@@ -136,7 +133,7 @@ def _tournament_picker(knapsack: Knapsack, first: Chromosome, second: Chromosome
             return second
 
 
-def _roulette_accumulated_selection(
+def _accumulated_selection(
         population: Population,
         selection_size: int,
         accum_probabilities: List[float]
@@ -162,24 +159,6 @@ def _calculate_accumulated_probability(probabilities: List[float]) -> List[float
         accum_values.append(accum)
 
     return accum_values
-
-
-def _rank_accumulated_selection(
-        population: Population,
-        selection_size: int,
-        accum_probabilities: List[float]
-) -> Population:
-    new_population = set()
-
-    while len(new_population) < selection_size:
-        r = random()
-
-        for i in range(len(population)):
-            if accum_probabilities[i] >= r > accum_probabilities[i + 1]:
-                new_population.add(population[i])
-                break
-
-    return list(new_population)
 
 
 SELECTION_METHODS = {

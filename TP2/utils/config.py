@@ -30,6 +30,7 @@ class SelectionMethodConfig:
         self.k = config.get('k')
         self.T0 = config.get('T0')
         self.Tc = config.get('Tc')
+        self.threshold = config.get('threshold')
 
 
 class MutationMethodConfig:
@@ -51,7 +52,8 @@ from algorithms.selection import SELECTION_METHODS
 
 
 class Config:
-    def __init__(self, config_dict, initial_population_size, end_condition_config: EndConditionConfig, fitness_function: Callable,
+    def __init__(self, config_dict, initial_population_size, end_condition_config: EndConditionConfig,
+                 fitness_function: Callable,
                  couple_selection_method: Callable, crossover_method_config: CrossoverMethodConfig,
                  mutation_method_config: MutationMethodConfig, selection_method_config: SelectionMethodConfig):
 
@@ -232,6 +234,20 @@ class Config:
         if not selection_method_type or selection_method_type not in SELECTION_METHODS.keys():
             raise InvalidSelectionMethod()
 
+        elif selection_method_type == 'tournament_selection':
+            try:
+                threshold = float(selection.get(selection_method_type).get('threshold'))
+
+                if threshold <= 0.5 or threshold >= 1:
+                    raise InvalidSelectionMethod()
+
+                return SelectionMethodConfig(
+                    SELECTION_METHODS.get(selection_method_type),
+                    threshold=threshold,
+                )
+            except (ValueError, TypeError):
+                raise InvalidSelectionMethod()
+
         if selection_method_type == 'truncated_selection':
             try:
                 truncation_size = int(selection.get(selection_method_type).get('truncation_size'))
@@ -264,6 +280,7 @@ class Config:
                 )
             except (ValueError, TypeError):
                 raise InvalidSelectionMethod()
+
 
         else:
             return SelectionMethodConfig(
