@@ -6,7 +6,7 @@ def benefit_weight_ratio(knapsack: Knapsack, c: Chromosome) -> float:
     weight = c.weight
     benefit = c.benefit
     if weight > knapsack.max_weight:
-        return benefit / weight
+        return (benefit / weight) * 10
     return benefit
 
 
