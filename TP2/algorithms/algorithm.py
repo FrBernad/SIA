@@ -49,7 +49,7 @@ def genetic_algorithm(
                                        config.initial_population_size, config.selection_method_config
                                        )
 
-        generation_children = set()
+        generation_children.clear()
         update_end_conditions(config.end_condition_config, current_generation, knapsack)
         stats.update(config.end_condition_config, current_generation)
 

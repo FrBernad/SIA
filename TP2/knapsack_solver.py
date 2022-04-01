@@ -68,9 +68,6 @@ def main(data_file: str, config_file: str, output_file: str):
 
     _generate_solution_file(generate_solution_yaml(stats, config), output_file)
 
-    print(stats.end_condition)
-    print(len(stats.get_best_solutions_stats()))
-
 
 if __name__ == '__main__':
     arguments = parse_arguments(sys.argv[1:])
@@ -83,5 +80,7 @@ if __name__ == '__main__':
         main(data_file, config_file, output_file)
     except OSError:
         print("Error opening config file.")
+    except KeyboardInterrupt:
+        print('Program interrupted by user.')
     except Exception as e:
         print(e)
