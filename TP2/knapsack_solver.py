@@ -57,16 +57,25 @@ def _generate_solution_file(solution, sol_file):
 
 
 def main(data_file: str, config_file: str, output_file: str):
+    print('--- WELCOME TO THE 0-1 KNAPSACK PROBLEM SOLVER ---')
+
+    print('parsing config file...')
     config = _get_config(config_file)
+
+    print('generating generation 0...')
     knapsack = _get_knapsack_data(data_file)
 
     chromosome_factory = ChromosomeFactory(knapsack, config.fitness_function)
     first_generation = chromosome_factory.generate_random_population(config.initial_population_size)
 
+    print('calculating solution...')
     stats = genetic_algorithm(first_generation, chromosome_factory, config.couple_selection_method,
                               config.crossover_method_config.method, config.mutation_method_config.method,
                               config.selection_method_config.method, config)
 
+    print('solution calculated...')
+
+    print('generating output file...')
     _generate_solution_file(generate_solution_yaml(stats, config), output_file)
 
 
