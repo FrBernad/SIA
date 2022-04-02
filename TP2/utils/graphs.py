@@ -79,7 +79,7 @@ def _generate_selection_graph(
                 x=0.8)
         }
     )
-
+    fig.update_xaxes(type="log")
     fig.show()
 
 
@@ -234,11 +234,11 @@ if __name__ == '__main__':
 
     chromosome_factory = ChromosomeFactory(_get_knapsack_data("../" + DEFAULT_DATA_FILE), benefit_weight_ratio)
 
-    # print('Generating individual plots')
-    # _generate_individual_plots(chromosome_factory, INITIAL_POPULATION_SIZES, MUTATION_PROBABILITY)
+    print('Generating individual plots')
+    _generate_individual_plots(chromosome_factory, INITIAL_POPULATION_SIZES, MUTATION_PROBABILITY)
 
-    print('Generating Boltzmann plots')
-    _generate_boltzman_plots(chromosome_factory, 100, 0.005)
+    # print('Generating Boltzmann plots')
+    # _generate_boltzman_plots(chromosome_factory, 100, 0.005)
 
     # print('Generating overlapped plots')
     # _generate_overlapped_plots(chromosome_factory, 100, 0.005)
