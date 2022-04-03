@@ -2,7 +2,7 @@ import plotly.graph_objs as go
 
 from algorithms.algorithm import genetic_algorithm
 from algorithms.couple_selection import COUPLE_SELECTION_METHODS, rand_couple_selection
-from algorithms.crossover import CROSSOVER_METHODS, multiple_crossover, simple_crossover
+from algorithms.crossover import CROSSOVER_METHODS, multiple_crossover, simple_crossover, uniform_crossover
 from algorithms.fitness_functions import benefit_weight_ratio
 from algorithms.mutation import random_mutation
 from algorithms.selection import SELECTION_METHODS, boltzmann_selection
@@ -148,9 +148,9 @@ def _generate_boltzman_plots(
 def _generate_overlapped_plots(
         chromosome_factory,
         initial_population_size,
-        mutation_probability
+        mutation_probability,
+        crossover_method
 ):
-    crossover_method = ['simple_crossover', simple_crossover]
     couple_selection_method = ['rand_couple_selection', rand_couple_selection]
     first_generation = chromosome_factory.generate_random_population(initial_population_size)
 
@@ -198,8 +198,6 @@ def _generate_overlapped_plots(
             #          f'{couple_selection_method[0].replace("_", " ").title()}',
             'xaxis_title': "Generation",
             'yaxis_title': "Fitness",
-            'width': 800,
-            'height': 800,
             'legend': dict(
                 bgcolor='rgba(0,0,0,0)',
                 y=0,
@@ -208,6 +206,7 @@ def _generate_overlapped_plots(
         }
     )
 
+    fig.update_xaxes(type="log")
     fig.show()
 
 
@@ -237,8 +236,20 @@ if __name__ == '__main__':
     # print('Generating individual plots')
     # _generate_individual_plots(chromosome_factory, INITIAL_POPULATION_SIZES, MUTATION_PROBABILITY)
 
-    print('Generating Boltzmann plots')
-    _generate_boltzman_plots(chromosome_factory, 100, 0.005)
+    # print('Generating Boltzmann plots')
+    # _generate_boltzman_plots(chromosome_factory, 100, 0.005)
 
     # print('Generating overlapped plots')
-    # _generate_overlapped_plots(chromosome_factory, 100, 0.005)
+    # _generate_overlapped_plots(chromosome_factory, 100, 0.005, ['simple_crossover', simple_crossover])
+    # _generate_overlapped_plots(chromosome_factory, 100, 0.005, ['multiple_crossover', multiple_crossover])
+    # _generate_overlapped_plots(chromosome_factory, 100, 0.005, ['uniform_crossover', uniform_crossover])
+
+    # print('Generating Mutation plots')
+    # _generate_mutation_plots(chromosome_factory, 100, [0.005, 0.05, 0.5])
+    #
+    # print('Generating Population plots')
+    # _generate_population_plots(chromosome_factory, [10, 50, 100], 0.005)
+
+    # print('Generating Couple Selection plots')
+    # _generate_population_plots(chromosome_factory, 100, 0.005)
+
