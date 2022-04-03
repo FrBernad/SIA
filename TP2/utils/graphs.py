@@ -48,7 +48,7 @@ def _generate_boltzmann_plots(
                         MutationMethodConfig(random_mutation, probability=mutation_probability),
                         SelectionMethodConfig(selection_method[1], k=s['k'], T0=s['T0'], Tc=s['Tc']))
 
-        print(f'Plotting k={s["k"]}, T0={s["T0"]}, Tc={s["Tc"]}')
+        print(f'\tPlotting k={s["k"]}, T0={s["T0"]}, Tc={s["Tc"]}')
 
         stats = genetic_algorithm(first_generation, chromosome_factory, config.couple_selection_method,
                                   config.crossover_method_config.method, config.mutation_method_config.method,
@@ -114,7 +114,7 @@ def _generate_truncated_plots(
                         MutationMethodConfig(random_mutation, probability=mutation_probability),
                         SelectionMethodConfig(selection_method[1], truncation_size=s))
 
-        print(f'Plotting truncation size {s}')
+        print(f'\tPlotting truncation size {s}')
 
         stats = genetic_algorithm(first_generation, chromosome_factory, config.couple_selection_method,
                                   config.crossover_method_config.method, config.mutation_method_config.method,
@@ -180,7 +180,7 @@ def _generate_tournament_plots(
                         MutationMethodConfig(random_mutation, probability=mutation_probability),
                         SelectionMethodConfig(selection_method[1], threshold=s))
 
-        print(f'Plotting threshold {s}')
+        print(f'\tPlotting threshold {s}')
 
         stats = genetic_algorithm(first_generation, chromosome_factory, config.couple_selection_method,
                                   config.crossover_method_config.method, config.mutation_method_config.method,
