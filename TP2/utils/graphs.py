@@ -469,7 +469,7 @@ def _generate_couple_plots(chromosome_factory, initial_population_size, mutation
     for selection_method in SELECTION_METHODS.items():
         fig = []
         for couple_selection_method in COUPLE_SELECTION_METHODS.items():
-            print(f'\tGenerating {selection_method} {couple_selection_method[1]} plot')
+            print(f'\tGenerating {selection_method[0]} {couple_selection_method[0]} plot')
 
             end_condition_config = EndConditionConfig(
                 generations_count=2000,
@@ -539,10 +539,10 @@ if __name__ == '__main__':
     # _generate_overlapped_plots(chromosome_factory, 100, 0.005, ['multiple_crossover', multiple_crossover])
     # _generate_overlapped_plots(chromosome_factory, 100, 0.005, ['uniform_crossover', uniform_crossover])
 
-    #print('Generating Population plots')
-    #_generate_population_plots(chromosome_factory)
+    # print('Generating Population plots')
+    # _generate_population_plots(chromosome_factory)
 
-    #
+
     # print('Generating Population plots')
     # _generate_population_plots(chromosome_factory, [10, 50, 100], 0.005)
 
