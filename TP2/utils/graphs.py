@@ -94,9 +94,9 @@ def _generate_boltzman_plots(
     first_generation = chromosome_factory.generate_random_population(initial_population_size)
 
     settings = [
-        dict(k=5, T0=100, Tc=10),
-        dict(k=5, T0=1000, Tc=10),
-        dict(k=5, T0=10000, Tc=10),
+        dict(k=0.1, T0=100, Tc=10),
+        dict(k=0.5, T0=100, Tc=10),
+        dict(k=100, T0=100, Tc=10),
     ]
 
     for s in settings:
@@ -123,12 +123,12 @@ def _generate_boltzman_plots(
                                   config.crossover_method_config.method, config.mutation_method_config.method,
                                   config.selection_method_config.method, config)
 
-        x = range(0, 200)
+        x = range(0, config.end_condition_config.generations_count)
 
         fig = go.Figure(
             go.Scatter(
                 x=list(x),
-                y=list(map(lambda c: c.fitness, stats.best_solutions))[0:200],
+                y=list(map(lambda c: c.fitness, stats.best_solutions)),
             ),
             {
                 'title': {
@@ -141,7 +141,7 @@ def _generate_boltzman_plots(
                 'height': 800
             }
         )
-
+        fig.update_xaxes(type="log")
         fig.show()
 
 
@@ -234,11 +234,11 @@ if __name__ == '__main__':
 
     chromosome_factory = ChromosomeFactory(_get_knapsack_data("../" + DEFAULT_DATA_FILE), benefit_weight_ratio)
 
-    print('Generating individual plots')
-    _generate_individual_plots(chromosome_factory, INITIAL_POPULATION_SIZES, MUTATION_PROBABILITY)
+    # print('Generating individual plots')
+    # _generate_individual_plots(chromosome_factory, INITIAL_POPULATION_SIZES, MUTATION_PROBABILITY)
 
-    # print('Generating Boltzmann plots')
-    # _generate_boltzman_plots(chromosome_factory, 100, 0.005)
+    print('Generating Boltzmann plots')
+    _generate_boltzman_plots(chromosome_factory, 100, 0.005)
 
     # print('Generating overlapped plots')
     # _generate_overlapped_plots(chromosome_factory, 100, 0.005)
