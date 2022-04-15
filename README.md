@@ -5,13 +5,13 @@
 
 # SIA TPs
 
-## TP1 - 3x3 SLIDER PUZZLE
+## [TP1 - 3x3 SLIDER PUZZLE](https://github.com/FrBernad/SIA/tree/main/TP1)
 
 This project aims to solve the 3x3 [slider puzzle](https://en.wikipedia.org/wiki/Sliding_puzzle) using 
 different informed and uninformed search algorithms. The problem consists of a combination puzzle that 
 challenges a player to slide pieces along certain routes to establish a certain end-configuration. 
 
-## TP2 - 0-1 KNAPSACK PROBLEM
+## [TP2 - 0-1 KNAPSACK PROBLEM](https://github.com/FrBernad/SIA/tree/main/TP2)
 
 This project aims to solve the [0-1 Knapsack Problem](https://en.wikipedia.org/wiki/Knapsack_problem) using Genetic
 Algorithms. The Knapsack Problem is an example of a combinatorial optimization problem, which seeks to maximize the
