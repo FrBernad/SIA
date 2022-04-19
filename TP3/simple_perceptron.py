@@ -1,7 +1,7 @@
-from numpy import zeros, copysign, dot, inner, subtract, array, arange
-from numpy import random
-from numpy.typing import NDArray
 import plotly.graph_objects as go
+from numpy import random
+from numpy import zeros, copysign, array, arange
+from numpy.typing import NDArray
 
 
 def simple_perceptron(
@@ -20,9 +20,9 @@ def simple_perceptron(
 
     while error > 0 and i < threshold:
         i_x = random.randint(0, p)
-        h = dot(x[i_x], w)
+        h = x[i_x] @ w
         o = copysign(1, h)
-        delta_w = dot(u, dot(y[i_x] - o, x[i_x]))
+        delta_w = u * (y[i_x] - o) * x[i_x]
         w += delta_w
         error = calculate_error(x, y, w, p)
         if error < error_min:
@@ -31,7 +31,7 @@ def simple_perceptron(
         i = i + 1
     print(i)
 
-    print(list(map(lambda xj: copysign(1, dot(xj, w)), x)))
+    print(list(map(lambda xj: copysign(1, xj @ w), x)))
     print(y)
     print(w_min)
 
@@ -78,7 +78,7 @@ def calculate_error(
 ):
     o = []
     for i in range(p):
-        o.append(abs(y[i] - copysign(1, dot(x[i], w))))
+        o.append(abs(y[i] - copysign(1, x[i] @ w)))
 
     return sum(o)
 
