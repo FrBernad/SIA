@@ -13,7 +13,7 @@ def simple_perceptron(
         threshold: int
 ):
     i = 0
-    w = zeros(dimension + 1)
+    w = array([0, *random.uniform(size=dimension)])
     w_min = w
     error = 1
     error_min = p * 2
@@ -22,6 +22,7 @@ def simple_perceptron(
         i_x = random.randint(0, p)
         h = x[i_x] @ w
         o = copysign(1, h)
+
         delta_w = u * (y[i_x] - o) * x[i_x]
         w += delta_w
         error = calculate_error(x, y, w, p)
@@ -45,7 +46,7 @@ def simple_perceptron(
             mode="markers",
             marker=dict(
                 size=15,
-                color=((x[:, 1] == 1) & (x[:, 2] == 1)).astype(int),
+                color=((x[:, 1] == 1) ^ (x[:, 2] == 1)).astype(int),
                 colorscale=[[0, 'red'], [1, 'black']]
             )
         )
@@ -85,6 +86,6 @@ def calculate_error(
 
 if __name__ == "__main__":
     x = array([[1, -1, 1], [1, 1, -1], [1, -1, -1], [1, 1, 1]])
-    y = array([-1, -1, -1, 1])
+    y = array([1, 1, -1, -1])
 
-    simple_perceptron(2, len(x), x, y, 0.01, 10000)
+    simple_perceptron(2, len(x), x, y, 0.01, 50000)
