@@ -1,7 +1,8 @@
+import math
 from typing import Callable
 
 import plotly.graph_objects as go
-from numpy import random, vectorize
+from numpy import random, vectorize, tanh
 from numpy import zeros, copysign, array, arange
 from numpy.typing import NDArray
 
@@ -23,19 +24,23 @@ def simple_perceptron_algorithm(
     error = 1
     error_min = examples_count * 2
 
+    y = tanh(y)
+
     while error > 0 and i < threshold:
         i_x = random.randint(0, examples_count)
         h = x @ w
         o = vectorize(activation_function)(h)
 
-        delta_w = delta_w_function(y[i_x], o[i_x], x[i_x], learning_rate)
+        delta_w = delta_w_function(y[i_x], o[i_x], x[i_x], h[i_x], learning_rate)
         w += delta_w
         error = calculate_error(y, o)
         if error < error_min:
             error_min = error
             w_min = w
         i = i + 1
-    # print(i)
+
+    print(i)
+    print(error_min)
     #
     # print(list(map(lambda xj: copysign(1, xj @ w), x)))
     # print(y)
@@ -80,4 +85,9 @@ def calculate_error(
         y: NDArray[float],
         o: NDArray[float],
 ):
-    return sum(abs(y - o))
+    error = 0
+    for i in range(len(y)):
+        if not math.isclose(y[i], o[i], abs_tol=0.01):
+            error += 1
+
+    return error
