@@ -1,4 +1,4 @@
-import time
+from datetime import datetime
 from math import exp
 from numpy import array, inf, zeros
 from numpy.typing import NDArray
@@ -58,46 +58,46 @@ def E(
 def main():
     x = zeros(11)
 
-    start_time = time.time()
+    start_time = datetime.now()
     CG = minimize(E, x, method="CG",
                   options={'gtol': 1e-05, 'norm': inf, 'eps': 1.4901161193847656e-08, 'maxiter': None,
                            'disp': False, 'return_all': False, 'finite_diff_rel_step': None}
                   )
 
     print(f'''
-GRADIENTE CONJUGADO\n
+METODO GRADIENTE CONJUGADO\n
     W = {CG.x[0:3]}
     w = {CG.x[3:6]}\n\t\t{CG.x[6:9]}
     w0 = {CG.x[9:11]}
     Error = {CG.fun}
-    Time = {time.time() - start_time}
+    Time = {datetime.now() - start_time}
     ''')
 
-    start_time = time.time()
+    start_time = datetime.now()
     BFGS = minimize(E, x, method='L-BFGS-B',
                     options={'disp': None, 'maxcor': 10, 'ftol': 2.220446049250313e-09, 'gtol': 1e-05, 'eps': 1e-08,
                              'maxfun': 15000, 'maxiter': 15000,
                              'iprint': - 1, 'maxls': 20, 'finite_diff_rel_step': None})
 
     print(f'''
-GRADIENTE DESCENDIENTE\n
+METODO GRADIENTE DESCENDIENTE\n
     W = {BFGS.x[0:3]}
     w = {BFGS.x[3:6]}\n\t\t{BFGS.x[6:9]}
     w0 = {BFGS.x[9:11]}
     Error = {BFGS.fun}
-    Time = {time.time() - start_time}
+    Time = {datetime.now() - start_time}
     ''')
 
-    start_time = time.time()
-    ADAM = adam(nd.Gradient(E), x, step_size=0.01)
+    start_time = datetime.now()
+    ADAM = adam(nd.Gradient(E), x, step_size=0.5)
 
     print(f'''
-ADAM\n
+METODO ADAM\n
     W = {ADAM[0:3]}
     w = {ADAM[3:6]}\n\t\t{ADAM[6:9]}
     w0 = {ADAM[9:11]}
     Error = {E(ADAM)}
-    Time = {time.time() - start_time}
+    Time = {datetime.now() - start_time}
     ''')
 
 
