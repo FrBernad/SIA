@@ -6,7 +6,9 @@
 
 # NON-LINEAR OPTIMIZATION EXERCISE SOLVER
 
-This project aims to optimize the parameters ***W***, ***w*** and ***w0*** for the error function defined in the [Assignment.pdf](./Assignment.pdf) file. It uses three non-linear optimization methods to get the results:
+This project aims to optimize the parameters ***W***, ***w*** and ***w0*** for the error function 
+defined in the [Assignment.pdf](./Assignment.pdf) file. 
+It uses three non-linear optimization methods to get the results:
 - [Gradient Descent Method](https://en.wikipedia.org/wiki/Gradient_descent)
 - [Conjugate Gradient Method](https://en.wikipedia.org/wiki/Conjugate_gradient_method)
 - [ADAM Method](https://en.wikipedia.org/wiki/Stochastic_gradient_descent#Adam)
