@@ -1,0 +1,32 @@
+---
+# --- Neural Network Config ---
+config:
+
+  # Input and Output file paths for the training values
+  training_values:
+    input:
+    output:
+
+  # Plot results
+  plot:
+
+  #Perceptron config
+  perceptron:
+    #Perceptron type
+    #Values:
+    # - simple
+    # - linear
+    # - non_linear
+    # - multilayer
+    type: non_linear
+
+    #Perceptron specific settings
+    settings:
+      #Global
+      learning_rate: 0.001
+      threshold: 1000
+
+      #Non-Linear
+      g: tanh
+      b: 0.01
+...

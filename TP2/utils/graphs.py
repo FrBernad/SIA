@@ -1,4 +1,4 @@
-import plotly.graph_objs as go
+import plotly.graph_objs as go  
 
 from algorithms.algorithm import genetic_algorithm
 from algorithms.couple_selection import COUPLE_SELECTION_METHODS, rand_couple_selection

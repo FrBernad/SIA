@@ -1,32 +1,40 @@
-from numpy import tanh, exp
+from typing import Optional
 
-NON_LINEAR_FUNCTIONS = {
-    "tanh": (
-        lambda b, h: tanh(b * h),
-        lambda b, h: b * (1 - tanh(b * h) ** 2)
-    ),
-    "logistic": (
-        lambda b, h: 1 / (1 + exp(-2 * b * h)),
-        lambda b, h: 2 * b * (1 / (1 + exp(-2 * b * h))) * (1 - (1 / (1 + exp(-2 * b * h))))
-    )
-}
+import yaml
+from pydantic import BaseModel, ValidationError
 
 DEFAULT_LEARNING_RATE = 0.001
-DEFAULT_THRESHOLD = 5000
+DEFAULT_THRESHOLD = 50000
+DEFAULT_TOLERANCE = 0.01
 
 
-class NeuronConfig:
+class PerceptronSettings(BaseModel):
+    learning_rate: float = DEFAULT_LEARNING_RATE
+    threshold: int = DEFAULT_THRESHOLD
+    g: Optional[str]
+    b: Optional[float]
 
-    def __init__(self,
-                 learning_rate: float = DEFAULT_LEARNING_RATE,
-                 threshold: int = DEFAULT_THRESHOLD,
-                 normalize: bool = False,
-                 g: str = None,
-                 b: float = 0.01
-                 ):
-        self.normalize = normalize
-        self.threshold = threshold
-        self.learning_rate = learning_rate
-        self.b = b
-        if g:
-            self.g = NON_LINEAR_FUNCTIONS[g]
+
+class PerceptronConfig(BaseModel):
+    type: str
+    settings: PerceptronSettings
+
+
+class TrainingValues(BaseModel):
+    input: Optional[str]
+    output: Optional[str]
+
+
+class Config(BaseModel):
+    training_values: Optional[TrainingValues] = dict()
+    plot: Optional[bool] = False
+    perceptron: PerceptronConfig
+
+
+def get_config(config_file: str) -> Config:
+    with open(config_file) as cf:
+        config = yaml.safe_load(cf)["config"]
+        try:
+            return Config(**config)
+        except ValidationError as e:
+            print(e.json())
