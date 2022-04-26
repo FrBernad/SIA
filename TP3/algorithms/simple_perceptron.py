@@ -1,13 +1,13 @@
 import math
 from typing import Callable
 
-import plotly.graph_objects as go
 from numpy import random, vectorize, tanh
-from numpy import zeros, copysign, array, arange
 from numpy.typing import NDArray
 
-
 # FIXME: ANIMAR W
+from utils.config import NeuronConfig
+
+
 def simple_perceptron_algorithm(
         x: NDArray[[float, float, float]],
         y: NDArray[float],
@@ -15,8 +15,7 @@ def simple_perceptron_algorithm(
         delta_w_function: Callable,
         dimension: int,
         examples_count: int,
-        learning_rate: float,
-        threshold: int
+        config: NeuronConfig
 ):
     i = 0
     w = random.uniform(size=dimension + 1)
@@ -24,14 +23,16 @@ def simple_perceptron_algorithm(
     error = 1
     error_min = examples_count * 2
 
-    y = tanh(y)
+    if config.normalize:
+        # y = vectorize(lambda v: 2 * (v - y.min()) / (y.max() - y.min()) - 1)(y)
+        y = tanh(y)
 
-    while error > 0 and i < threshold:
+    while error > 0 and i < config.threshold:
         i_x = random.randint(0, examples_count)
         h = x @ w
-        o = vectorize(activation_function)(h)
+        o = vectorize(activation_function)(h, config)
 
-        delta_w = delta_w_function(y[i_x], o[i_x], x[i_x], h[i_x], learning_rate)
+        delta_w = delta_w_function(y[i_x], o[i_x], x[i_x], h[i_x], config)
         w += delta_w
         error = calculate_error(y, o)
         if error < error_min:
@@ -41,7 +42,7 @@ def simple_perceptron_algorithm(
 
     print(i)
     print(error_min)
-    #
+
     # print(list(map(lambda xj: copysign(1, xj @ w), x)))
     # print(y)
     # print(w_min)
@@ -87,7 +88,7 @@ def calculate_error(
 ):
     error = 0
     for i in range(len(y)):
-        if not math.isclose(y[i], o[i], abs_tol=0.01):
+        if not math.isclose(y[i], o[i], abs_tol=0.1):
             error += 1
 
     return error
