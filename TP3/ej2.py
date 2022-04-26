@@ -1,6 +1,7 @@
 import sys
+import plotly.graph_objects as go
 
-from algorithms.perceptrons import NonLinearPerceptron, SimplePerceptron
+from algorithms.perceptrons import NonLinearPerceptron, SimplePerceptron, LinearPerceptron
 from utils.argument_parser import parse_arguments
 from utils.config import get_config
 from utils.parser_utils import parse_training_values, parse_output_values
@@ -19,13 +20,29 @@ def ej2(config_path: str):
     input_values = parse_training_values(training_values.input)
     output_values = parse_output_values(training_values.output)
 
-    if config.perceptron.type == "linear":
-        linear_perceptron = NonLinearPerceptron(input_values, output_values, config.perceptron.settings)
-        linear_perceptron.algorithm()
+    perceptron: SimplePerceptron
 
-    elif config.perceptron.type == "non_linear":
-        non_linear_perceptron = NonLinearPerceptron(input_values, output_values, config.perceptron.settings)
-        non_linear_perceptron.algorithm()
+    if config.perceptron.type == "linear":
+        perceptron = LinearPerceptron(input_values, output_values, config.perceptron.settings)
+        perceptron.train()
+
+    else:
+        perceptron = NonLinearPerceptron(input_values, output_values, config.perceptron.settings)
+        perceptron.train()
+
+    perceptron.predict(input_values, output_values, input_values[-1:], output_values[-1:])
+
+    if config.plot:
+        fig = go.Figure(
+            go.Scatter(
+                y=perceptron.plot['e'],
+            )
+            ,
+            {
+                'title': f'Error',
+            }
+        )
+        fig.show()
 
 
 if __name__ == "__main__":

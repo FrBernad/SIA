@@ -1,5 +1,8 @@
 import sys
 
+from numpy import arange
+import plotly.graph_objects as go
+
 from algorithms.perceptrons import NonLinearPerceptron, SimplePerceptron
 from utils.argument_parser import parse_arguments
 from utils.config import get_config
@@ -19,9 +22,54 @@ def ej1(config_path: str):
     input_values = parse_training_values(training_values.input)
     output_values = parse_output_values(training_values.output)
 
-    simple_perceptron = SimplePerceptron(input_values, output_values, config.perceptron.settings)
+    perceptron = SimplePerceptron(input_values, output_values, config.perceptron.settings)
 
-    simple_perceptron.algorithm()
+    perceptron.train()
+
+    if config.plot:
+        figures = [go.Scatter(
+            x=perceptron.x[:, 1],
+            y=perceptron.x[:, 2],
+            mode="markers",
+            marker=dict(
+                size=15,
+                color=
+                ((perceptron.x[:, 1] == 1) & (perceptron.x[:, 2] == 1)).astype(int) if "and" in training_values.input
+                else ((perceptron.x[:, 1] == 1) ^ (perceptron.x[:, 2] == 1)).astype(int),
+                colorscale=[[0, 'red'], [1, 'black']]
+            )
+        )]
+
+        # Generate hyperplane
+        x_vals = arange(-1, 2)
+        w = perceptron.w
+        figures.append(
+            go.Scatter(
+                x=x_vals,
+                y=(-w[1] / w[2]) * x_vals - w[0] / w[2],
+            )
+        )
+
+        fig = go.Figure(
+            figures
+            ,
+            {
+                'title': f'{"And" if "and" in training_values.input else "Xor"}',
+                'showlegend': False
+            }
+        )
+        fig.show()
+
+        fig = go.Figure(
+            go.Scatter(
+                y=perceptron.plot['e'],
+            )
+            ,
+            {
+                'title': f'Error',
+            }
+        )
+        fig.show()
 
 
 if __name__ == "__main__":

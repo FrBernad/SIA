@@ -8,7 +8,7 @@ config:
     output:
 
   # Plot results
-  plot:
+  plot: true
 
   #Perceptron config
   perceptron:
@@ -23,10 +23,10 @@ config:
     #Perceptron specific settings
     settings:
       #Global
-      learning_rate: 0.001
-      threshold: 1000
+      learning_rate: 0.1
+      threshold: 50000
 
       #Non-Linear
       g: tanh
-      b: 0.01
+      b: 0.1
 ...

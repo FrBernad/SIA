@@ -1,4 +1,5 @@
 from numpy import random, vectorize, tanh, exp, copysign
+from numpy.linalg import norm
 from numpy.typing import NDArray
 
 from utils.config import PerceptronConfig, PerceptronSettings
@@ -12,6 +13,11 @@ class SimplePerceptron:
             y: NDArray[float],
             config: PerceptronSettings
     ):
+        self.plot = dict(
+            e=[],
+            o=[]
+        )
+        self.w = None
         self.x = x
         self.y = y
         self.threshold = config.threshold
@@ -19,17 +25,17 @@ class SimplePerceptron:
         self.dimension = len(x[0]) - 1
         self.examples_count = len(x)
 
-    def algorithm(self):
+    def train(self):
 
         i = 0
-        w = random.uniform(size=self.dimension + 1)
+        w = random.uniform(-1, 1, size=self.dimension + 1)
         w_min = w
         error = 1
         error_min = self.examples_count * 2
-        errors = []
         o = []
 
         while error > 0 and i < self.threshold:
+
             i_x = random.randint(0, self.examples_count)
             h = self.x @ w
             o = vectorize(self.activation_function)(h)
@@ -37,22 +43,46 @@ class SimplePerceptron:
             delta_w = self.delta_w(self.y[i_x], o[i_x], self.x[i_x], h[i_x])
             w += delta_w
 
-            error = self.error(o)
-            if i % 10 == 0:
-                errors.append(error)
+            error = self.error(o, self.y)
+
+            self.plot['e'].append(error)
 
             if error < error_min:
                 error_min = error
                 w_min = w
+
             i = i + 1
 
-        errors.append(error)
+        self.plot['e'].append(error)
+        self.plot['o'] = o
+        self.w = w_min
 
-        print(i)
-        print(error_min)
+        # print(w_min)
+
+        # print(i)
+        # print(error_min)
+
+        # print(o)
+        # print(self.y)
+
+    def predict(
+            self,
+            x_d,
+            y_d,
+            x: NDArray[[float, float, float]],
+            y: NDArray[float],
+    ):
+        x = vectorize(lambda v: (v - x_d.min()) / (x_d.max() - x_d.min()) - 1)(x)
+        y = vectorize(lambda v: (v - y_d.min()) / (y_d.max() - y_d.min()) - 1)(y)
+
+        h = x @ self.w
+        o = vectorize(self.activation_function)(h)
+        error = self.error(o, y)
 
         print(o)
-        print(self.y)
+        print(y)
+
+        print(error)
 
     def activation_function(
             self,
@@ -71,9 +101,10 @@ class SimplePerceptron:
 
     def error(
             self,
-            o: NDArray[float]
+            o: NDArray[float],
+            y: NDArray[float]
     ):
-        return 0.5 * sum((self.y - o) ** 2)
+        return 0.5 * sum((y - o) ** 2)
 
 
 class LinearPerceptron(SimplePerceptron):
@@ -84,6 +115,11 @@ class LinearPerceptron(SimplePerceptron):
             config: PerceptronSettings
     ):
         super().__init__(x, y, config)
+        self.x = vectorize(lambda v: (v - x.min()) / (x.max() - x.min()) - 1)(x)
+        self.y = vectorize(lambda v: (v - y.min()) / (y.max() - y.min()) - 1)(y)
+
+        # self.x = x/norm(x)
+        # self.y = y/norm(y)
 
     def activation_function(
             self,
