@@ -7,6 +7,7 @@ from utils.config import get_config
 from utils.parser_utils import parse_training_values, parse_output_values
 
 
+# FIXME: ERROR > UN NUMERO NO  A 0
 def ej3(config_path: str):
     config = get_config(config_path)
 

@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from numpy import random, vectorize, tanh, exp, copysign, zeros
+from numpy import random, vectorize, tanh, exp, copysign, zeros, array
 from numpy.linalg import norm
 from numpy.random import rand, randint
 from numpy.typing import NDArray
@@ -118,7 +118,7 @@ class SimplePerceptron:
             o: NDArray[float],
             y: NDArray[float]
     ):
-        return 0.5 * sum((y - o) ** 2)
+        return 0.5 * sum((y - o) ** 2)[0]
 
 
 class LinearPerceptron(SimplePerceptron):
@@ -203,8 +203,8 @@ class MultiLayerPerceptron:
             layer = []
             for n in range(self.neurons_per_layer[i]):
                 perceptron = Perceptron(0, 0, 0, None)
-                if i != self.layers_count - 1:
-                    perceptron.w = rand(self.neurons_per_layer[i + 1] - 1)
+                if i != 0:
+                    perceptron.w = rand(self.neurons_per_layer[i - 1])
                 layer.append(perceptron)
             self.layers.append(layer)
 
@@ -223,14 +223,13 @@ class MultiLayerPerceptron:
             self.propagate()
             self.calculate_d_M(self.y[i_x])
             self.retro_propagate()
-            self.update_weights()
 
             error = self.error(self.x, self.y)
-
             self.plot['e'].append(error)
-
             if error < error_min:
                 error_min = error
+
+            self.update_weights()
 
             i = i + 1
 
@@ -247,11 +246,14 @@ class MultiLayerPerceptron:
         for m in range(1, self.layers_count):
             # Para cada neurona i del nivel m
             for i in range(self.neurons_per_layer[m]):
-                if i != 0 or m == self.layers_count - 1:
-                    # Para cada neurona de la capa de abajo le pido el peso que le llega a la neurona i
+                self.layers[m][i].h = 0
+                # Si no es el umbral
+                if i != self.neurons_per_layer[m] - 1 or m == self.layers_count - 1:
+                    # Para cada neurona de la capa de abajo sumo el peso
                     for j in range(self.neurons_per_layer[m - 1]):
-                        self.layers[m][i].h += self.layers[m - 1][j].w[i] * self.layers[m - 1][j].v
+                        self.layers[m][i].h += self.layers[m][i].w[j] * self.layers[m - 1][j].v
                     self.layers[m][i].v = self.g(self.b, self.layers[m][i].h)
+                # Si es el umbral
                 else:
                     self.layers[m][i].v = 1
 
@@ -259,31 +261,32 @@ class MultiLayerPerceptron:
         for i in range(self.neurons_per_layer[-1]):
             perceptron = self.layers[-1][i]
             perceptron.d = self.g_derivative(self.b, perceptron.h) * (y - perceptron.v)
+            # O:       Y
+            # Vj:  x1 x2 x0
+            # V0: e1  e2  e0
 
     def retro_propagate(self):
-
         # Por cada capa oculta de arriba para abajo
         for m in range(self.layers_count - 1, 1, -1):
             # Por cada neurona de la capa m-1
-            for i in range(self.neurons_per_layer[m - 1]):
+            for i in range(0, self.neurons_per_layer[m - 1] - 1):
                 aux = 0
-                # O:       Y
-                # Vj:  x0 x1 x2
-                # V0: e0  e1  e2
-                # Por cada conexion de la capa que le llega a la neurona
-                for j in range(len(self.layers[m - 1][i].w)):
-                    aux += self.layers[m - 1][i].w[j] * self.layers[m][j].d
+                # Por cada peso que sale de la neurona m-1
+                for j in range(self.neurons_per_layer[m]):
+                    aux += self.layers[m][j].w[i] * self.layers[m][j].d
 
                 self.layers[m - 1][i].d = self.g_derivative(self.b, self.layers[m - 1][i].h) * aux
 
     def update_weights(self):
         # para cada capa de abajo hacia arriba
-        for m in range(0, self.layers_count - 1):
+        for m in range(1, self.layers_count - 1):
             # para cada neurona i del nivel m
             for i in range(self.neurons_per_layer[m]):
-                # Para cada peso que sale de la neurona i
-                for j in range(len(self.layers[m][i].w)):
-                    self.layers[m][i].w[j] += self.learning_rate * self.layers[m + 1][j].d * self.layers[m][i].v
+                # Si no es el umbral
+                if i != self.neurons_per_layer[m] - 1 or m == self.layers_count - 1:
+                    # Para cada neurona de la capa m-1
+                    for j in range(self.neurons_per_layer[m - 1]):
+                        self.layers[m][i].w[j] += self.learning_rate * self.layers[m][i].d * self.layers[m - 1][j].v
 
     def error(
             self,
@@ -293,7 +296,7 @@ class MultiLayerPerceptron:
         o = []
         for value in x:
             o.append(self.predict(value))
-        return 0.5 * sum((y - o) ** 2)
+        return 0.5 * sum((y - o) ** 2)[0]
 
     def predict(self, x):
         layers = []
@@ -301,8 +304,8 @@ class MultiLayerPerceptron:
             layer = []
             for n in range(self.neurons_per_layer[i]):
                 perceptron = Perceptron(0, 0, 0, None)
-                if i != self.layers_count - 1:
-                    perceptron.w = rand(self.neurons_per_layer[i + 1])
+                if i != 0:
+                    perceptron.w = rand(self.neurons_per_layer[i - 1])
                 layer.append(perceptron)
             layers.append(layer)
 
@@ -311,11 +314,12 @@ class MultiLayerPerceptron:
 
         for m in range(1, self.layers_count):
             for i in range(self.neurons_per_layer[m]):
-                if i != 0:
+                layers[m][i].h = 0
+                if i != self.neurons_per_layer[m] - 1 or m == self.layers_count - 1:
                     for j in range(self.neurons_per_layer[m - 1]):
-                        layers[m][i].h += layers[m - 1][j].w[i] * layers[m - 1][j].v
+                        layers[m][i].h += layers[m][i].w[j] * layers[m - 1][j].v
                     layers[m][i].v = self.g(self.b, layers[m][i].h)
                 else:
                     layers[m][i].v = 1
 
-        return layers[-1][0].v
+        return array(list(map(lambda p: p.v, layers[-1])))

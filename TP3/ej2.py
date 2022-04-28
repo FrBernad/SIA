@@ -31,7 +31,7 @@ def ej2(config_path: str):
         perceptron.train()
 
     perceptron.predict(input_values, output_values, input_values[-1:], output_values[-1:])
-
+    # FIXME: VER DE REESCALAR EL ERROR
     if config.plot:
         fig = go.Figure(
             go.Scatter(
