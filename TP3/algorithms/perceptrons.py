@@ -1,8 +1,8 @@
-from typing import List
+from typing import List, Optional
 
 from numpy import random, vectorize, tanh, exp, copysign, zeros
 from numpy.linalg import norm
-from numpy.random import rand
+from numpy.random import rand, randint
 from numpy.typing import NDArray
 
 from utils.config import PerceptronConfig, PerceptronSettings
@@ -168,7 +168,7 @@ class NonLinearPerceptron(SimplePerceptron):
 
 
 class Perceptron:
-    def __init__(self, h: float, v: NDArray[float], d: float, w: NDArray[float]):
+    def __init__(self, h, v, d: float, w: Optional[NDArray[float]]):
         self.h = h
         self.v = v
         self.d = d
@@ -180,7 +180,7 @@ class MultiLayerPerceptron:
     def __init__(
             self,
             x: NDArray,
-            neurons_per_layer: List[int],
+            hidden_layers: List[int],
             y: NDArray,
             config: PerceptronSettings
     ):
@@ -195,20 +195,18 @@ class MultiLayerPerceptron:
         self.g_derivative = _FUNCTIONS[config.g][1]
         self.b = config.b
 
-        self.neurons_per_layer = neurons_per_layer
+        self.neurons_per_layer = [len(x[0]), *hidden_layers, 1]
+        self.layers_count = len(self.neurons_per_layer)
+        self.layers = []
 
-        self.w = []
-        self.d_j = []
-        self.v = []
-        self.h_m = []
-
-        for i in range(len(neurons_per_layer) - 1):
-            self.w.append(rand(neurons_per_layer[i + 1], neurons_per_layer[i]))
-            self.d_j.append(zeros(neurons_per_layer[i + 1]))
-            self.v.append(zeros(neurons_per_layer[i]))
-            self.h_m.append(zeros(neurons_per_layer[i + 1]))
-
-        self.v.append(zeros(neurons_per_layer[-1]))
+        for i in range(self.layers_count):
+            layer = []
+            for n in range(self.neurons_per_layer[i]):
+                perceptron = Perceptron(0, 0, 0, None)
+                if i != self.layers_count - 1:
+                    perceptron.w = rand(self.neurons_per_layer[i + 1] - 1)
+                layer.append(perceptron)
+            self.layers.append(layer)
 
         self.threshold = config.threshold
         self.learning_rate = config.learning_rate
@@ -219,65 +217,73 @@ class MultiLayerPerceptron:
         error = 1
         error_min = len(self.x) * 2
         while error > 0 and i < self.threshold:
-            for x_i in range(0, len(self.x)):
+            i_x = randint(0, len(self.x))
 
-                self.v[0] = self.x[x_i]
+            self.apply_first_layer(i_x)
+            self.propagate()
+            self.calculate_d_M(self.y[i_x])
+            self.retro_propagate()
+            self.update_weights()
 
-                self.propagate()
-                self.calculate_d_M(self.y[x_i])
-                self.retro_propagate()
-                self.update_weights()
+            error = self.error(self.x, self.y)
 
-                error = self.error(self.x, self.y)
+            self.plot['e'].append(error)
 
-                self.plot['e'].append(error)
+            if error < error_min:
+                error_min = error
 
-                if error < error_min:
-                    error_min = error
-
-                i = i + 1
+            i = i + 1
 
         self.plot['e'].append(error)
 
         print(error_min)
 
-    def predict(self, x):
-        for m in range(1, len(self.neurons_per_layer)):
-            h = self.w[m - 1] @ x
-            x = self.g(self.b, h)
-            if m != len(self.neurons_per_layer) - 1:
-                x[0] = 1
-
-        return x
+    def apply_first_layer(self, i_x):
+        for i in range(self.neurons_per_layer[0]):
+            self.layers[0][i].v = self.x[i_x][i]
 
     def propagate(self):
-        # Iterate layers and calculate Vm
-        for m in range(1, len(self.neurons_per_layer)):
-            self.h_m[m - 1] = self.w[m - 1] @ self.v[m - 1]
-            self.v[m] = self.g(self.b, self.h_m[m - 1])
-            # Make sure bias is maintained
-            if m != len(self.neurons_per_layer) - 1:
-                self.v[m][0] = 1
-
-        # O:       Y
-        # V:  x0 x1 x2
-        # E: e0  e1  e2
-
-        # w = [[2, 3], [1, 3]]
-        # w = [ [ [w00,w01,w02], [w10, w11, w12],[w20,w21,w22] ], [W10,W11,W12] ]
-        # V0 = [e0, e1, e2]
-        # V[1][0] = [e0*w10+e1*w11+e2*w12]
+        # Para cada capa oculta hasta la de salida
+        for m in range(1, self.layers_count):
+            # Para cada neurona i del nivel m
+            for i in range(self.neurons_per_layer[m]):
+                if i != 0 or m == self.layers_count - 1:
+                    # Para cada neurona de la capa de abajo le pido el peso que le llega a la neurona i
+                    for j in range(self.neurons_per_layer[m - 1]):
+                        self.layers[m][i].h += self.layers[m - 1][j].w[i] * self.layers[m - 1][j].v
+                    self.layers[m][i].v = self.g(self.b, self.layers[m][i].h)
+                else:
+                    self.layers[m][i].v = 1
 
     def calculate_d_M(self, y):
-        self.d_j[-1] = self.g_derivative(self.b, self.h_m[-1]) * (y - self.v[-1])
+        for i in range(self.neurons_per_layer[-1]):
+            perceptron = self.layers[-1][i]
+            perceptron.d = self.g_derivative(self.b, perceptron.h) * (y - perceptron.v)
 
     def retro_propagate(self):
-        for m in range(len(self.h_m) - 1, 0, -1):
-            self.d_j[m - 1] = self.g_derivative(self.b, self.w[m].T @ self.d_j[m])
+
+        # Por cada capa oculta de arriba para abajo
+        for m in range(self.layers_count - 1, 1, -1):
+            # Por cada neurona de la capa m-1
+            for i in range(self.neurons_per_layer[m - 1]):
+                aux = 0
+                # O:       Y
+                # Vj:  x0 x1 x2
+                # V0: e0  e1  e2
+                # Por cada conexion de la capa que le llega a la neurona
+                for j in range(len(self.layers[m - 1][i].w)):
+                    aux += self.layers[m - 1][i].w[j] * self.layers[m][j].d
+
+                self.layers[m - 1][i].d = self.g_derivative(self.b, self.layers[m - 1][i].h) * aux
 
     def update_weights(self):
-        for m in range(1, len(self.neurons_per_layer)):
-            self.w[m - 1] += self.learning_rate * self.d_j[m - 1] * self.v[m]
+        # para cada capa de abajo hacia arriba
+        for m in range(0, self.layers_count - 1):
+            # para cada neurona i del nivel m
+            for i in range(self.neurons_per_layer[m]):
+                # Para cada peso que sale de la neurona i
+                for j in range(len(self.layers[m][i].w)):
+                    self.layers[m][i].w[j] += self.learning_rate * self.layers[m + 1][j].d * self.layers[m][i].v
 
     def error(
             self,
@@ -286,6 +292,30 @@ class MultiLayerPerceptron:
     ):
         o = []
         for value in x:
-            o.append(*self.predict(value))
-
+            o.append(self.predict(value))
         return 0.5 * sum((y - o) ** 2)
+
+    def predict(self, x):
+        layers = []
+        for i in range(self.layers_count):
+            layer = []
+            for n in range(self.neurons_per_layer[i]):
+                perceptron = Perceptron(0, 0, 0, None)
+                if i != self.layers_count - 1:
+                    perceptron.w = rand(self.neurons_per_layer[i + 1])
+                layer.append(perceptron)
+            layers.append(layer)
+
+        for i in range(self.neurons_per_layer[0]):
+            layers[0][i].v = x[i]
+
+        for m in range(1, self.layers_count):
+            for i in range(self.neurons_per_layer[m]):
+                if i != 0:
+                    for j in range(self.neurons_per_layer[m - 1]):
+                        layers[m][i].h += layers[m - 1][j].w[i] * layers[m - 1][j].v
+                    layers[m][i].v = self.g(self.b, layers[m][i].h)
+                else:
+                    layers[m][i].v = 1
+
+        return layers[-1][0].v

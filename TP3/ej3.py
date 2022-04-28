@@ -20,7 +20,7 @@ def ej3(config_path: str):
     input_values = parse_training_values(training_values.input)
     output_values = parse_output_values(training_values.output)
 
-    perceptron = MultiLayerPerceptron(input_values, [3, 3, 1], output_values, config.perceptron.settings)
+    perceptron = MultiLayerPerceptron(input_values, [3], output_values, config.perceptron.settings)
     perceptron.train()
 
     if config.plot:
@@ -37,19 +37,18 @@ def ej3(config_path: str):
 
 
 if __name__ == "__main__":
-
     arguments = parse_arguments(sys.argv[1:])
 
     config_file = arguments['config_file']
 
-    try:
-        ej3(config_file)
-    except FileNotFoundError as e:
-        print("File not found")
-        print(e)
-    except OSError:
-        print("Error occurred.")
-    except KeyboardInterrupt:
-        print('Program interrupted by user.')
-    except Exception as e:
-        print(e)
+    # try:
+    ej3(config_file)
+    # except FileNotFoundError as e:
+    #     print("File not found")
+    #     print(e)
+    # except OSError:
+    #     print("Error occurred.")
+    # except KeyboardInterrupt:
+    #     print('Program interrupted by user.')
+    # except Exception as e:
+    #     print(e)
