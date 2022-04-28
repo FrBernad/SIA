@@ -1,11 +1,10 @@
 from typing import List, Optional
 
-from numpy import random, vectorize, tanh, exp, copysign, zeros, array
-from numpy.linalg import norm
-from numpy.random import rand, randint
+from numpy import random, vectorize, tanh, exp, copysign
+from numpy.random import randint
 from numpy.typing import NDArray
 
-from utils.config import PerceptronConfig, PerceptronSettings
+from utils.config import PerceptronSettings
 
 _FUNCTIONS = {
     "tanh": (
@@ -34,7 +33,8 @@ class SimplePerceptron:
         self.w = None
         self.x = x
         self.y = y
-        self.threshold = config.threshold
+        self.min_iter = config.min_iter
+        self.min_error = config.min_error
         self.learning_rate = config.learning_rate
         self.dimension = len(x[0]) - 1
         self.examples_count = len(x)
@@ -48,7 +48,7 @@ class SimplePerceptron:
         error_min = self.examples_count * 2
         o = []
 
-        while error > 0 and i < self.threshold:
+        while error > self.min_error and i < self.min_iter:
 
             i_x = random.randint(0, self.examples_count)
             h = self.x @ w
@@ -71,13 +71,7 @@ class SimplePerceptron:
         self.plot['o'] = o
         self.w = w_min
 
-        # print(w_min)
-
-        # print(i)
         print(error_min)
-
-        # print(o)
-        # print(self.y)
 
     def predict(
             self,
@@ -92,7 +86,6 @@ class SimplePerceptron:
         h = x @ self.w
         o = vectorize(self.activation_function)(h)
         error = self.error(o, y)
-
         print(o)
         print(y)
 
@@ -118,7 +111,7 @@ class SimplePerceptron:
             o: NDArray[float],
             y: NDArray[float]
     ):
-        return 0.5 * sum((y - o) ** 2)[0]
+        return 0.5 * sum((y - o) ** 2)
 
 
 class LinearPerceptron(SimplePerceptron):
@@ -202,13 +195,17 @@ class MultiLayerPerceptron:
         for i in range(self.layers_count):
             layer = []
             for n in range(self.neurons_per_layer[i]):
-                perceptron = Perceptron(0, 0, 0, None)
-                if i != 0:
-                    perceptron.w = rand(self.neurons_per_layer[i - 1])
+                perceptron = Perceptron(None, None, None, None)
+                if i != 0 and (n != self.neurons_per_layer[i] - 1 or i == self.layers_count - 1):
+                    perceptron.w = random.uniform(-1, 1, size=self.neurons_per_layer[i - 1])
+                    perceptron.v = 0
+                    perceptron.d = 0
+                    perceptron.h = 0
                 layer.append(perceptron)
             self.layers.append(layer)
 
-        self.threshold = config.threshold
+        self.min_iter = config.min_iter
+        self.min_error = config.min_error
         self.learning_rate = config.learning_rate
 
     def train(self):
@@ -216,7 +213,7 @@ class MultiLayerPerceptron:
         i = 0
         error = 1
         error_min = len(self.x) * 2
-        while error > 0 and i < self.threshold:
+        while error > self.min_error and i < self.min_iter:
             i_x = randint(0, len(self.x))
 
             self.apply_first_layer(i_x)
@@ -224,7 +221,7 @@ class MultiLayerPerceptron:
             self.calculate_d_M(self.y[i_x])
             self.retro_propagate()
 
-            error = self.error(self.x, self.y)
+            error = self.calculate_error(self.x, self.y)
             self.plot['e'].append(error)
             if error < error_min:
                 error_min = error
@@ -232,6 +229,10 @@ class MultiLayerPerceptron:
             self.update_weights()
 
             i = i + 1
+
+        o = []
+        for value in self.x:
+            o.append(self.predict(value))
 
         self.plot['e'].append(error)
 
@@ -247,7 +248,7 @@ class MultiLayerPerceptron:
             # Para cada neurona i del nivel m
             for i in range(self.neurons_per_layer[m]):
                 self.layers[m][i].h = 0
-                # Si no es el umbral
+                # Si no es el umbral o la ultima capa
                 if i != self.neurons_per_layer[m] - 1 or m == self.layers_count - 1:
                     # Para cada neurona de la capa de abajo sumo el peso
                     for j in range(self.neurons_per_layer[m - 1]):
@@ -279,16 +280,15 @@ class MultiLayerPerceptron:
 
     def update_weights(self):
         # para cada capa de abajo hacia arriba
-        for m in range(1, self.layers_count - 1):
+        for m in range(1, self.layers_count):
             # para cada neurona i del nivel m
             for i in range(self.neurons_per_layer[m]):
-                # Si no es el umbral
+                # Para cada neurona de la capa m-1
                 if i != self.neurons_per_layer[m] - 1 or m == self.layers_count - 1:
-                    # Para cada neurona de la capa m-1
                     for j in range(self.neurons_per_layer[m - 1]):
                         self.layers[m][i].w[j] += self.learning_rate * self.layers[m][i].d * self.layers[m - 1][j].v
 
-    def error(
+    def calculate_error(
             self,
             x: NDArray[float],
             y: NDArray[float]
@@ -296,16 +296,19 @@ class MultiLayerPerceptron:
         o = []
         for value in x:
             o.append(self.predict(value))
-        return 0.5 * sum((y - o) ** 2)[0]
+        return 0.5 * sum((y - o) ** 2)
 
     def predict(self, x):
         layers = []
+
         for i in range(self.layers_count):
             layer = []
             for n in range(self.neurons_per_layer[i]):
-                perceptron = Perceptron(0, 0, 0, None)
-                if i != 0:
-                    perceptron.w = rand(self.neurons_per_layer[i - 1])
+                perceptron = Perceptron(None, None, None, None)
+                if i != 0 and (n != self.neurons_per_layer[i] - 1 or i == self.layers_count - 1):
+                    perceptron.v = 0
+                    perceptron.d = 0
+                    perceptron.h = 0
                 layer.append(perceptron)
             layers.append(layer)
 
@@ -314,12 +317,11 @@ class MultiLayerPerceptron:
 
         for m in range(1, self.layers_count):
             for i in range(self.neurons_per_layer[m]):
-                layers[m][i].h = 0
                 if i != self.neurons_per_layer[m] - 1 or m == self.layers_count - 1:
                     for j in range(self.neurons_per_layer[m - 1]):
-                        layers[m][i].h += layers[m][i].w[j] * layers[m - 1][j].v
+                        layers[m][i].h += self.layers[m][i].w[j] * layers[m - 1][j].v
                     layers[m][i].v = self.g(self.b, layers[m][i].h)
                 else:
                     layers[m][i].v = 1
 
-        return array(list(map(lambda p: p.v, layers[-1])))
+        return layers[-1][0].v

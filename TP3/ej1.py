@@ -1,9 +1,9 @@
 import sys
 
-from numpy import arange
 import plotly.graph_objects as go
+from numpy import arange
 
-from algorithms.perceptrons import NonLinearPerceptron, SimplePerceptron
+from algorithms.perceptrons import SimplePerceptron
 from utils.argument_parser import parse_arguments
 from utils.config import get_config
 from utils.parser_utils import parse_training_values, parse_output_values
@@ -28,14 +28,14 @@ def ej1(config_path: str):
 
     if config.plot:
         figures = [go.Scatter(
-            x=perceptron.x[:, 1],
-            y=perceptron.x[:, 2],
+            x=perceptron.x[:, 0],
+            y=perceptron.x[:, 1],
             mode="markers",
             marker=dict(
                 size=15,
                 color=
-                ((perceptron.x[:, 1] == 1) & (perceptron.x[:, 2] == 1)).astype(int) if "and" in training_values.input
-                else ((perceptron.x[:, 1] == 1) ^ (perceptron.x[:, 2] == 1)).astype(int),
+                ((perceptron.x[:, 0] == 1) & (perceptron.x[:, 1] == 1)).astype(int) if "and" in training_values.input
+                else ((perceptron.x[:, 0] == 1) ^ (perceptron.x[:, 1] == 1)).astype(int),
                 colorscale=[[0, 'red'], [1, 'black']]
             )
         )]
@@ -46,7 +46,7 @@ def ej1(config_path: str):
         figures.append(
             go.Scatter(
                 x=x_vals,
-                y=(-w[1] / w[2]) * x_vals - w[0] / w[2],
+                y=(-w[0] / w[1]) * x_vals - w[2] / w[1],
             )
         )
 

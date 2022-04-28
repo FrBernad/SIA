@@ -1,7 +1,8 @@
 import sys
+
 import plotly.graph_objects as go
 
-from algorithms.perceptrons import NonLinearPerceptron, SimplePerceptron, LinearPerceptron, MultiLayerPerceptron
+from algorithms.perceptrons import MultiLayerPerceptron
 from utils.argument_parser import parse_arguments
 from utils.config import get_config
 from utils.parser_utils import parse_training_values, parse_output_values

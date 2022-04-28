@@ -1,4 +1,5 @@
 import sys
+
 import plotly.graph_objects as go
 
 from algorithms.perceptrons import NonLinearPerceptron, SimplePerceptron, LinearPerceptron
@@ -30,7 +31,7 @@ def ej2(config_path: str):
         perceptron = NonLinearPerceptron(input_values, output_values, config.perceptron.settings)
         perceptron.train()
 
-    perceptron.predict(input_values, output_values, input_values[-1:], output_values[-1:])
+    # perceptron.predict(input_values, output_values, input_values[-1:], output_values[-1:])
     # FIXME: VER DE REESCALAR EL ERROR
     if config.plot:
         fig = go.Figure(
@@ -51,14 +52,14 @@ if __name__ == "__main__":
 
     config_file = arguments['config_file']
 
-    try:
-        ej2(config_file)
-    except FileNotFoundError as e:
-        print("File not found")
-        print(e)
-    except OSError:
-        print("Error occurred.")
-    except KeyboardInterrupt:
-        print('Program interrupted by user.')
-    except Exception as e:
-        print(e)
+    # try:
+    ej2(config_file)
+    # except FileNotFoundError as e:
+    #     print("File not found")
+    #     print(e)
+    # except OSError:
+    #     print("Error occurred.")
+    # except KeyboardInterrupt:
+    #     print('Program interrupted by user.')
+    # except Exception as e:
+    #     print(e)
