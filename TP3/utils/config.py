@@ -5,14 +5,14 @@ from pydantic import BaseModel, ValidationError
 
 DEFAULT_LEARNING_RATE = 0.001
 DEFAULT_MIN_ITER = 50000
-DEFAULT_MIN_ERROR = 50000
+DEFAULT_MIN_ERROR = 0.01
 DEFAULT_TOLERANCE = 0.01
 
 
 class PerceptronSettings(BaseModel):
     learning_rate: float = DEFAULT_LEARNING_RATE
+    min_error: float = DEFAULT_MIN_ERROR
     min_iter: int = DEFAULT_MIN_ITER
-    min_error: int = DEFAULT_MIN_ERROR
     g: Optional[str]
     b: Optional[float]
 

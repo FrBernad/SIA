@@ -270,7 +270,7 @@ class MultiLayerPerceptron:
         # Por cada capa oculta de arriba para abajo
         for m in range(self.layers_count - 1, 1, -1):
             # Por cada neurona de la capa m-1
-            for i in range(0, self.neurons_per_layer[m - 1] - 1):
+            for i in range(self.neurons_per_layer[m - 1] - 1):
                 aux = 0
                 # Por cada peso que sale de la neurona m-1
                 for j in range(self.neurons_per_layer[m]):
