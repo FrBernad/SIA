@@ -6,8 +6,10 @@ config:
   training_values:
     input: training_values/ej3-2-input.txt
     output: training_values/ej3-3-output.txt
-    #    input: training_values/ej1-xor-input.txt
-    #    output: training_values/ej1-xor-output.txt
+  #    input: training_values/ej1-xor-input.txt
+  #    output: training_values/ej1-xor-output.txt
+  #    input: training_values/ej2-linear-input.txt
+  #    output: training_values/ej2-linear-output.txt
   #    input:
   #    output:
 
@@ -22,17 +24,17 @@ config:
     # - linear
     # - non_linear
     # - multilayer
-    type: non_linear
+    type: multilayer
 
     #Perceptron specific settings
     settings:
       #Global
       learning_rate: 0.01
-      min_error: 0.01
-      min_iter: 60000
+      min_error: 0.001
+      min_iter: 80000
       mutation_probability: 0.02
 
       #Non-Linear
       g: tanh
-      b: 2
+      b: 3
 ...

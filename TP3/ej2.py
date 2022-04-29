@@ -1,5 +1,7 @@
+import random
 import sys
 
+import numpy
 import plotly.graph_objects as go
 
 from algorithms.perceptrons import NonLinearPerceptron, SimplePerceptron, LinearPerceptron
@@ -31,35 +33,64 @@ def ej2(config_path: str):
         perceptron = NonLinearPerceptron(input_values, output_values, config.perceptron.settings)
         perceptron.train()
 
-    # perceptron.predict(input_values, output_values, input_values[-1:], output_values[-1:])
     # FIXME: VER DE REESCALAR EL ERROR
     if config.plot:
-        fig = go.Figure(
-            go.Scatter(
-                y=perceptron.plot['e'],
+        if perceptron.normalize:
+            fig = go.Figure(
+                go.Scatter(
+                    y=perceptron.plot['e_normalized'],
+                )
+                ,
+                {
+                    'title': f'Error Normalized',
+                }
             )
-            ,
-            {
-                'title': f'Error',
-            }
-        )
-        fig.show()
+            fig.show()
+
+            fig = go.Figure(
+                go.Scatter(
+                    y=perceptron.plot['e_denormalized'],
+                )
+                ,
+                {
+                    'title': f'Error Denormalized',
+                }
+            )
+            fig.show()
+        else:
+            fig = go.Figure(
+                go.Scatter(
+                    y=perceptron.plot['e'],
+                )
+                ,
+                {
+                    'title': f'Error',
+                }
+            )
+            fig.show()
 
 
 if __name__ == "__main__":
-
     arguments = parse_arguments(sys.argv[1:])
 
     config_file = arguments['config_file']
 
-    # try:
-    ej2(config_file)
-    # except FileNotFoundError as e:
-    #     print("File not found")
-    #     print(e)
-    # except OSError:
-    #     print("Error occurred.")
-    # except KeyboardInterrupt:
-    #     print('Program interrupted by user.')
-    # except Exception as e:
-    #     print(e)
+    try:
+        ej2(config_file)
+    except FileNotFoundError as e:
+        print("File not found")
+        print(e)
+    except OSError:
+        print("Error occurred.")
+    except KeyboardInterrupt:
+        print('Program interrupted by user.')
+    except Exception as e:
+        print(e)
+
+    # x = []
+    # y = []
+    # for i in range(200):
+    #     x.append(i)
+    #     y.append(2 * i)
+    # print('\n'.join(numpy.array(x).__str__().split()))
+    # print('\n'.join(numpy.array(y).__str__().split()))

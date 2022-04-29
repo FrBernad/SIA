@@ -24,12 +24,22 @@ class SimplePerceptron:
             self,
             x: NDArray[[float, float, float]],
             y: NDArray[float],
-            config: PerceptronSettings
+            config: PerceptronSettings,
+            normalize: bool = False
     ):
         self.plot = dict(
             e=[],
+            e_normalized=[],
+            e_denormalized=[],
             o=[]
         )
+        self.y_max = y.max()
+        self.y_min = y.min()
+
+        if normalize:
+            self.y_denormalized = y
+            y = vectorize(lambda v: 2 * (v - y.min()) / (y.max() - y.min()) - 1)(y)  # Normalize Output
+
         self.w = None
         self.x = x
         self.y = y
@@ -38,6 +48,7 @@ class SimplePerceptron:
         self.learning_rate = config.learning_rate
         self.dimension = len(x[0]) - 1
         self.examples_count = len(x)
+        self.normalize = normalize
 
     def train(self):
 
@@ -62,7 +73,13 @@ class SimplePerceptron:
 
             error = self.error(o, self.y)
 
-            self.plot['e'].append(error[0])
+            if self.normalize:
+                self.plot['e_denormalized'].append(self.error(
+                    vectorize(lambda v: (v + 1) * (self.y_max - self.y_min) / 2 + self.y_min)(o),
+                    self.y_denormalized)[0])
+                self.plot['e_normalized'].append(error[0])
+            else:
+                self.plot['e'].append(error[0])
 
             if error < error_min:
                 error_min = error
@@ -70,11 +87,25 @@ class SimplePerceptron:
 
             i = i + 1
 
-        self.plot['e'].append(error)
         self.plot['o'] = o
         self.w = w_min
 
+        print(' '.join(self.predict(self.x).__str__().split()))
+        if self.normalize:
+            print(' '.join(self.y_denormalized.__str__().split()))
+        else:
+            print(' '.join(self.y.__str__().split()))
+        print(i)
         print(error_min)
+
+    def predict(self, x: NDArray):
+        h = x @ self.w
+        o = []
+        for val in h:
+            o.append([self.activation_function(val)])
+        if self.normalize:
+            return vectorize(lambda v: (v + 1) * (self.y_max - self.y_min) / 2 + self.y_min)(o)
+        return array(o)
 
     def activation_function(
             self,
@@ -104,9 +135,9 @@ class LinearPerceptron(SimplePerceptron):
             self,
             x: NDArray[[float, float, float]],
             y: NDArray[float],
-            config: PerceptronSettings
+            config: PerceptronSettings,
     ):
-        super().__init__(x, y, config)
+        super().__init__(x, y, config, normalize=False)
 
     def activation_function(
             self,
@@ -123,8 +154,11 @@ class NonLinearPerceptron(SimplePerceptron):
             y: NDArray[float],
             config: PerceptronSettings
     ):
-        y = vectorize(lambda v: 2 * (v - y.min()) / (y.max() - y.min()) - 1)(y)  # Normalize Output
-        super().__init__(x, y, config)
+        # y = 2*(x-a)/(b) - 1
+        # x = 2*(y-a)/(b) - 1
+        # (x+1)*b/2 = (y-a)
+        # (x+1)*b/2 + a = y
+        super().__init__(x, y, config, normalize=True)
         self.g = _FUNCTIONS[config.g][0]
         self.g_derivative = _FUNCTIONS[config.g][1]
         self.b = config.b
@@ -219,6 +253,9 @@ class MultiLayerPerceptron:
         for value in self.x:
             o.append(self.predict(value))
         self.plot['e'].append(error)
+
+        print(array(o))
+        print(self.y)
         print(i)
         print(error_min)
 
@@ -245,10 +282,7 @@ class MultiLayerPerceptron:
     def calculate_d_M(self, y):
         for i in range(self.neurons_per_layer[-1]):
             perceptron = self.layers[-1][i]
-            perceptron.d = self.g_derivative(self.b, perceptron.h) * (y - perceptron.v)
-            # O:       Y
-            # Vj:  x1 x2 x0
-            # V0: e1  e2  e0
+            perceptron.d = self.g_derivative(self.b, perceptron.h) * (y[i] - perceptron.v)
 
     def retro_propagate(self):
         # Por cada capa oculta de arriba para abajo
@@ -280,11 +314,11 @@ class MultiLayerPerceptron:
     ):
         o = []
         for value in x:
-            o.append([self.predict(value)])
+            o.append(self.predict(value))
         o = array(o)
         return 0.5 * sum((y - o) ** 2)
 
-    def predict(self, x):
+    def predict(self, x: NDArray):
         layers = []
 
         for i in range(self.layers_count):
@@ -310,4 +344,4 @@ class MultiLayerPerceptron:
                 else:
                     layers[m][i].v = 1
 
-        return layers[-1][0].v
+        return list(map(lambda p: p.v, layers[-1]))
