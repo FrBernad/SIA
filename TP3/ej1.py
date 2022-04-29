@@ -10,6 +10,9 @@ from utils.parser_utils import parse_training_values, parse_output_values
 
 
 def ej1(config_path: str):
+    print('--- WELCOME TO THE EJ1 PROBLEM SOLVER ---')
+
+    print('parsing config file...')
     config = get_config(config_path)
 
     training_values = config.training_values
@@ -19,12 +22,18 @@ def ej1(config_path: str):
     if not training_values or training_values.output is None:
         training_values.output = 'training_values/ej1-and-output.txt'
 
+    print(f'parsing input file: {training_values.input}')
     input_values = parse_training_values(training_values.input)
+    print(f'parsing output file: {training_values.input}')
     output_values = parse_output_values(training_values.output)
 
+    print(f'Generating simple perceptron...')
     perceptron = SimplePerceptron(input_values, output_values, config.perceptron.settings)
 
-    perceptron.train()
+    print(f'Predicting results...')
+    results = perceptron.train()
+    print(f'Finished!')
+    results.print(remove_ws=True)
 
     if config.plot:
         figures = [go.Scatter(

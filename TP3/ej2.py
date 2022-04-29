@@ -1,8 +1,7 @@
-import random
 import sys
 
-import numpy
 import plotly.graph_objects as go
+from numpy import copy
 
 from algorithms.perceptrons import NonLinearPerceptron, SimplePerceptron, LinearPerceptron
 from utils.argument_parser import parse_arguments
@@ -10,7 +9,46 @@ from utils.config import get_config
 from utils.parser_utils import parse_training_values, parse_output_values
 
 
+def _plot_errors(perceptron: SimplePerceptron):
+    if perceptron.normalize:
+        fig = go.Figure(
+            go.Scatter(
+                y=perceptron.plot['e_normalized'],
+            )
+            ,
+            {
+                'title': f'Error Normalized',
+            }
+        )
+        fig.show()
+
+        fig = go.Figure(
+            go.Scatter(
+                y=perceptron.plot['e_denormalized'],
+            )
+            ,
+            {
+                'title': f'Error Denormalized',
+            }
+        )
+        fig.show()
+    else:
+        fig = go.Figure(
+            go.Scatter(
+                y=perceptron.plot['e'],
+            )
+            ,
+            {
+                'title': f'Error',
+            }
+        )
+        fig.show()
+
+
 def ej2(config_path: str):
+    print('--- WELCOME TO THE EJ2 PROBLEM SOLVER ---')
+
+    print('parsing config file...')
     config = get_config(config_path)
 
     training_values = config.training_values
@@ -20,54 +58,32 @@ def ej2(config_path: str):
     if not training_values or training_values.output is None:
         training_values.output = 'training_values/ej2-output.txt'
 
+    print(f'parsing input file: {training_values.input}')
     input_values = parse_training_values(training_values.input)
+    print(f'parsing output file: {training_values.input}')
     output_values = parse_output_values(training_values.output)
 
     perceptron: SimplePerceptron
 
     if config.perceptron.type == "linear":
-        perceptron = LinearPerceptron(input_values, output_values, config.perceptron.settings)
-        perceptron.train()
+        print(f'Generating linear perceptron...')
+        perceptron = LinearPerceptron(input_values, copy(output_values), config.perceptron.settings)
+        print(f'Predicting results...')
+        results = perceptron.train()
+        print(f'Finished!')
+        results.print(remove_ws=True)
 
     else:
-        perceptron = NonLinearPerceptron(input_values, output_values, config.perceptron.settings)
-        perceptron.train()
+        print(f'Generating non-linear perceptron...')
+        perceptron = NonLinearPerceptron(input_values, copy(output_values), config.perceptron.settings)
+        print(f'Predicting results...')
+        results = perceptron.train()
+        print(f'Finished!')
+        results.print(remove_ws=True)
 
     # FIXME: VER DE REESCALAR EL ERROR
     if config.plot:
-        if perceptron.normalize:
-            fig = go.Figure(
-                go.Scatter(
-                    y=perceptron.plot['e_normalized'],
-                )
-                ,
-                {
-                    'title': f'Error Normalized',
-                }
-            )
-            fig.show()
-
-            fig = go.Figure(
-                go.Scatter(
-                    y=perceptron.plot['e_denormalized'],
-                )
-                ,
-                {
-                    'title': f'Error Denormalized',
-                }
-            )
-            fig.show()
-        else:
-            fig = go.Figure(
-                go.Scatter(
-                    y=perceptron.plot['e'],
-                )
-                ,
-                {
-                    'title': f'Error',
-                }
-            )
-            fig.show()
+        _plot_errors(perceptron)
 
 
 if __name__ == "__main__":

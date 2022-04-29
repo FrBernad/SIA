@@ -1,9 +1,11 @@
+import time
 from typing import List, Optional
 
 from numpy import random, vectorize, tanh, exp, copysign, array
 from numpy.random import randint
 from numpy.typing import NDArray
 
+from algorithms.results import Results
 from utils.config import PerceptronSettings
 
 _FUNCTIONS = {
@@ -31,7 +33,6 @@ class SimplePerceptron:
             e=[],
             e_normalized=[],
             e_denormalized=[],
-            o=[]
         )
         self.y_max = y.max()
         self.y_min = y.min()
@@ -49,6 +50,7 @@ class SimplePerceptron:
         self.dimension = len(x[0]) - 1
         self.examples_count = len(x)
         self.normalize = normalize
+        self.time = 0
 
     def train(self):
 
@@ -58,6 +60,8 @@ class SimplePerceptron:
         error = 1
         error_min = self.examples_count * 2
         o = []
+
+        self.time = time.time()
 
         while error > self.min_error and i < self.min_iter:
 
@@ -87,16 +91,14 @@ class SimplePerceptron:
 
             i = i + 1
 
-        self.plot['o'] = o
+        self.time = time.time() - self.time
+
         self.w = w_min
 
-        print(' '.join(self.predict(self.x).__str__().split()))
         if self.normalize:
-            print(' '.join(self.y_denormalized.__str__().split()))
+            return Results(self.y_denormalized, self.predict(self.x), self.time, i, error_min)
         else:
-            print(' '.join(self.y.__str__().split()))
-        print(i)
-        print(error_min)
+            return Results(self.y, self.predict(self.x), self.time, i, error_min)
 
     def predict(self, x: NDArray):
         h = x @ self.w
@@ -203,6 +205,8 @@ class MultiLayerPerceptron:
             e=[]
         )
 
+        self.time = 0
+
         self.g = _FUNCTIONS[config.g][0]
         self.g_derivative = _FUNCTIONS[config.g][1]
         self.b = config.b
@@ -232,6 +236,7 @@ class MultiLayerPerceptron:
         i = 0
         error = 1
         error_min = len(self.x) * 2
+        self.time = time.time()
         while error > self.min_error and i < self.min_iter:
             i_x = randint(0, len(self.x))
 
@@ -249,15 +254,14 @@ class MultiLayerPerceptron:
 
             i = i + 1
 
+        self.time = time.time() - self.time
+
         o = []
         for value in self.x:
             o.append(self.predict(value))
         self.plot['e'].append(error)
 
-        print(array(o))
-        print(self.y)
-        print(i)
-        print(error_min)
+        return Results(self.y, array(o), self.time, i, error_min)
 
     def apply_first_layer(self, i_x):
         for i in range(self.neurons_per_layer[0]):
