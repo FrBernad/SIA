@@ -1,11 +1,13 @@
 import sys
+from typing import List
 
 import plotly.graph_objects as go
+from numpy.typing import NDArray
 
 from algorithms.perceptrons import MultiLayerPerceptron
 from utils.argument_parser import parse_arguments
 from utils.config import get_config
-from utils.parser_utils import parse_training_values, parse_output_values
+from utils.parser_utils import parse_training_values, parse_output_values, parse_nums
 
 
 # FIXME: ERROR > UN NUMERO NO  A 0
@@ -19,10 +21,15 @@ def ej3(config_path: str):
     if not training_values or training_values.output is None:
         training_values.output = 'training_values/ej1-xor-output.txt'
 
-    input_values = parse_training_values(training_values.input)
+    input_values: NDArray
+    if 'xor' in training_values.input:
+        input_values = parse_training_values(training_values.input)
+    else:
+        input_values = parse_nums(training_values.input)
+
     output_values = parse_output_values(training_values.output)
 
-    perceptron = MultiLayerPerceptron(input_values, [4, 4], output_values, config.perceptron.settings)
+    perceptron = MultiLayerPerceptron(input_values, [5, 5], output_values, config.perceptron.settings)
     perceptron.train()
 
     if config.plot:

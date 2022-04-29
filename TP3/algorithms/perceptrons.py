@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from numpy import random, vectorize, tanh, exp, copysign
+from numpy import random, vectorize, tanh, exp, copysign, array
 from numpy.random import randint
 from numpy.typing import NDArray
 
@@ -52,14 +52,17 @@ class SimplePerceptron:
 
             i_x = random.randint(0, self.examples_count)
             h = self.x @ w
-            o = vectorize(self.activation_function)(h)
+            o = []
+            for val in h:
+                o.append([self.activation_function(val)])
+            o = array(o)
 
             delta_w = self.delta_w(self.y[i_x], o[i_x], self.x[i_x], h[i_x])
             w += delta_w
 
             error = self.error(o, self.y)
 
-            self.plot['e'].append(error)
+            self.plot['e'].append(error[0])
 
             if error < error_min:
                 error_min = error
@@ -72,24 +75,6 @@ class SimplePerceptron:
         self.w = w_min
 
         print(error_min)
-
-    def predict(
-            self,
-            x_d,
-            y_d,
-            x: NDArray[[float, float, float]],
-            y: NDArray[float],
-    ):
-        x = vectorize(lambda v: (v - x_d.min()) / (x_d.max() - x_d.min()) - 1)(x)
-        y = vectorize(lambda v: (v - y_d.min()) / (y_d.max() - y_d.min()) - 1)(y)
-
-        h = x @ self.w
-        o = vectorize(self.activation_function)(h)
-        error = self.error(o, y)
-        print(o)
-        print(y)
-
-        print(error)
 
     def activation_function(
             self,
@@ -188,7 +173,7 @@ class MultiLayerPerceptron:
         self.g_derivative = _FUNCTIONS[config.g][1]
         self.b = config.b
 
-        self.neurons_per_layer = [len(x[0]), *hidden_layers, 1]
+        self.neurons_per_layer = [len(x[0]), *hidden_layers, len(y[0])]
         self.layers_count = len(self.neurons_per_layer)
         self.layers = []
 
@@ -221,7 +206,7 @@ class MultiLayerPerceptron:
             self.calculate_d_M(self.y[i_x])
             self.retro_propagate()
 
-            error = self.calculate_error(self.x, self.y)
+            error = self.calculate_error(self.x, self.y)[0]
             self.plot['e'].append(error)
             if error < error_min:
                 error_min = error
@@ -233,9 +218,8 @@ class MultiLayerPerceptron:
         o = []
         for value in self.x:
             o.append(self.predict(value))
-
         self.plot['e'].append(error)
-
+        print(i)
         print(error_min)
 
     def apply_first_layer(self, i_x):
@@ -296,7 +280,8 @@ class MultiLayerPerceptron:
     ):
         o = []
         for value in x:
-            o.append(self.predict(value))
+            o.append([self.predict(value)])
+        o = array(o)
         return 0.5 * sum((y - o) ** 2)
 
     def predict(self, x):

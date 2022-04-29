@@ -22,7 +22,7 @@ def parse_output_values(file: str) -> NDArray:
 
         for entry in lines:
             float_vals = list(map(lambda v: float(v), entry.split()))
-            values.append(float_vals[0])
+            values.append(float_vals)
 
         return array(values)
 
@@ -32,8 +32,13 @@ def parse_nums(file: str) -> NDArray:
         lines = df.readlines()
         values = []
 
-        for entry in lines:
-            float_vals = list(map(lambda v: float(v), entry.split()))
-            values.append(float_vals)
+        for i in range(10):
+            number = []
+            for j in range(7):
+                current_line = list(map(lambda v: int(v), lines[j + i * 7].split()))
+                for n in current_line:
+                    number.append(n)
+            number.append(1)
+            values.append(number)
 
         return array(values)
