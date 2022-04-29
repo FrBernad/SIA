@@ -11,6 +11,7 @@ def _mutate_input_values(input_values):
     for i in range(len(input_values)):
         for j in range(len(input_values[i]) - 1):
             if random() < 0.02:
+                print(i)
                 input_values[i][j] = 1 if input_values[i][j] == 0 else 0
 
 
@@ -39,6 +40,6 @@ if __name__ == "__main__":
     for i in range(len(input_values)):
         print(f"Input: {i}")
         predicted_output = perceptron.predict(input_values[i])
-        print(f'Expected: {output_values[i]}')
-        print(f'Predicted: {predicted_output}')
+        print(f'Expected: \n{output_values[i]}')
+        print(f'Predicted: \n{predicted_output}')
         print(f'Error: {perceptron.calculate_error(array([input_values[i]]), array([output_values[i]]))}\n')

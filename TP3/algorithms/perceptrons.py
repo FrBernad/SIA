@@ -245,7 +245,7 @@ class MultiLayerPerceptron:
             self.calculate_d_M(self.y[i_x])
             self.retro_propagate()
 
-            error = self.calculate_error(self.x, self.y)[0]
+            error = self.calculate_error(self.x, self.y)
             self.plot['e'].append(error)
             if error < error_min:
                 error_min = error
@@ -320,7 +320,7 @@ class MultiLayerPerceptron:
         for value in x:
             o.append(self.predict(value))
         o = array(o)
-        return 0.5 * sum((y - o) ** 2)
+        return (0.5 * sum((y - o) ** 2)).max()
 
     def predict(self, x: NDArray):
         layers = []
