@@ -274,7 +274,8 @@ class MultiLayerPerceptron:
                 aux = 0
                 # Por cada peso que sale de la neurona m-1
                 for j in range(self.neurons_per_layer[m]):
-                    aux += self.layers[m][j].w[i] * self.layers[m][j].d
+                    if j != self.neurons_per_layer[m] - 1 or m == self.layers_count - 1:
+                        aux += self.layers[m][j].w[i] * self.layers[m][j].d
 
                 self.layers[m - 1][i].d = self.g_derivative(self.b, self.layers[m - 1][i].h) * aux
 

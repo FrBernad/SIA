@@ -22,7 +22,7 @@ def ej3(config_path: str):
     input_values = parse_training_values(training_values.input)
     output_values = parse_output_values(training_values.output)
 
-    perceptron = MultiLayerPerceptron(input_values, [5], output_values, config.perceptron.settings)
+    perceptron = MultiLayerPerceptron(input_values, [4, 4], output_values, config.perceptron.settings)
     perceptron.train()
 
     if config.plot:
