@@ -8,11 +8,14 @@ from utils.parser_utils import parse_output_values, parse_nums
 
 
 def _mutate_input_values(input_values):
+    mutated_numbers = []
     for i in range(len(input_values)):
         for j in range(len(input_values[i]) - 1):
             if random() < 0.02:
-                print(i)
+                mutated_numbers.append(i)
                 input_values[i][j] = 1 if input_values[i][j] == 0 else 0
+
+    return mutated_numbers
 
 
 if __name__ == "__main__":
@@ -36,7 +39,8 @@ if __name__ == "__main__":
     print(f'Finished!')
     results.print()
 
-    _mutate_input_values(input_values)
+    print(f'Mutated values: {_mutate_input_values(input_values)}')
+
     for i in range(len(input_values)):
         print(f"Input: {i}")
         predicted_output = perceptron.predict(input_values[i])

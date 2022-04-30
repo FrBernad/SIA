@@ -1,7 +1,7 @@
 import time
 from typing import List, Optional
 
-from numpy import random, vectorize, tanh, exp, copysign, array
+from numpy import random, vectorize, tanh, exp, copysign, array, mean
 from numpy.random import randint
 from numpy.typing import NDArray
 
@@ -320,7 +320,7 @@ class MultiLayerPerceptron:
         for value in x:
             o.append(self.predict(value))
         o = array(o)
-        return (0.5 * sum((y - o) ** 2)).max()
+        return mean((0.5 * sum((y - o) ** 2)))
 
     def predict(self, x: NDArray):
         layers = []
