@@ -1,7 +1,7 @@
 import time
 from typing import List, Optional
 
-from numpy import random, vectorize, tanh, exp, copysign, array, mean
+from numpy import random, vectorize, tanh, exp, copysign, array, mean, copy
 from numpy.random import randint
 from numpy.typing import NDArray
 
@@ -33,6 +33,7 @@ class SimplePerceptron:
             e=[],
             e_normalized=[],
             e_denormalized=[],
+            w=[]
         )
         self.y_max = y.max()
         self.y_min = y.min()
@@ -56,6 +57,7 @@ class SimplePerceptron:
 
         i = 0
         w = random.uniform(-1, 1, size=self.dimension + 1)
+        self.plot['w'].append(copy(w))
         w_min = w
         error = 1
         error_min = self.examples_count * 2
@@ -73,6 +75,7 @@ class SimplePerceptron:
 
             delta_w = self.delta_w(self.y[i_x], o[i_x], self.x[i_x], h[i_x])
             w += delta_w
+            self.plot['w'].append(copy(w))
 
             error = self.calculate_error(o, self.y)
 
