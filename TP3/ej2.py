@@ -77,7 +77,7 @@ def ej2(config_path: str):
 
     print(f'parsing input file: {training_values.input}')
     input_values = parse_training_values(training_values.input)
-    print(f'parsing output file: {training_values.input}')
+    print(f'parsing output file: {training_values.output}')
     output_values = parse_output_values(training_values.output)
 
     perceptron: SimplePerceptron
@@ -98,7 +98,6 @@ def ej2(config_path: str):
         print(f'Finished!')
         results.print(remove_ws=True)
 
-    # FIXME: VER DE REESCALAR EL ERROR
     if config.plot:
         _plot_errors(perceptron)
 

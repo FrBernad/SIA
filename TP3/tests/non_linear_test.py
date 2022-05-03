@@ -1,6 +1,6 @@
 from itertools import chain
 
-from numpy import split, array, mean, std
+from numpy import split, array, mean, std, copy
 from numpy.random import randint
 
 from algorithms.perceptrons import NonLinearPerceptron
@@ -37,17 +37,17 @@ if __name__ == "__main__":
         for rd in range(2):
             print(f"Round {rd + 1}")
             # SHUFFLE
-            # print("Shuffling values")
             for i in range(200):
                 rand_index_1 = randint(0, len(input_values))
                 rand_index_2 = randint(0, len(input_values))
-                input_values[rand_index_1], input_values[rand_index_2] = input_values[rand_index_2], input_values[
-                    rand_index_1]
-                output_values[rand_index_1], output_values[rand_index_2] = output_values[rand_index_2], output_values[
-                    rand_index_1]
+                aux = copy(input_values[rand_index_1])
+                input_values[rand_index_1] = copy(input_values[rand_index_2])
+                input_values[rand_index_2] = aux
+                aux = copy(output_values[rand_index_1])
+                output_values[rand_index_1] = copy(output_values[rand_index_2])
+                output_values[rand_index_2] = aux
 
             # SPLIT VALUES
-            # Voy a buscar el conjunto de prueba que me da el menor error para mi conjunto de practica
             training_input_parts = split(input_values, 10)
             training_output_parts = split(output_values, 10)
 
@@ -84,7 +84,7 @@ if __name__ == "__main__":
                 # print(f'\n{" ".join(predicted_testing.__str__().split())}')
                 # print(f'{" ".join(testing_output.__str__().split())}')
 
-                prediction_error = perceptron.error(predicted_testing, testing_output)[0]
+                prediction_error = perceptron.calculate_error(predicted_testing, testing_output)[0]
                 mse_prediction_errors.append(prediction_error)
                 # print(f"Testing values MSE: {prediction_error}\n")
 
@@ -116,7 +116,7 @@ if __name__ == "__main__":
                 name=f'Testing MSE',
                 error_y=dict(
                     type='data',
-                    array=mse_percentages_prediction_errors,
+                    array=mse_percentages_prediction_std,
                     visible=True
                 )
             )

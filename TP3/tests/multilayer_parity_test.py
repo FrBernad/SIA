@@ -1,4 +1,7 @@
-from numpy import split, array
+from itertools import chain
+
+from numpy import array, mean, std, copy, split
+import plotly.graph_objects as go
 from numpy.random import randint
 
 from algorithms.perceptrons import MultiLayerPerceptron
@@ -18,35 +21,112 @@ if __name__ == "__main__":
     print(f'parsing output file: {training_values.output}')
     output_values = parse_output_values(training_values.output)
 
-    print("Shuffling values...")
-    for i in range(50):
-        rand_index_1 = randint(0, len(input_values))
-        rand_index_2 = randint(0, len(input_values))
-        input_values[rand_index_1], input_values[rand_index_2] = input_values[rand_index_2], input_values[
-            rand_index_1]
-        output_values[rand_index_1], output_values[rand_index_2] = output_values[rand_index_2], output_values[
-            rand_index_1]
+    mse_percentages_training_errors = []
+    mse_percentages_training_std = []
+    mse_percentages_prediction_errors = []
+    mse_percentages_prediction_std = []
+    percentages = []
 
-    training_input_parts = split(input_values, 10)
-    training_output_parts = split(output_values, 10)
+    for percentage in range(1, 10):
+        print(f"\n--- Cross Validation Training {percentage * 10}% - Testing {(10 - percentage) * 10}% ---\n")
+        percentages.append(f'{percentage * 10}%')
 
-    for i in range(len(training_input_parts)):
-        training_input = []
-        training_output = []
-        practice_input = training_input_parts[i]
-        practice_output = training_output_parts[i]
-        for k in range(len(training_input_parts)):
-            if k != i:
-                training_input.extend(training_input_parts[k])
-                training_output.extend(training_output_parts[k])
+        mse_training_errors = []
+        mse_prediction_errors = []
 
-        print(f"Training round {i}")
-        perceptron = MultiLayerPerceptron(array(training_input), [6], array(training_output),
-                                          config.perceptron.settings)
-        perceptron.train()
-        predicted_outputs = []
-        for j in range(len(practice_input)):
-            predicted_outputs.append(perceptron.predict(practice_input[j]))
-            print(f'Expected: \n{practice_output[j]}')
-            print(f'Predicted: \n{predicted_outputs[-1]}')
-        print(f'Error: {perceptron.calculate_error(array(practice_input), array(practice_output))}\n')
+        for rd in range(1):
+            print(f"Round {rd + 1}")
+            # SHUFFLE
+            for i in range(200):
+                rand_index_1 = randint(0, len(input_values))
+                rand_index_2 = randint(0, len(input_values))
+                aux = copy(input_values[rand_index_1])
+                input_values[rand_index_1] = copy(input_values[rand_index_2])
+                input_values[rand_index_2] = aux
+                aux = copy(output_values[rand_index_1])
+                output_values[rand_index_1] = copy(output_values[rand_index_2])
+                output_values[rand_index_2] = aux
+
+            # SPLIT VALUES
+            training_input_parts = split(input_values, 10)
+            training_output_parts = split(output_values, 10)
+
+            i = 0
+            print("Calculating")
+            while i + percentage <= len(training_input_parts):
+                print(f"{i}")
+                training_input = []
+                training_output = []
+                for k in range(i, i + percentage):
+                    training_input.extend(training_input_parts[k])
+                    training_output.extend(training_output_parts[k])
+
+                training_input = array(training_input)
+                training_output = array(training_output)
+
+                testing_input = []
+                testing_output = []
+                for k in chain(range(0, i), range(i + percentage, len(training_input_parts))):
+                    testing_input.extend(training_input_parts[k])
+                    testing_output.extend(training_output_parts[k])
+                testing_input = array(testing_input)
+                testing_output = array(testing_output)
+
+                perceptron = MultiLayerPerceptron(training_input, [6, 6], training_output, config.perceptron.settings)
+                results = perceptron.train()
+
+                testing_error = perceptron.plot['e'][-1]
+                mse_training_errors.append(testing_error)
+                print(f"Training values MSE: {testing_error}")
+
+                print("Predicted - Expected outputs")
+                for j in range(len(testing_input)):
+                    print(f'{perceptron.predict(testing_input[j])}', end=" ")
+                    print(f'{testing_output[j]}', end=" ")
+
+                prediction_error = perceptron.calculate_error(testing_input, testing_output)
+                mse_prediction_errors.append(prediction_error)
+                print(f"\nTesting values MSE: {prediction_error}\n")
+
+                i += 1
+
+            print("")
+
+        mse_percentages_training_errors.append(mean(mse_training_errors))
+        mse_percentages_training_std.append(std(mse_training_errors))
+
+        mse_percentages_prediction_errors.append(mean(mse_prediction_errors))
+        mse_percentages_prediction_std.append(std(mse_prediction_errors))
+
+    fig = go.Figure(
+        [
+            go.Scatter(
+                x=percentages,
+                y=mse_percentages_training_errors,
+                name=f'Training MSE',
+                error_y=dict(
+                    type='data',
+                    array=mse_percentages_training_std,
+                    visible=True
+                )
+            ),
+            go.Scatter(
+                x=percentages,
+                y=mse_percentages_prediction_errors,
+                name=f'Testing MSE',
+                error_y=dict(
+                    type='data',
+                    array=mse_percentages_prediction_std,
+                    visible=True
+                )
+            )
+        ]
+        ,
+        {
+            'title': f'Training and testing MSE per training selection size percentage',
+            'xaxis_title': "Percentage",
+            'yaxis_title': "MSE",
+
+        }
+    )
+    fig.show()
