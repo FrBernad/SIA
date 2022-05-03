@@ -59,7 +59,6 @@ class SimplePerceptron:
         w_min = w
         error = 1
         error_min = self.examples_count * 2
-        o = []
 
         self.time = time.time()
 
@@ -75,10 +74,10 @@ class SimplePerceptron:
             delta_w = self.delta_w(self.y[i_x], o[i_x], self.x[i_x], h[i_x])
             w += delta_w
 
-            error = self.error(o, self.y)
+            error = self.calculate_error(o, self.y)
 
             if self.normalize:
-                self.plot['e_denormalized'].append(self.error(
+                self.plot['e_denormalized'].append(self.calculate_error(
                     vectorize(lambda v: (v + 1) * (self.y_max - self.y_min) / 2 + self.y_min)(o),
                     self.y_denormalized)[0])
                 self.plot['e_normalized'].append(error[0])
@@ -124,12 +123,12 @@ class SimplePerceptron:
     ):
         return self.learning_rate * (y - o) * x
 
-    def error(
+    def calculate_error(
             self,
             o: NDArray[float],
             y: NDArray[float]
     ):
-        return 0.5 * sum((y - o) ** 2)
+        return (1 / len(self.x)) * sum((y - o) ** 2)
 
 
 class LinearPerceptron(SimplePerceptron):
@@ -320,7 +319,7 @@ class MultiLayerPerceptron:
         for value in x:
             o.append(self.predict(value))
         o = array(o)
-        return mean((0.5 * sum((y - o) ** 2)))
+        return mean(((1 / len(self.x)) * sum((y - o) ** 2)))
 
     def predict(self, x: NDArray):
         layers = []

@@ -24,17 +24,17 @@ config:
     # - linear
     # - non_linear
     # - multilayer
-    type: non_linear
+    type: linear
 
     #Perceptron specific settings
     settings:
       #Global
-      learning_rate: 0.01
-      min_error: 0.0000001
+      learning_rate: 0.1
+      min_error: 0.00001
       min_iter: 5000
 
       #Non-Linear
       g: tanh
-      b: 0.4\
+      b: 0.4
 
 ...
