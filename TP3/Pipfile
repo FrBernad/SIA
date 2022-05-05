@@ -8,7 +8,7 @@ numpy = "*"
 plotly = "==5.6.0"
 pydantic = "*"
 pyyaml = "*"
-
+scikit-learn = "*"
 
 [dev-packages]
 

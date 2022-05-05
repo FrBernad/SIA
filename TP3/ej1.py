@@ -1,8 +1,7 @@
 import sys
-from itertools import groupby
 
 import plotly.graph_objects as go
-from numpy import arange, ones, array_equal
+from numpy import arange, array_equal
 
 from algorithms.perceptrons import SimplePerceptron
 from utils.argument_parser import parse_arguments

@@ -9,10 +9,10 @@ config:
     #    output: training_values/ej3-3-output.txt
     #    input: training_values/ej1-xor-input.txt
     #    output: training_values/ej1-xor-output.txt
-    input: training_values/ej2-linear-input.txt
-    output: training_values/ej2-linear-output.txt
-  #      input:
-  #      output:
+    #    input: training_values/ej2-linear-input.txt
+    #    output: training_values/ej2-linear-output.txt
+    input:
+    output:
 
   # Plot results
   plot: true

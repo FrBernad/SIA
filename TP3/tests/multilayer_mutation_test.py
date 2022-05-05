@@ -1,9 +1,6 @@
-from itertools import chain
 from random import random
-import plotly.graph_objects as go
 
-from numpy import array, split, copy, mean, std
-from numpy.random import randint
+from numpy import array
 
 from algorithms.perceptrons import MultiLayerPerceptron
 from utils.config import get_config
