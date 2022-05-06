@@ -30,9 +30,9 @@ if __name__ == "__main__":
         percentages.append(f'{percentage * 10}%')
 
         mse_training_errors = []
-        mse_prediction_errors = []
+        mse_testing_errors = []
 
-        for rd in range(5):
+        for rd in range(10):
             print(f"Round {rd + 1}")
 
             # SPLIT VALUES
@@ -47,19 +47,20 @@ if __name__ == "__main__":
             # print(f"Training values MSE: {training_error}")
 
             print("Predicted - Expected outputs")
+
             predicted_output = perceptron.predict(test_input)
             print(f'\n{" ".join(predicted_output.__str__().split())}')
             print(f'{" ".join(test_output.__str__().split())}')
 
             testing_error = perceptron.calculate_error(predicted_output, test_output)[0]
-            mse_prediction_errors.append(testing_error)
+            mse_testing_errors.append(testing_error)
             # print(f"Testing values MSE: {testing_error}\n")
 
         mse_percentages_training.append(mean(mse_training_errors))
         std_percentages_training_mse.append(std(mse_training_errors))
 
-        mse_percentages_testing.append(mean(mse_prediction_errors))
-        std_percentages_testing_mse.append(std(mse_prediction_errors))
+        mse_percentages_testing.append(mean(mse_testing_errors))
+        std_percentages_testing_mse.append(std(mse_testing_errors))
 
     fig = go.Figure(
         [

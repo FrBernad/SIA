@@ -1,21 +1,21 @@
 from random import random
 
-from numpy import array
+from numpy import array, reshape, flip, copy
+from numpy.random import randint, choice
+from plotly.subplots import make_subplots
 
 from algorithms.perceptrons import MultiLayerPerceptron
 from utils.config import get_config
 from utils.parser_utils import parse_output_values, parse_nums
 
 
-def _mutate_input_values(input_values):
-    mutated_numbers = []
-    for i in range(len(input_values)):
-        for j in range(len(input_values[i]) - 1):
-            if random() < 0.02:
-                mutated_numbers.append(i)
-                input_values[i][j] = 1 if input_values[i][j] == 0 else 0
+def _mutate_input_value(input_value, mutated_amount):
+    mutated_input = copy(input_value)
+    indexes = choice(range(len(input_value) - 1), size=mutated_amount, replace=False)
+    for i in indexes:
+        mutated_input[i] = 1 if mutated_input[i] == 0 else 0
 
-    return mutated_numbers
+    return mutated_input
 
 
 if __name__ == "__main__":
@@ -39,121 +39,55 @@ if __name__ == "__main__":
     print(f'Finished!')
     results.print()
 
-    print(f'Mutated values: {_mutate_input_values(input_values)}')
-
+    mutations = [0, 5, 15, 35]
     for i in range(len(input_values)):
-        print(f"Input: {i}")
-        predicted_output = perceptron.predict(input_values[i])
-        print(f'Expected: {output_values[i]}')
-        print(f'Predicted: {predicted_output}')
-        print(f'Error: {perceptron.calculate_error(array([input_values[i]]), array([output_values[i]]))}\n')
+        bitmaps = []
+        prediction_errors = []
+        for mutated_amount in mutations:
+            mutated_value = _mutate_input_value(input_values[i], mutated_amount)
+            bitmaps.append(mutated_value)
 
-    # mse_percentages_training_errors = []
-    # mse_percentages_training_std = []
-    # mse_percentages_prediction_errors = []
-    # mse_percentages_prediction_std = []
-    # percentages = []
-    #
-    # for percentage in range(1, 10):
-    #     print(f"\n--- Cross Validation Training {percentage * 10}% - Testing {(10 - percentage) * 10}% ---\n")
-    #     percentages.append(f'{percentage * 10}%')
-    #
-    #     mse_training_errors = []
-    #     mse_prediction_errors = []
-    #
-    #     for rd in range(1):
-    #         print(f"Round {rd + 1}")
-    #         # SHUFFLE
-    #         for i in range(200):
-    #             rand_index_1 = randint(0, len(input_values))
-    #             rand_index_2 = randint(0, len(input_values))
-    #             aux = copy(input_values[rand_index_1])
-    #             input_values[rand_index_1] = copy(input_values[rand_index_2])
-    #             input_values[rand_index_2] = aux
-    #             aux = copy(output_values[rand_index_1])
-    #             output_values[rand_index_1] = copy(output_values[rand_index_2])
-    #             output_values[rand_index_2] = aux
-    #
-    #         # SPLIT VALUES
-    #         training_input_parts = split(input_values, 10)
-    #         training_output_parts = split(output_values, 10)
-    #
-    #         i = 0
-    #         print("Calculating")
-    #         while i + percentage <= len(training_input_parts):
-    #             print(f"{i}")
-    #             training_input = []
-    #             training_output = []
-    #             for k in range(i, i + percentage):
-    #                 training_input.extend(training_input_parts[k])
-    #                 training_output.extend(training_output_parts[k])
-    #
-    #             training_input = array(training_input)
-    #             training_output = array(training_output)
-    #
-    #             testing_input = []
-    #             testing_output = []
-    #             for k in chain(range(0, i), range(i + percentage, len(training_input_parts))):
-    #                 testing_input.extend(training_input_parts[k])
-    #                 testing_output.extend(training_output_parts[k])
-    #             testing_input = array(testing_input)
-    #             testing_output = array(testing_output)
-    #
-    #             perceptron = MultiLayerPerceptron(training_input, [6, 6], training_output, config.perceptron.settings)
-    #             results = perceptron.train()
-    #
-    #             testing_error = perceptron.plot['e'][-1]
-    #             mse_training_errors.append(testing_error)
-    #             print(f"Training values MSE: {testing_error}")
-    #
-    #             print("Predicted - Expected outputs")
-    #             for j in range(len(testing_input)):
-    #                 print(f'{perceptron.predict(testing_input[j])}')
-    #                 print(f'{testing_output[j]}')
-    #
-    #             prediction_error = perceptron.calculate_error(testing_input, testing_output)
-    #             mse_prediction_errors.append(prediction_error)
-    #             print(f"Testing values MSE: {prediction_error}\n")
-    #
-    #             i += 1
-    #
-    #         print("")
-    #
-    #     mse_percentages_training_errors.append(mean(mse_training_errors))
-    #     mse_percentages_training_std.append(std(mse_training_errors))
-    #
-    #     mse_percentages_prediction_errors.append(mean(mse_prediction_errors))
-    #     mse_percentages_prediction_std.append(std(mse_prediction_errors))
-    #
-    # fig = go.Figure(
-    #     [
-    #         go.Scatter(
-    #             x=percentages,
-    #             y=mse_percentages_training_errors,
-    #             name=f'Training MSE',
-    #             error_y=dict(
-    #                 type='data',
-    #                 array=mse_percentages_training_std,
-    #                 visible=True
-    #             )
-    #         ),
-    #         go.Scatter(
-    #             x=percentages,
-    #             y=mse_percentages_prediction_errors,
-    #             name=f'Testing MSE',
-    #             error_y=dict(
-    #                 type='data',
-    #                 array=mse_percentages_prediction_std,
-    #                 visible=True
-    #             )
-    #         )
-    #     ]
-    #     ,
-    #     {
-    #         'title': f'Training and testing MSE per training selection size percentage',
-    #         'xaxis_title': "Percentage",
-    #         'yaxis_title': "MSE",
-    #
-    #     }
-    # )
-    # fig.show()
+            print(f"Input: {i} - {mutated_amount} mutations")
+
+            predicted_output = perceptron.predict(mutated_value)
+
+            print(f'Expected: {output_values[i]}')
+            print(f'Predicted: {predicted_output}')
+
+            error = perceptron.calculate_error(array([mutated_value]), array([output_values[i]]))
+            prediction_errors.append(error)
+            print(f'Error: {error}\n')
+
+        fig = make_subplots(
+            rows=2, cols=5,
+            subplot_titles=tuple(map(lambda m: f'{m} mutations', mutations)),
+            specs=[[{}, {}, {}, {}, {}], [{'type': 'table', "colspan": 2}, None, None, None, None]],
+        )
+
+        fig.update_xaxes(visible=False)
+        fig.update_yaxes(visible=False)
+
+        for k in range(1, len(mutations) + 1):
+            fig.add_heatmap(
+                z=flip(reshape(bitmaps[k - 1][:-1], (7, 5)), axis=0),
+                showscale=False,
+                row=1, col=k, colorscale='Greys',
+            )
+
+        fig.add_table(
+            columnwidth=[1, 1.5],
+            header=dict(
+                values=["Mutations", "Prediction Error"],
+                align=['center', 'center']
+            ),
+            cells=dict(
+                values=array([mutations, prediction_errors]),
+                align=['center', 'center'],
+                font_size=12,
+                format=[None, ".6f"],
+                height=30
+            ),
+            row=2, col=1
+        )
+
+        fig.show()

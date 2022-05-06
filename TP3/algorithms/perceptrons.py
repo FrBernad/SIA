@@ -131,7 +131,7 @@ class SimplePerceptron:
             o: NDArray[float],
             y: NDArray[float]
     ):
-        return (1 / len(self.x)) * sum((y - o) ** 2)
+        return (1 / len(o)) * sum((y - o) ** 2)
 
 
 class LinearPerceptron(SimplePerceptron):
@@ -322,7 +322,7 @@ class MultiLayerPerceptron:
         for value in x:
             o.append(self.predict(value))
         o = array(o)
-        return mean(((1 / len(self.x)) * sum((y - o) ** 2)))
+        return mean(((1 / len(x)) * sum((y - o) ** 2)))
 
     def predict(self, x: NDArray):
         layers = []
