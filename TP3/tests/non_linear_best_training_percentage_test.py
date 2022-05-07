@@ -25,7 +25,7 @@ if __name__ == "__main__":
     std_percentages_testing_mse = []
     percentages = []
 
-    for percentage in range(4, 10):
+    for percentage in range(1, 10):
         print(f"\n--- Training {percentage * 10}% - Testing {(10 - percentage) * 10}% ---\n")
         percentages.append(f'{percentage * 10}%')
 

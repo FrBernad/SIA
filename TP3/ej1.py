@@ -53,58 +53,19 @@ def ej1(config_path: str):
         # Generate hyperplane frames
         x_vals = arange(-1, 2)
 
-        w_values = perceptron.plot['w']
-        not_repeated_w = []
-        for i in range(len(w_values)):
-            if i == len(w_values) - 1 or not array_equal(w_values[i], w_values[i + 1]):
-                not_repeated_w.append(w_values[i])
-
-        frames = list(map(lambda w: go.Frame(
-            data=[
-                dots,
-                go.Scatter(
-                    x=x_vals,
-                    y=(-w[0] / w[1]) * x_vals - w[2] / w[1],
-                )
-            ]
-        ), not_repeated_w))
-
-        figures = [dots, go.Scatter(
-            x=x_vals,
-            y=(-not_repeated_w[0][0] / not_repeated_w[0][1]) * x_vals - not_repeated_w[0][2] / not_repeated_w[0][1],
-        )]
+        w = perceptron.plot['w'][-1]
 
         fig = go.Figure(
-            data=figures,
+            data=[dots, go.Scatter(
+                x=x_vals,
+                y=(-w[0] / w[1]) * x_vals - w[2] / w[1],
+            )],
             layout=go.Layout(
-                xaxis=dict(range=[-4, 4], autorange=False),
-                yaxis=dict(range=[-4, 4], autorange=False),
                 title=f'{"And" if "and" in training_values.input else "Xor"}',
                 showlegend=False,
-                updatemenus=[dict(
-                    type="buttons",
-                    buttons=[
-                        dict(
-                            label="Play",
-                            method="animate",
-                            args=[None,
-                                  {
-                                      "frame": {
-                                          "duration": 300, "redraw": False
-                                      },
-                                      "fromcurrent": True,
-                                      "transition": {
-                                          "duration": 300,
-                                          "easing": "quadratic-in-out"
-                                      }
-
-                                  }
-                                  ]
-                        )
-                    ]
-                )]
+                width=800,
+                height=600,
             ),
-            frames=frames
         )
         fig.show()
 
@@ -113,9 +74,11 @@ def ej1(config_path: str):
                 y=perceptron.plot['e'],
             )
             ,
-            {
-                'title': f'Error',
-            }
+            layout=go.Layout(
+                width=800,
+                height=600,
+                title="Error"
+            )
         )
         fig.show()
 

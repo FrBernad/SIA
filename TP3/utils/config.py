@@ -15,6 +15,10 @@ class PerceptronSettings(BaseModel):
     min_iter: int = DEFAULT_MIN_ITER
     g: Optional[str]
     b: Optional[float]
+    variable: bool = False
+    alpha: Optional[float]
+    a: Optional[float]
+    beta: Optional[float]
 
 
 class PerceptronConfig(BaseModel):

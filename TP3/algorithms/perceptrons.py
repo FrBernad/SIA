@@ -42,7 +42,13 @@ class SimplePerceptron:
             self.y_denormalized = y
             y = vectorize(lambda v: 2 * (v - y.min()) / (y.max() - y.min()) - 1)(y)  # Normalize Output
 
+        self.variable = config.variable
+
         self.w = None
+        self.d_w = [0.0]
+        self.alpha = config.alpha
+        self.a = config.a
+        self.beta = config.beta
         self.x = x
         self.y = y
         self.min_iter = config.min_iter
@@ -56,9 +62,11 @@ class SimplePerceptron:
     def train(self):
 
         i = 0
+
         w = random.uniform(-1, 1, size=self.dimension + 1)
         self.plot['w'].append(copy(w))
         w_min = w
+
         error = 1
         error_min = self.examples_count * 2
 
@@ -74,18 +82,23 @@ class SimplePerceptron:
             o = array(o)
 
             delta_w = self.delta_w(self.y[i_x], o[i_x], self.x[i_x], h[i_x])
+            if self.variable:
+                self.d_w.append(delta_w)
+
             w += delta_w
             self.plot['w'].append(copy(w))
 
             error = self.calculate_error(o, self.y)
 
+            if self.variable:
+                self.adapt_learning_rate(error)
+
             if self.normalize:
                 self.plot['e_denormalized'].append(self.calculate_error(
                     vectorize(lambda v: (v + 1) * (self.y_max - self.y_min) / 2 + self.y_min)(o),
-                    self.y_denormalized)[0])
-                self.plot['e_normalized'].append(error[0])
-            else:
-                self.plot['e'].append(error[0])
+                    self.y_denormalized))
+                self.plot['e_normalized'].append(error)
+            self.plot['e'].append(error)
 
             if error < error_min:
                 error_min = error
@@ -124,14 +137,20 @@ class SimplePerceptron:
             x: float,
             h: float
     ):
-        return self.learning_rate * (y - o) * x
+        return self.learning_rate * (y - o) * x + self.alpha * self.d_w[-1]
 
     def calculate_error(
             self,
             o: NDArray[float],
             y: NDArray[float]
     ):
-        return (1 / len(o)) * sum((y - o) ** 2)
+        return mean((1 / len(o)) * sum((y - o) ** 2))
+
+    def adapt_learning_rate(self, error):
+        delta_n = 0
+        if len(self.plot['e']) > 0:
+            delta_n = self.a if error < self.plot['e'][-1] else -self.beta * self.learning_rate
+        self.learning_rate += delta_n
 
 
 class LinearPerceptron(SimplePerceptron):
@@ -180,7 +199,7 @@ class NonLinearPerceptron(SimplePerceptron):
             x: float,
             h: float
     ):
-        return self.learning_rate * (y - o) * x * self.g_derivative(self.b, h)
+        return self.learning_rate * (y - o) * x * self.g_derivative(self.b, h) + self.alpha * self.d_w[-1]
 
 
 class Perceptron:
@@ -217,26 +236,39 @@ class MultiLayerPerceptron:
         self.layers_count = len(self.neurons_per_layer)
         self.layers = []
 
+        self.d_w = []
+
         for i in range(self.layers_count):
             layer = []
+            d_w = []
             for n in range(self.neurons_per_layer[i]):
                 perceptron = Perceptron(None, None, None, None)
                 if i != 0 and (n != self.neurons_per_layer[i] - 1 or i == self.layers_count - 1):
+                    d_w_i = []
+                    for k in range(self.neurons_per_layer[i - 1]):
+                        d_w_i.append([0])
+                    d_w.append(d_w_i)
                     perceptron.w = random.uniform(-1, 1, size=self.neurons_per_layer[i - 1])
                     perceptron.v = 0
                     perceptron.d = 0
                     perceptron.h = 0
                 layer.append(perceptron)
             self.layers.append(layer)
+            self.d_w.append(d_w)
 
         self.min_iter = config.min_iter
         self.min_error = config.min_error
         self.learning_rate = config.learning_rate
 
+        self.variable = config.variable
+        self.alpha = config.alpha
+        self.a = config.a
+        self.beta = config.beta
+
     def train(self):
 
         i = 0
-        error = 1
+        error = 1.0
         error_min = len(self.x) * 2
         self.time = time.time()
         while error > self.min_error and i < self.min_iter:
@@ -248,6 +280,10 @@ class MultiLayerPerceptron:
             self.retro_propagate()
 
             error = self.calculate_error(self.x, self.y)
+
+            if self.variable:
+                self.adapt_learning_rate(error)
+
             self.plot['e'].append(error)
             if error < error_min:
                 error_min = error
@@ -311,7 +347,13 @@ class MultiLayerPerceptron:
                 # Para cada neurona de la capa m-1
                 if i != self.neurons_per_layer[m] - 1 or m == self.layers_count - 1:
                     for j in range(self.neurons_per_layer[m - 1]):
-                        self.layers[m][i].w[j] += self.learning_rate * self.layers[m][i].d * self.layers[m - 1][j].v
+                        d_w = self.learning_rate * self.layers[m][i].d * self.layers[m - 1][j].v \
+                              + self.alpha * self.d_w[m][i][j][-1]
+
+                        self.layers[m][i].w[j] += d_w
+
+                        if self.variable:
+                            self.d_w[m][i][j].append(d_w)
 
     def calculate_error(
             self,
@@ -322,7 +364,13 @@ class MultiLayerPerceptron:
         for value in x:
             o.append(self.predict(value))
         o = array(o)
-        return mean(((1 / len(x)) * sum((y - o) ** 2)))
+        return float(mean(((1 / len(x)) * sum((y - o) ** 2))))
+
+    def adapt_learning_rate(self, error: float):
+        delta_n = 0
+        if len(self.plot['e']) > 0:
+            delta_n = self.a if error < self.plot['e'][-1] else -self.beta * self.learning_rate
+        self.learning_rate += delta_n
 
     def predict(self, x: NDArray):
         layers = []

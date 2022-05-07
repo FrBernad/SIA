@@ -30,6 +30,7 @@ if __name__ == "__main__":
     output_parts = split(concatenate((train_output, test_output)), 10)
 
     mse_training = []
+    mse_testing = []
     testing_guess = []
 
     for i in range(len(input_parts)):
@@ -63,10 +64,16 @@ if __name__ == "__main__":
 
         hit = 1 if math.isclose(predicted_testing[0], testing_output[0], abs_tol=0.5) else 0
         testing_guess.append(hit)
-        print(f"Testing values guess: {hit}\n")
+        print(f"Testing values guess: {hit}")
+
+        testing_error = perceptron.calculate_error(testing_input, testing_output)
+        mse_testing.append(testing_error)
+        print(f"Testing values MSE: {training_error}\n")
 
     mse_training.append(std(mse_training))
     mse_training.append(mean(mse_training))
+    mse_testing.append(std(mse_testing))
+    mse_testing.append(mean(mse_testing))
     testing_guess.append(std(testing_guess))
     testing_guess.append(mean(testing_guess))
     col_0 = list(range(1, 11))
@@ -76,11 +83,11 @@ if __name__ == "__main__":
     fig = go.Figure(
         data=[
             go.Table(
-                header=dict(values=["Group", "Training MSE", "Testing Guess"],
+                header=dict(values=["Group", "Training MSE", "Testing MSE", "Testing Guess"],
                             fill_color='paleturquoise',
                             align='left'),
                 cells=dict(
-                    values=[col_0, mse_training, testing_guess],
+                    values=[col_0, mse_training, mse_testing, testing_guess],
                     fill_color='lavender',
                     format=[None, ".5f", ".5f", ".5f", ".5f", ".5f"],
                     align='left')

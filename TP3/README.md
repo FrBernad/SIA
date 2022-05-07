@@ -8,6 +8,7 @@
 
 This project aims to solve different problems using different neural networks strategies.
 It makes use of:
+
 - Simple Perceptron
 - Linear Perceptron
 - Non-Linear Perceptron
@@ -85,6 +86,12 @@ config:
       #Non-Linear
       g: tanh
       b: 0.4
+      
+      #Momentum and adaptative lr
+      variable: false
+      alpha: 0.8
+      a: 0.01
+      beta: 0.1
 
 ...
 ```
