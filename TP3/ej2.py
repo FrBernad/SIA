@@ -33,22 +33,6 @@ def _plot_errors(perceptron: SimplePerceptron):
         )
         fig.show()
 
-        # fig = go.Figure(
-        #     [
-        #         go.Scatter(
-        #             y=perceptron.activation_function(perceptron.x[:, 0]),
-        #             x=perceptron.x[:, 0],
-        #             name=f'Logistic Function'
-        #         ),
-        #         go.Scatter(
-        #             y=perceptron.y[:, 0],
-        #             x=perceptron.x[:, 0],
-        #             name=f'Real Function'
-        #         )
-        #     ]
-        # )
-        # fig.show()
-
     else:
         fig = go.Figure(
             go.Scatter(

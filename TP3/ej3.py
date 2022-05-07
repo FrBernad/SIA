@@ -33,7 +33,7 @@ def ej3(config_path: str):
     output_values = parse_output_values(training_values.output)
 
     print(f'Generating multilayer perceptron...')
-    perceptron = MultiLayerPerceptron(input_values, [36], output_values, config.perceptron.settings)
+    perceptron = MultiLayerPerceptron(input_values, [30], output_values, config.perceptron.settings)
 
     print(f'Predicting results...')
     results = perceptron.train()

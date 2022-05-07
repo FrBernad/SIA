@@ -31,7 +31,7 @@ if __name__ == "__main__":
     print(f'parsing output file: {training_values.output}')
     output_values = parse_output_values(training_values.output)
 
-    print(f'Generating multilayer perceptron...')
+    print(f'Generating multilayer perceptron {j + 1}')
     perceptron = MultiLayerPerceptron(input_values, [36], output_values, config.perceptron.settings)
 
     print(f'Training perceptron...')
@@ -43,51 +43,53 @@ if __name__ == "__main__":
     for i in range(len(input_values)):
         bitmaps = []
         prediction_errors = []
-        for mutated_amount in mutations:
-            mutated_value = _mutate_input_value(input_values[i], mutated_amount)
-            bitmaps.append(mutated_value)
+        for j in range(10):
 
-            print(f"Input: {i} - {mutated_amount} mutations")
+            for mutated_amount in mutations:
+                mutated_value = _mutate_input_value(input_values[i], mutated_amount)
+                bitmaps.append(mutated_value)
 
-            predicted_output = perceptron.predict(mutated_value)
+                print(f"Input: {i} - {mutated_amount} mutations")
 
-            print(f'Expected: {output_values[i]}')
-            print(f'Predicted: {predicted_output}')
+                predicted_output = perceptron.predict(mutated_value)
 
-            error = perceptron.calculate_error(array([mutated_value]), array([output_values[i]]))
-            prediction_errors.append(error)
-            print(f'Error: {error}\n')
+                print(f'Expected: {output_values[i]}')
+                print(f'Predicted: {predicted_output}')
 
-        fig = make_subplots(
-            rows=2, cols=5,
-            subplot_titles=tuple(map(lambda m: f'{m} mutations', mutations)),
-            specs=[[{}, {}, {}, {}, {}], [{'type': 'table', "colspan": 2}, None, None, None, None]],
-        )
+                error = perceptron.calculate_error(array([mutated_value]), array([output_values[i]]))
+                prediction_errors.append(error)
+                print(f'Error: {error}\n')
 
-        fig.update_xaxes(visible=False)
-        fig.update_yaxes(visible=False)
-
-        for k in range(1, len(mutations) + 1):
-            fig.add_heatmap(
-                z=flip(reshape(bitmaps[k - 1][:-1], (7, 5)), axis=0),
-                showscale=False,
-                row=1, col=k, colorscale='Greys',
+            fig = make_subplots(
+                rows=2, cols=5,
+                subplot_titles=tuple(map(lambda m: f'{m} mutations', mutations)),
+                specs=[[{}, {}, {}, {}, {}], [{'type': 'table', "colspan": 2}, None, None, None, None]],
             )
 
-        fig.add_table(
-            columnwidth=[1, 1.5],
-            header=dict(
-                values=["Mutations", "Prediction Error"],
-                align=['center', 'center']
-            ),
-            cells=dict(
-                values=array([mutations, prediction_errors]),
-                align=['center', 'center'],
-                font_size=12,
-                format=[None, ".6f"],
-                height=30
-            ),
-            row=2, col=1
-        )
+            fig.update_xaxes(visible=False)
+            fig.update_yaxes(visible=False)
 
-        fig.show()
+            for k in range(1, len(mutations) + 1):
+                fig.add_heatmap(
+                    z=flip(reshape(bitmaps[k - 1][:-1], (7, 5)), axis=0),
+                    showscale=False,
+                    row=1, col=k, colorscale='Greys',
+                )
+
+            fig.add_table(
+                columnwidth=[1, 1.5],
+                header=dict(
+                    values=["Mutations", "Prediction Error"],
+                    align=['center', 'center']
+                ),
+                cells=dict(
+                    values=array([mutations, prediction_errors]),
+                    align=['center', 'center'],
+                    font_size=12,
+                    format=[None, ".6f"],
+                    height=30
+                ),
+                row=2, col=1
+            )
+
+            fig.show()
