@@ -40,8 +40,6 @@ To run the different exercises you **MUST** follow the next steps:
 Where:
 
 - config_file: specifies the path to a valid yaml configuration file. Defaults to **"config.yaml"**
-- data_file: specifies the .txt data file to generate the knapsack. Defaults to  **"Mochila100Elementos.txt"**.
-- output_file: specifies the path to the output file containing the found solution. Defaults to **"solution.yaml"**
 
 ## Configuration File
 
