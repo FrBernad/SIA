@@ -31,12 +31,12 @@ config:
     settings:
       #Global
       learning_rate: 0.1
-      min_error: 0.005
-      min_iter: 10000
+      min_error: 0.0000005
+      min_iter: 5000
 
       #Non-Linear
-      g: tanh
-      b: 0.5
+      g: logistic
+      b: 0.1
 
       #Momentum and adaptive lr
       variable: false
