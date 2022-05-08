@@ -31,7 +31,7 @@ config:
     settings:
       #Global
       learning_rate: 0.1
-      min_error: 0.001
+      min_error: 0.005
       min_iter: 10000
 
       #Non-Linear
