@@ -1,7 +1,5 @@
-from random import random
-
 from numpy import array, reshape, flip, copy
-from numpy.random import randint, choice
+from numpy.random import choice
 from plotly.subplots import make_subplots
 
 from algorithms.perceptrons import MultiLayerPerceptron
@@ -20,11 +18,11 @@ def _mutate_input_value(input_value, mutated_amount):
 
 if __name__ == "__main__":
     print('Welcome to the multilayer mutation perceptron test')
-    config = get_config('../config.yaml')
+    config = get_config('../../config.yaml')
 
     training_values = config.training_values
-    training_values.input = '../training_values/ej3-2-input.txt'
-    training_values.output = '../training_values/ej3-3-output.txt'
+    training_values.input = '../../training_values/ej3-2-input.txt'
+    training_values.output = '../../training_values/ej3-3-output.txt'
 
     print(f'parsing input file: {training_values.input}')
     input_values = parse_nums(training_values.input)

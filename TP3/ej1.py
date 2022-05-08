@@ -1,7 +1,7 @@
 import sys
 
 import plotly.graph_objects as go
-from numpy import arange, array_equal
+from numpy import arange
 
 from algorithms.perceptrons import SimplePerceptron
 from utils.argument_parser import parse_arguments

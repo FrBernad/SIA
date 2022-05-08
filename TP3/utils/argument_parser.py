@@ -27,9 +27,9 @@ def parse_arguments(argv: List[str]) -> dict:
 def _help():
     print(
         f'''NAME
-\tSimple Perceptron Solver - solves optimization problems using the simple perceptron model\n
+\tPerceptron Optimizer - solves optimization problems using different perceptron models\n
 SYNOPSIS
-\tej1.py [-h] [-c config_file]\n
+\tejN.py [-h] [-c config_file]\n
 DESCRIPTION
 \tSolves optimization based on a training set.
 \tMandatory arguments for short options are.\n

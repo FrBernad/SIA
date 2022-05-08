@@ -1,20 +1,20 @@
 import plotly.graph_objects as go
-from numpy import copy, mean, std, concatenate, array
+from numpy import mean, array
 
-from algorithms.perceptrons import LinearPerceptron, MultiLayerPerceptron
+from algorithms.perceptrons import MultiLayerPerceptron
 from utils.config import get_config
-from utils.parser_utils import parse_training_values, parse_output_values, parse_nums
+from utils.parser_utils import parse_output_values, parse_nums
 
 if __name__ == "__main__":
     print('--- Welcome to multilayer perceptron parity beta errors plot ---')
 
     print('parsing config file...')
-    config = get_config("../config.yaml")
+    config = get_config("../../config.yaml")
 
     training_values = config.training_values
 
-    training_values.input = '../training_values/ej3-2-input.txt'
-    training_values.output = '../training_values/ej3-2-output.txt'
+    training_values.input = '../../training_values/ej3-2-input.txt'
+    training_values.output = '../../training_values/ej3-2-output.txt'
 
     print(f'parsing input file: {training_values.input}')
     input_values = parse_nums(training_values.input)

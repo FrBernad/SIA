@@ -10,11 +10,11 @@ from utils.parser_utils import parse_training_values, parse_output_values
 
 if __name__ == "__main__":
     print('Welcome to the non_linear cross validation perceptron test')
-    config = get_config('../config.yaml')
+    config = get_config('../../config.yaml')
 
     training_values = config.training_values
-    training_values.input = '../training_values/ej2-input.txt'
-    training_values.output = '../training_values/ej2-output.txt'
+    training_values.input = '../../training_values/ej2-input.txt'
+    training_values.output = '../../training_values/ej2-output.txt'
 
     print(f'parsing input file: {training_values.input}')
     input_values = parse_training_values(training_values.input)

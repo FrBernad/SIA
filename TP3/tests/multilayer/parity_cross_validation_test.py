@@ -2,8 +2,7 @@ import math
 from itertools import chain
 
 import plotly.graph_objects as go
-from numpy import array, mean, std, copy, split, concatenate
-from numpy.random import randint
+from numpy import array, mean, std, split, concatenate
 from sklearn.model_selection import train_test_split
 
 from algorithms.perceptrons import MultiLayerPerceptron
@@ -12,11 +11,11 @@ from utils.parser_utils import parse_nums, parse_output_values
 
 if __name__ == "__main__":
     print('Welcome to the multilayer perceptron parity cross validation test')
-    config = get_config('../config.yaml')
+    config = get_config('../../config.yaml')
 
     training_values = config.training_values
-    training_values.input = '../training_values/ej3-2-input.txt'
-    training_values.output = '../training_values/ej3-2-output.txt'
+    training_values.input = '../../training_values/ej3-2-input.txt'
+    training_values.output = '../../training_values/ej3-2-output.txt'
 
     print(f'parsing input file: {training_values.input}')
     input_values = parse_nums(training_values.input)

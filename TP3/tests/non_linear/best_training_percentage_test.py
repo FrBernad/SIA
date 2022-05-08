@@ -8,11 +8,11 @@ from utils.parser_utils import parse_training_values, parse_output_values
 
 if __name__ == "__main__":
     print('Welcome to the non_linear best training percentage perceptron test')
-    config = get_config('../config.yaml')
+    config = get_config('../../config.yaml')
 
     training_values = config.training_values
-    training_values.input = '../training_values/ej2-input.txt'
-    training_values.output = '../training_values/ej2-output.txt'
+    training_values.input = '../../training_values/ej2-input.txt'
+    training_values.output = '../../training_values/ej2-output.txt'
 
     print(f'parsing input file: {training_values.input}')
     input_values = parse_training_values(training_values.input)
@@ -52,7 +52,7 @@ if __name__ == "__main__":
             print(f'\n{" ".join(predicted_output.__str__().split())}')
             print(f'{" ".join(test_output.__str__().split())}')
 
-            testing_error = perceptron.calculate_error(predicted_output, test_output)[0]
+            testing_error = perceptron.calculate_error(predicted_output, test_output)
             mse_testing_errors.append(testing_error)
             # print(f"Testing values MSE: {testing_error}\n")
 

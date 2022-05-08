@@ -1,7 +1,7 @@
 import plotly.graph_objects as go
-from numpy import copy, mean, std, concatenate
+from numpy import mean
 
-from algorithms.perceptrons import LinearPerceptron, MultiLayerPerceptron
+from algorithms.perceptrons import MultiLayerPerceptron
 from utils.config import get_config
 from utils.parser_utils import parse_training_values, parse_output_values
 
@@ -9,12 +9,12 @@ if __name__ == "__main__":
     print('--- Welcome to multilayer perceptron xor layers error plot ---')
 
     print('parsing config file...')
-    config = get_config("../config.yaml")
+    config = get_config("../../config.yaml")
 
     training_values = config.training_values
 
-    training_values.input = '../training_values/ej1-xor-input.txt'
-    training_values.output = '../training_values/ej1-xor-output.txt'
+    training_values.input = '../../training_values/ej1-xor-input.txt'
+    training_values.output = '../../training_values/ej1-xor-output.txt'
 
     print(f'parsing input file: {training_values.input}')
     input_values = parse_training_values(training_values.input)

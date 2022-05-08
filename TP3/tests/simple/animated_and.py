@@ -1,20 +1,20 @@
+import plotly.graph_objects as go
 from numpy import arange, array_equal
 
 from algorithms.perceptrons import SimplePerceptron
 from utils.config import get_config
 from utils.parser_utils import parse_training_values, parse_output_values
-import plotly.graph_objects as go
 
 if __name__ == "__main__":
     print('--- WELCOME TO THE ANIMATED SIMPLE PERCEPTRON ---')
 
     print('parsing config file...')
-    config = get_config('../config.yaml')
+    config = get_config('../../config.yaml')
 
     training_values = config.training_values
 
-    training_values.input = '../training_values/ej1-and-input.txt'
-    training_values.output = '../training_values/ej1-and-output.txt'
+    training_values.input = '../../training_values/ej1-and-input.txt'
+    training_values.output = '../../training_values/ej1-and-output.txt'
 
     print(f'parsing input file: {training_values.input}')
     input_values = parse_training_values(training_values.input)

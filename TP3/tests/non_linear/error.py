@@ -1,20 +1,20 @@
 import plotly.graph_objects as go
 from numpy import copy, mean, std, concatenate
 
-from algorithms.perceptrons import LinearPerceptron
+from algorithms.perceptrons import NonLinearPerceptron
 from utils.config import get_config
 from utils.parser_utils import parse_training_values, parse_output_values
 
 if __name__ == "__main__":
-    print('--- Welcome to linear perceptron error plot ---')
+    print('--- Welcome to non linear perceptron error plot ---')
 
     print('parsing config file...')
-    config = get_config("../config.yaml")
+    config = get_config("../../config.yaml")
 
     training_values = config.training_values
 
-    training_values.input = '../training_values/ej2-linear-input.txt'
-    training_values.output = '../training_values/ej2-linear-output.txt'
+    training_values.input = '../../training_values/ej2-linear-input.txt'
+    training_values.output = '../../training_values/ej2-linear-output.txt'
 
     print(f'parsing input file: {training_values.input}')
     input_values = parse_training_values(training_values.input)
@@ -24,10 +24,10 @@ if __name__ == "__main__":
     errors = []
 
     for i in range(20):
-        perceptron = LinearPerceptron(input_values, copy(output_values), config.perceptron.settings)
+        perceptron = NonLinearPerceptron(input_values, copy(output_values), config.perceptron.settings)
         print(f'Predicting results {i + 1}')
         results = perceptron.train()
-        errors.append(perceptron.plot['e'])
+        errors.append(perceptron.plot['e_denormalized'])
 
     mean_errors = mean(errors, axis=0)
     print(f'Min error: {mean_errors.min()}')
@@ -49,7 +49,7 @@ if __name__ == "__main__":
         ]
         ,
         {
-            'title': f'Error',
+            'title': f'Error Denormalized',
         }
     )
     fig.show()
