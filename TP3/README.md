@@ -6,9 +6,8 @@
 
 # NEURAL NETWORKS OPTIMIZATIONS
 
-This project aims to solve different problems using different neural networks strategies.
+This project aims to solve different problems using a variety of neural networks strategies.
 It makes use of:
-
 - Simple Perceptron
 - Linear Perceptron
 - Non-Linear Perceptron

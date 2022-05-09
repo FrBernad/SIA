@@ -17,5 +17,14 @@ This project aims to solve the [0-1 Knapsack Problem](https://en.wikipedia.org/w
 Algorithms. The Knapsack Problem is an example of a combinatorial optimization problem, which seeks to maximize the
 benefit of objects in a knapsack without exceeding its capacity.
 
+## [TP3 - NEURAL NETWORKS OPTIMIZATIONS](https://github.com/FrBernad/SIA/tree/main/TP3)
+
+This project aims to solve different problems using a variety of neural networks strategies.
+It makes use of:
+- Simple Perceptron
+- Linear Perceptron
+- Non-Linear Perceptron
+- Multilayer Perceptron
+
 
 
