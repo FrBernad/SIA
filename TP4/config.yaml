@@ -1,0 +1,14 @@
+---
+# --- Unsupervised Learning Config ---
+config:
+
+  # Input and Output file paths for the input values
+  input_file:
+
+  #Perceptron config
+  kohonen:
+    #network radius
+    radius: 4
+    #network max iterations
+    max_iter: 10000
+...
