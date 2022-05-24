@@ -39,3 +39,31 @@ DESCRIPTION
 \t-c config_file
 \t\tSpecifies the .yaml configuration file. Defaults to config.yaml.\n
          ''')
+    elif exercise == 'HOPFIELD':
+        print(
+            f'''NAME
+\tHopfield Solver - approximates patterns using Hopfield Networks\n
+SYNOPSIS
+\thopfield_solver.py [-h] [-c config_file]\n
+DESCRIPTION
+\tApproximates and stores patterns using Hopfield Networks.
+\tMandatory arguments for short options are.\n
+\t-h
+\t\tShow this help message and exit\n
+\t-c config_file
+\t\tSpecifies the .yaml configuration file. Defaults to config.yaml.\n
+         ''')
+    elif exercise == 'OJA':  # FIXME:
+        print(
+            f'''NAME
+\tOja Solver - PCA first component approximation using Oja Networks\n
+SYNOPSIS
+\tojasolver.py [-h] [-c config_file]\n
+DESCRIPTION
+\tApproximates PCA first component using Oja Networks.
+\tMandatory arguments for short options are.\n
+\t-h
+\t\tShow this help message and exit\n
+\t-c config_file
+\t\tSpecifies the .yaml configuration file. Defaults to config.yaml.\n
+         ''')

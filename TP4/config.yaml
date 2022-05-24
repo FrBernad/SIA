@@ -5,10 +5,17 @@ config:
   # Input and Output file paths for the input values
   input_file:
 
-  #Perceptron config
+  #Kohonen config
   kohonen:
     #network radius
     radius: 4
+    #network max iterations
+    max_iter: 10000
+
+  #Oja config
+  oja:
+    #network radius
+    learning_rate: 0.05
     #network max iterations
     max_iter: 10000
 ...

@@ -3,7 +3,7 @@ import sys
 from algorithms.kohonen import Kohonen
 from utils.argument_parser import parse_arguments
 from utils.config import get_config
-from utils.parser_utils import parse_input_values
+from utils.parser_utils import parse_input_csv
 
 
 def kohonen_solver(config_file: str):
@@ -16,7 +16,7 @@ def kohonen_solver(config_file: str):
         config.input_file = 'data/europe.csv'
 
     print(f'\tparsing input file: {config.input_file}')
-    input_values = parse_input_values(config.input_file)
+    input_values = parse_input_csv(config.input_file)
 
     print(f'\tGenerating Kohonen Network...')
     kohonen_network = Kohonen(input_values, config.kohonen)

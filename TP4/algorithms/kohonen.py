@@ -1,6 +1,6 @@
 from numpy import zeros, unravel_index, argmin, array, copy
 from numpy.linalg import norm
-from numpy.random import choice, randint
+from numpy.random import randint
 from numpy.typing import NDArray
 
 from utils.config import KohonenConfig
