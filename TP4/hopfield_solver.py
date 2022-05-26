@@ -1,5 +1,7 @@
 import sys
 
+from numpy import array
+
 from algorithms.hopfield import Hopfield
 from utils.argument_parser import parse_arguments
 from utils.config import get_config
@@ -16,7 +18,7 @@ def hopfield_solver(config_file: str):
         config.input_file = 'data/font.txt'
 
     print(f'\tparsing input file: {config.input_file}')
-    input_values = parse_letters(config.input_file)
+    input_values = array(list(parse_letters(config.input_file).values()))
 
     print(f'\tGenerating Hopfield Network...')
     hopfield_network = Hopfield(input_values[1:4])

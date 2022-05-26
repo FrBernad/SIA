@@ -1,5 +1,5 @@
 import pandas as pd
-from numpy import array, where
+from numpy import where, array
 from numpy.typing import NDArray
 
 from sklearn.preprocessing import StandardScaler
@@ -12,7 +12,7 @@ def parse_input_csv(input_file: str) -> NDArray:
     return StandardScaler().fit_transform(df.values)
 
 
-def parse_letters(file: str) -> NDArray:
+def parse_letters(file: str) -> dict:
     with open(file) as df:
         lines = df.readlines()
         values = []
@@ -25,5 +25,12 @@ def parse_letters(file: str) -> NDArray:
                     number.append(n)
             values.append(number)
 
-        letters = array(values)
-        return where(letters == 0, -1, letters)
+        values = array(values)
+        values = where(values == 0, -1, values)
+        letters = {}
+        current_letter = 65
+        for value in values:
+            letters[chr(current_letter)] = value
+            current_letter += 1
+
+        return letters

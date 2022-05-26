@@ -1,4 +1,4 @@
-from numpy import fill_diagonal, matmul, sign, array_equal, reshape
+from numpy import fill_diagonal, matmul, sign, array_equal
 from numpy.typing import NDArray
 
 

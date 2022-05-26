@@ -7,15 +7,19 @@ config:
 
   #Kohonen config
   kohonen:
+    #network learning rate
+    learning_rate: 0.1
     #network radius
     radius: 4
     #network max iterations
-    max_iter: 10000
+    max_iter: 50000
+    #network k neurons
+    k: 4
 
   #Oja config
   oja:
-    #network radius
-    learning_rate: 0.05
+    #network learning rate
+    learning_rate: 0.0001
     #network max iterations
     max_iter: 10000
 ...

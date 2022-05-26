@@ -6,13 +6,14 @@ from pydantic import BaseModel, ValidationError
 DEFAULT_RADIUS = 1
 DEFAULT_K = 5
 DEFAULT_MAX_ITER = 500
-DEFAULT_LEARNING_RATE = 0.1
+DEFAULT_LEARNING_RATE = 0.01
 
 
 class KohonenConfig(BaseModel):
     radius: int = DEFAULT_RADIUS
     k: int = DEFAULT_K
     max_iter: int = DEFAULT_MAX_ITER
+    learning_rate: float = DEFAULT_LEARNING_RATE
 
 
 class OjaConfig(BaseModel):

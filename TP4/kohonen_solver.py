@@ -22,15 +22,9 @@ def kohonen_solver(config_file: str):
     kohonen_network = Kohonen(input_values, config.kohonen)
 
     print(f'\tTraining network...')
-    results = kohonen_network.train()
+    kohonen_network.train()
 
     print(f'\tFinished!')
-    # results.print(remove_ws=True)
-    #
-    # np.set_printoptions(suppress=True, linewidth=np.inf)
-    # pd.set_option('display.max_columns', None)
-    # pd.set_option('display.max_rows', None)
-    # pd.set_option('display.width', None)
 
 
 if __name__ == "__main__":
