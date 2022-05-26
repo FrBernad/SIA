@@ -2,8 +2,7 @@ import sys
 
 import numpy as np
 import pandas as pd
-from numpy import dot, matmul
-from numpy.linalg import norm
+from numpy import matmul
 from sklearn.decomposition import PCA
 
 from algorithms.oja import Oja
@@ -45,9 +44,9 @@ def oja_solver(config_file: str):
 
     pca = PCA()
     principal_components = pca.fit_transform(oja_network.input_values)
-
     print("\n\nEigenvector - First Component")
-    print(pca.components_[:, 0])
+
+    print(pca.components_.T[:, 0])
 
     print("\n\nPCA 1")
     print(principal_components[:, 0])

@@ -1,5 +1,3 @@
-from numpy import dot
-from numpy.linalg import norm
 from numpy.random import rand
 from numpy.typing import NDArray
 
@@ -13,8 +11,8 @@ class Oja:
         self.max_iter = config.max_iter
         self.learning_rate = config.learning_rate
         self.n = len(input_values)
-        self.w = rand(len(input_values[0]))
-        self.w = self.w / norm(self.w)
+        self.w = rand(len(input_values[0]))*2 - 1
+        self.w = self.w
 
     def train(self) -> 'OjaResults':
         iteration = 0
@@ -26,8 +24,7 @@ class Oja:
             for i in range(self.n):
                 s = self.input_values[i] @ self.w
 
-                self.w = self.w / norm(self.w) + self.learning_rate * s * (
-                        self.input_values[i] / norm(self.w) - s * self.w / norm(self.w) ** 3)
+                self.w = self.w + self.learning_rate * s * (self.input_values[i] - s * self.w)
 
                 results.w.append(self.w)
 
