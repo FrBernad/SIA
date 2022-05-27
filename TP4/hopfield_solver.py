@@ -21,7 +21,7 @@ def hopfield_solver(config_file: str):
     input_values = array(list(parse_letters(config.input_file).values()))
 
     print(f'\tGenerating Hopfield Network...')
-    hopfield_network = Hopfield(input_values[1:4])
+    hopfield_network = Hopfield(config.hopfield, input_values[1:4])
 
     print(f'\tTraining network...')
     results = hopfield_network.train(input_values[1])
