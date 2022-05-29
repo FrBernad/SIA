@@ -8,11 +8,11 @@ config:
   #Kohonen config
   kohonen:
     #network learning rate
-    learning_rate: 0.1
+    learning_rate: 0.01
     #network radius
     radius: 4
     #network max iterations
-    max_iter: 50000
+    max_iter: 1000
     #network k neurons
     k: 4
 

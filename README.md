@@ -26,5 +26,12 @@ It makes use of:
 - Non-Linear Perceptron
 - Multilayer Perceptron
 
+## [TP4 - UNSUPERVISED NETWORKS](https://github.com/FrBernad/SIA/tree/main/TP4)
+
+This project aims to solve different problems using a variety unsupervised machine learning algorithms.
+It makes use of:
+- Kohonen Networks
+- Oja Rule
+- Hopfield Networks
 
 

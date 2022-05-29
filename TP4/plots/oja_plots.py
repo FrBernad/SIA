@@ -1,4 +1,4 @@
-from numpy import matmul, array
+from numpy import matmul, array, square
 from pandas import read_csv, DataFrame
 import plotly.graph_objects as go
 from sklearn.decomposition import PCA
@@ -41,13 +41,13 @@ if __name__ == "__main__":
     non_standardized_df.index = non_standardized_df.Country.values
     non_standardized_df.drop('Country', axis=1, inplace=True)
 
-    box_plot(non_standardized_df, 'denormalized')
+    # box_plot(non_standardized_df, 'denormalized')
 
     standardized_df = DataFrame(StandardScaler().fit_transform(non_standardized_df.values))
     standardized_df.index = non_standardized_df.index
     standardized_df.columns = non_standardized_df.columns
 
-    box_plot(standardized_df, 'normalized')
+    # box_plot(standardized_df, 'normalized')
 
     input_values = standardized_df.values
     oja_network = Oja(input_values, config.oja)
@@ -154,3 +154,26 @@ if __name__ == "__main__":
         )
     )
     fig.show()
+
+    lrs = [0.1, 0.01, 0.001, 0.0001, 0.00001]
+    error = []
+    for lr in lrs:
+        config.oja.learning_rate = lr
+        oja_network = Oja(input_values, config.oja)
+        result = oja_network.train()
+        eig = pca.components_[0]
+        approximated_eig = result.w[-1]
+        # if eig[0] > 0 and approximated_eig[0] < 0:
+        #     approximated_eig = approximated_eig * -1
+        error.append((square(abs(eig) - abs(approximated_eig))).mean(axis=0))
+
+    go.Figure(
+        data=go.Bar(
+            x=list(map(lambda lr: "{0:f}".format(lr), lrs)),
+            y=error
+        )
+        ,
+        layout=go.Layout(
+            title="MSE per learning rate"
+        )
+    ).show()

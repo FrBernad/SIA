@@ -64,23 +64,6 @@ def _make_plots(kohonen_network: Kohonen):
 
     fig.show()
 
-    fig = go.Figure(
-        data=go.Heatmap(
-            z=neuron_count,
-            colorscale="Blues"
-        ),
-        layout=go.Layout(
-            xaxis=dict(visible=False),
-            yaxis=dict(visible=False),
-            title=f"Elements per neuron - Learning rate: {kohonen_network.init_learning_rate} - K: {kohonen_network.k}"
-        )
-    )
-
-    fig.update_xaxes(visible=False)
-    fig.update_yaxes(visible=False)
-
-    fig.show()
-
 
 if __name__ == "__main__":
     config = get_config("../config.yaml")
@@ -88,13 +71,16 @@ if __name__ == "__main__":
 
     input_values = parse_input_csv(config.input_file)
 
-    learning_rates = [0.001, 0.01, 0.1]
-    ks = [3, 4, 5]
+    learning_rates = [0.1, 0.01, 0.001]
+    ks = [4]
+    epochs = [10000]
 
     for k in ks:
         for lr in learning_rates:
-            config.kohonen.k = k
-            config.kohonen.learning_rate = lr
-            kohonen_network = Kohonen(input_values, config.kohonen)
-            kohonen_network.train()
-            _make_plots(kohonen_network)
+            for e in epochs:
+                config.kohonen.k = k
+                config.kohonen.learning_rate = lr
+                config.kohonen.max_iter = e
+                kohonen_network = Kohonen(input_values, config.kohonen)
+                kohonen_network.train()
+                _make_plots(kohonen_network)
