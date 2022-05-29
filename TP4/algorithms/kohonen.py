@@ -57,7 +57,8 @@ class Kohonen:
         radius = 1.5
         for i in range(self.k):
             for j in range(self.k):
-                if norm(array([i, j]) - neuron) <= radius:
-                    euc_distance.append(norm(self.neurons[i][j] - self.neurons[neuron[0]][neuron[1]]))
+                if i != neuron[0] or j != neuron[1]:
+                    if norm(array([i, j]) - neuron) <= radius:
+                        euc_distance.append(norm(self.neurons[i][j] - self.neurons[neuron[0]][neuron[1]]))
 
         return average(euc_distance)
