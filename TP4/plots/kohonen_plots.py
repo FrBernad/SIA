@@ -71,7 +71,7 @@ if __name__ == "__main__":
 
     input_values = parse_input_csv(config.input_file)
 
-    learning_rates = [0.1, 0.01, 0.001]
+    learning_rates = [00.01]
     ks = [4]
     epochs = [10000]
 

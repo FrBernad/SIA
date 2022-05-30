@@ -53,7 +53,7 @@ DESCRIPTION
 \t-c config_file
 \t\tSpecifies the .yaml configuration file. Defaults to config.yaml.\n
          ''')
-    elif exercise == 'OJA':  # FIXME:
+    elif exercise == 'OJA':
         print(
             f'''NAME
 \tOja Solver - PCA first component approximation using Oja Networks\n
