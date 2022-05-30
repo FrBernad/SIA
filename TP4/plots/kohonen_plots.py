@@ -1,5 +1,5 @@
 import plotly.graph_objects as go
-from numpy import zeros, array
+from numpy import zeros, array, empty
 from pandas import read_csv
 
 from algorithms.kohonen import Kohonen
@@ -8,7 +8,9 @@ from utils.parser_utils import parse_input_csv
 
 
 def _make_plots(kohonen_network: Kohonen):
-    countries = read_csv(config.input_file).Country.values
+    df = read_csv(config.input_file)
+    countries = df.Country.values
+    df.drop('Country', axis=1, inplace=True)
     neuron_count = zeros(shape=(config.kohonen.k, config.kohonen.k))
     neuron_countries = [['' for _ in range(config.kohonen.k)] for _ in range(config.kohonen.k)]
     for value, country in zip(input_values, countries):
@@ -64,6 +66,28 @@ def _make_plots(kohonen_network: Kohonen):
 
     fig.show()
 
+    for index, c in enumerate(df.columns.values):
+        values = empty((len(kohonen_network.neurons), len(kohonen_network.neurons)))
+        for i in range(len(kohonen_network.neurons)):
+            for j in range(len(kohonen_network.neurons)):
+                values[i][j] = kohonen_network.neurons[i][j][index]
+
+        fig = go.Figure(
+            data=go.Heatmap(
+                z=values,
+                colorscale="Blues"
+            ),
+            layout=go.Layout(
+                xaxis=dict(visible=False),
+                yaxis=dict(visible=False),
+                title=f"{c}"
+            )
+        )
+        fig.update_xaxes(visible=False)
+        fig.update_yaxes(visible=False)
+
+        fig.show()
+
 
 if __name__ == "__main__":
     config = get_config("../config.yaml")
@@ -72,7 +96,7 @@ if __name__ == "__main__":
     input_values = parse_input_csv(config.input_file)
 
     learning_rates = [00.01]
-    ks = [4]
+    ks = [3]
     epochs = [10000]
 
     for k in ks:

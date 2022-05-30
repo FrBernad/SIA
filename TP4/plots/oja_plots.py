@@ -1,12 +1,11 @@
+import plotly.graph_objects as go
 from numpy import matmul, array, square
 from pandas import read_csv, DataFrame
-import plotly.graph_objects as go
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
 from algorithms.oja import Oja
 from utils.config import get_config
-from utils.parser_utils import parse_input_csv
 
 
 def box_plot(df, title):
