@@ -4,13 +4,13 @@
 - [Nicolás Rampoldi](https://github.com/NicolasRampoldi)
 - [Joaquín Legammare](https://github.com/JoacoLega)
 
-# UNSUPERVISED LEARNING
+# AUTOENCODERS NETWORKS
 
-This project aims to solve different problems using a variety unsupervised machine learning algorithms.
+This project aims to solve different problems using a variety of autoencoders.
 It makes use of:
-- Kohonen Networks
-- Oja Rule
-- Hopfield Networks
+- Linear Auto Enconder
+- Denoising Autoencoder
+- Variational Autoencoders
 
 # Requirements
 
@@ -32,7 +32,7 @@ To run the different exercises you **MUST** follow the next steps:
 
 ```bash
   pipenv shell 
-  python [method]_solver.py [-h] [-c config_file]
+  python [encoder]_solver.py [-h] [-c config_file]
 ```
 
 Where:
@@ -45,33 +45,31 @@ The configuration file must be a valid yaml file with the following structure:
 
 ```
 ---
-# --- Unsupervised Learning Config ---
+# --- Autoencoders Config ---
 config:
 
   # Input and Output file paths for the input values
-  input_file:
+  font: 2
 
-  #Kohonen config
-  kohonen:
+  #AE config
+  ae:
     #network learning rate
     learning_rate: 0.01
-    #network radius
-    radius: 4
     #network max iterations
     max_iter: 1000
-    #network k neurons
-    k: 4
 
-  #Hopfield config
-  hopfield:
-    #network max iterations
-    max_iter: 100
-
-  #Oja config
-  oja:
+  #DAE config
+  dae:
     #network learning rate
-    learning_rate: 0.0001
+    learning_rate: 0.01
     #network max iterations
-    max_iter: 10000
+    max_iter: 1000
+
+  #VAE config
+  vae:
+    #network learning rate
+    learning_rate: 0.01
+    #network max iterations
+    max_iter: 1000
 ...
 ```

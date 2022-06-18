@@ -1,0 +1,37 @@
+---
+# --- Autoencoders Config ---
+config:
+
+  # Input and Output file paths for the input values
+  # Values:
+  # - 1 numbers
+  # - 2 uppercase characters
+  # - 3 lowercase characters
+  font: 2
+
+  # font values selection amount
+  selection_amount: 5
+
+  # - 3 lowercase characters
+
+  #AE config
+  ae:
+    #network max iterations
+    max_iter: 15
+    #network min error
+    min_error: 0.01
+
+  #DAE config
+  dae:
+    #network max iterations
+    max_iter: 15
+    #network min error
+    min_error: 0.01
+
+  #VAE config
+  vae:
+    #network max iterations
+    max_iter: 15
+    #network min error
+    min_error: 0.01
+...
