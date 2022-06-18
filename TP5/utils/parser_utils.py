@@ -1,11 +1,13 @@
 from numpy import array, zeros
 from numpy.random import choice
-from numpy.typing import NDArray
-from data.fonts import FONTS_ARRAY
+
+from data.fonts import FONTS
 
 
-def parse_font(font_number: int, selection_amount: int) -> NDArray:
-    characters = FONTS_ARRAY[font_number - 1]
+def parse_font(font_number: int, selection_amount: int) -> dict:
+    font = FONTS[font_number - 1]
+    characters = font.get('array')
+    letters = array(font.get('letters'))
     bin_characters = []
     for c in characters:
         bin_array = zeros((7, 5), dtype=int)
@@ -15,4 +17,5 @@ def parse_font(font_number: int, selection_amount: int) -> NDArray:
                 bin_array[row][4 - col] = current_row & 1
                 current_row >>= 1
         bin_characters.append(bin_array.flatten())
-    return array(bin_characters)[choice(list(range(len(characters))), replace=False, size=selection_amount)]
+    selected = choice(list(range(len(characters))), replace=False, size=selection_amount)
+    return dict(array=array(bin_characters)[selected], letters=letters[selected])

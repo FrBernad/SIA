@@ -4,11 +4,12 @@ from algorithms.autoencoder import Autoencoder
 from data.fonts import FONTS
 from utils.argument_parser import parse_arguments
 from utils.config import get_config
+from utils.noise import generate_noise
 from utils.parser_utils import parse_font
 
 
-def AE_solver(config_file: str):
-    print('--- WELCOME TO THE AE SOLVER ---')
+def DAE_solver(config_file: str):
+    print('--- WELCOME TO THE DAE SOLVER ---')
 
     print(f'\tparsing config file...')
     config = get_config(config_file)
@@ -21,9 +22,10 @@ def AE_solver(config_file: str):
 
     print(f'\tparsing font file: {config.font}')
     font = parse_font(config.font, config.selection_amount)
+    noise_font = generate_noise(font, 0.5)
 
-    print(f'\tGenerating AE Network...')
-    autoencoder = Autoencoder(font.get('array'), font.get('array'), config)
+    print(f'\tGenerating DAE Network...')
+    autoencoder = Autoencoder(noise_font.get('array'), font.get('array'), config)
 
     print(f'\tTraining network...')
     result = autoencoder.train()
@@ -32,12 +34,12 @@ def AE_solver(config_file: str):
 
 
 if __name__ == "__main__":
-    arguments = parse_arguments(sys.argv[1:], 'AE')
+    arguments = parse_arguments(sys.argv[1:], 'DAE')
 
     config_file = arguments['config_file']
 
     try:
-        AE_solver(config_file)
+        DAE_solver(config_file)
     except FileNotFoundError as e:
         print("File not found")
         print(e)
