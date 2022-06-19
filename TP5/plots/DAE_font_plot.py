@@ -1,5 +1,5 @@
 import plotly.graph_objects as go
-from numpy import array, flip, reshape
+from numpy import array, flip, reshape, concatenate
 from plotly.subplots import make_subplots
 
 from algorithms.autoencoder import Autoencoder
@@ -70,41 +70,41 @@ def plot_latent_layer(latent_values, letters):
 if __name__ == "__main__":
     config = get_config("../config.yaml")
     config.font = 2
-    config.max_iter = 50
-    config.intermediate_layers = [25, 15, 10]
+    config.max_iter = 10
+    config.intermediate_layers = [25, 20, 15]
+    config.latent_layer = 10
+    config.selection_amount = 5
 
     font = parse_font(config.font, config.selection_amount)
-    noise_font = generate_noise(font, 0.2)
 
-    font_array = font.get('array')
-    noise_font_array = noise_font.get('array')
+    noise_font_array = []
+    font_array = []
 
-    font_letters = font.get('letters')
+    for i in range(10):
+        noise_font_array.extend(generate_noise(font, 0.2).get('array'))
+        font_array.extend(font.get('array'))
 
-    print_letters(font_array, "Letters")
-    print_letters(noise_font_array, "Letters With Noise")
+    print_letters(font_array[:config.selection_amount], "Letters")
+    print_letters(noise_font_array[:config.selection_amount], "Letters With Noise")
+
+    noise_font_array = array(noise_font_array)
+    font_array = array(font_array)
 
     autoencoder = Autoencoder(noise_font_array, font_array, config)
-
     result = autoencoder.train()
 
     decoded_values = []
-    for val in font_array:
-        decoded_values.append(autoencoder.propagate(result.weights, val))
-    print_letters(decoded_values, "DAE Letters")
+    for noise_val in noise_font_array[:config.selection_amount]:
+        decoded_values.append(autoencoder.propagate(result.weights, noise_val))
+    print_letters(decoded_values, "DAE Letters With Noise")
 
     decoded_values = []
-    for val in noise_font_array:
+    for val in font_array[:config.selection_amount]:
         decoded_values.append(autoencoder.propagate(result.weights, val))
-    print_letters(decoded_values, "DAE Letters With Noise")
+    print_letters(decoded_values, "DAE Letters")
 
     alternative_noise_font_array = generate_noise(font, 0.2).get('array')
     decoded_values = []
     for val in alternative_noise_font_array:
         decoded_values.append(autoencoder.propagate(result.weights, val))
     print_letters(decoded_values, "DAE Alternative Letters With Noise")
-
-    latent_values = []
-    for val in noise_font_array:
-        latent_values.append(autoencoder.encode(val, result.weights))
-    plot_latent_layer(array(latent_values), font_letters)
