@@ -4,21 +4,14 @@ from keras import backend as K
 from keras import metrics
 import tensorflow as tf
 import numpy as np
+from numpy.typing import NDArray
+
 
 from tensorflow.python.framework.ops import disable_eager_execution
 
+from utils.config import Config
+
 disable_eager_execution()
-
-
-def execute(properties: Properties):
-    flattened_set = flatten_set(properties.training_set).astype('float32')
-    latent_index = int((len(properties.neurons_per_layer)) / 2)
-    vae = VAE(properties.neurons_per_layer[latent_index], len(properties.training_set[0]),
-              properties.neurons_per_layer[:latent_index])
-    vae.train(flattened_set, properties.epochs, len(properties.training_set))
-    # train_encoded = vae.encoder.predict(flattened_set, batch_size=len(properties.training_set))[0]
-    # print(train_encoded)
-    # print
 
 
 def flatten_set(training_set):
@@ -26,10 +19,15 @@ def flatten_set(training_set):
 
 
 class VAE:
-    def _init_(self, latent_neurons, dim, intermediate_layers):
-        self.latent_neurons = latent_neurons
-        self.dim = dim
-        self.intermediate_layers = intermediate_layers
+    def __init__(
+            self,
+            x: NDArray,
+            y: NDArray,
+            config: Config):
+
+        self.latent_neurons = config.latent_layer
+        self.dim = len(x[0])
+        self.intermediate_layers = config.intermediate_layers
         self.set_vae()
 
     def train(self, training_set, epochs, batch_size):
@@ -37,7 +35,8 @@ class VAE:
         self.model.fit(training_set, training_set, epochs=epochs)
 
     def set_vae(self):
-        # input to our encoder
+        # input to our encoder (es el tensor, shape es una tupla de
+        #integers que indica la dimension de los vectores)
         x = Input(shape=(self.dim,), name="input")
         self.encoder = self.set_encoder(x)
         # print out summary of what we just did
@@ -52,6 +51,8 @@ class VAE:
         self.model.summary()
         self.model.compile(loss=self.vae_loss)
 
+
+
     def set_encoder(self, x):
         # intermediate layers
         if (len(self.intermediate_layers) != 0):
@@ -61,7 +62,7 @@ class VAE:
                 aux_h = h
             h = Dense(self.intermediate_layers[-1], activation="relu",
                       name="encoding_{0}".format(len(self.intermediate_layers) - 1))(aux_h)
-        # defining the mean of the latent space
+        # defining the mean of the latent space, just your regular densely-connected NN layer.
         self.z_mean = Dense(self.latent_neurons, name="mean")(h)
         # defining the log variance of the latent space
         self.z_log_var = Dense(self.latent_neurons, name="log-variance")(h)

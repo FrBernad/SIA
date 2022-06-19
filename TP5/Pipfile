@@ -12,6 +12,7 @@ scikit-learn = "*"
 scipy = "*"
 keras = "*"
 tensorflow = "*"
+mnist = "*"
 
 [dev-packages]
 
