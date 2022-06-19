@@ -10,6 +10,8 @@ pydantic = "*"
 pyyaml = "*"
 scikit-learn = "*"
 scipy = "*"
+keras = "*"
+tensorflow = "*"
 
 [dev-packages]
 
