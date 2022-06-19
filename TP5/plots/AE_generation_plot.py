@@ -1,6 +1,5 @@
 import plotly.graph_objects as go
-from numpy import array, flip, reshape, where
-from numpy.linalg import norm
+from numpy import array, flip, reshape
 from plotly.subplots import make_subplots
 
 from algorithms.autoencoder import Autoencoder
@@ -57,8 +56,7 @@ def plot_latent_layer(latent_values, letters):
             ax=0, ay=0,
             xanchor="center",
             yanchor="bottom",
-            text=letters[i],
-            font=dict(size=18)
+            text=letters[i]
         )
     fig.update_traces(textposition='top center')
     fig.show()
@@ -67,49 +65,22 @@ def plot_latent_layer(latent_values, letters):
 if __name__ == "__main__":
     config = get_config("../config.yaml")
     config.font = 2
-    config.max_iter = 
+    config.max_iter = 50
     config.intermediate_layers = [25, 15, 10]
 
-    font = parse_font(config.font, 5)
+    font = parse_font(config.font, 32)
     font_array = font.get('array')
     font_letters = font.get('letters')
-
     print_letters(font_array)
 
     autoencoder = Autoencoder(font_array, font_array, config)
 
     result = autoencoder.train()
-
     decoded_values = []
-    for val in font_array:
-        decoded_values.append(autoencoder.propagate(result.weights, val))
 
-    print_letters(decoded_values)
     latent_values = []
     for val in font_array:
         latent_values.append(autoencoder.encode(val, result.weights))
 
     plot_latent_layer(array(latent_values), font_letters)
 
-    direction = latent_values[1] - latent_values[0]
-
-    parts = 5
-
-    direction_latent_values = [latent_values[0]]
-    direction_font_letters = [font_letters[0]]
-
-    proportion = direction / parts
-
-    for i in range(1, parts):
-        direction_latent_values.append(latent_values[0] + proportion * i)
-        direction_font_letters.append('*')
-    direction_latent_values.append(latent_values[1])
-    direction_font_letters.append(font_letters[1])
-
-    plot_latent_layer(array(direction_latent_values), direction_font_letters)
-
-    direction_letters = []
-    for val in direction_latent_values:
-        direction_letters.append(autoencoder.decode(val, result.weights))
-
-    print_letters(direction_letters)

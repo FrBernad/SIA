@@ -1,4 +1,4 @@
-from numpy import array, zeros
+from numpy import array, zeros, sort
 from numpy.random import choice
 
 from data.fonts import FONTS
@@ -17,5 +17,5 @@ def parse_font(font_number: int, selection_amount: int) -> dict:
                 bin_array[row][4 - col] = current_row & 1
                 current_row >>= 1
         bin_characters.append(bin_array.flatten())
-    selected = choice(list(range(len(characters))), replace=False, size=selection_amount)
+    selected = sort(choice(list(range(len(characters))), replace=False, size=selection_amount))
     return dict(array=array(bin_characters)[selected], letters=letters[selected])

@@ -70,8 +70,8 @@ def plot_latent_layer(latent_values, letters):
 if __name__ == "__main__":
     config = get_config("../config.yaml")
     config.font = 2
-    config.max_iter = 10
-    config.intermediate_layers = [25]
+    config.max_iter = 50
+    config.intermediate_layers = [25, 15, 10]
 
     font = parse_font(config.font, config.selection_amount)
     noise_font = generate_noise(font, 0.2)
