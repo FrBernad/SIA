@@ -80,8 +80,8 @@ if __name__ == "__main__":
     noise_font_array = []
     font_array = []
 
-    for i in range(10):
-        noise_font_array.extend(generate_noise(font, 0.2).get('array'))
+    for i in range(5):
+        noise_font_array.extend(generate_noise(font, 0.15).get('array'))
         font_array.extend(font.get('array'))
 
     print_letters(font_array[:config.selection_amount], "Letters")
@@ -89,6 +89,18 @@ if __name__ == "__main__":
 
     noise_font_array = array(noise_font_array)
     font_array = array(font_array)
+
+    # for layers in [2, 5, 10]:
+    #     config.latent_layer = layers
+    #     autoencoder = Autoencoder(noise_font_array, font_array, config)
+    #
+    #     result = autoencoder.train()
+    #
+    #     decoded_values = []
+    #     for noise_val in noise_font_array[:config.selection_amount]:
+    #         decoded_values.append(autoencoder.propagate(result.weights, noise_val))
+    #     print_letters(decoded_values, "DAE Letters With Noise")
+
 
     autoencoder = Autoencoder(noise_font_array, font_array, config)
     result = autoencoder.train()
@@ -103,7 +115,7 @@ if __name__ == "__main__":
         decoded_values.append(autoencoder.propagate(result.weights, val))
     print_letters(decoded_values, "DAE Letters")
 
-    alternative_noise_font_array = generate_noise(font, 0.2).get('array')
+    alternative_noise_font_array = generate_noise(font, 0.15).get('array')
     decoded_values = []
     for val in alternative_noise_font_array:
         decoded_values.append(autoencoder.propagate(result.weights, val))
