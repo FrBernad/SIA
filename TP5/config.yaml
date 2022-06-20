@@ -19,7 +19,5 @@ config:
   #network latent layer
   latent_layer: 2
   #network intermediate layers
-  intermediate_layers: [25,10]
-
-
+  intermediate_layers: [256]
 ...

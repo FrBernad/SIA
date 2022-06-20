@@ -11,8 +11,9 @@ pyyaml = "*"
 scikit-learn = "*"
 scipy = "*"
 keras = "*"
-tensorflow = "*"
+tensorflow-macos = "*"
 mnist = "*"
+matplotlib = "*"
 
 [dev-packages]
 

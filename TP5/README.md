@@ -49,27 +49,22 @@ The configuration file must be a valid yaml file with the following structure:
 config:
 
   # Input and Output file paths for the input values
+  # Values:
+  # - 1 numbers
+  # - 2 uppercase characters
+  # - 3 lowercase characters
   font: 2
 
-  #AE config
-  ae:
-    #network learning rate
-    learning_rate: 0.01
-    #network max iterations
-    max_iter: 1000
+  # font values selection amount
+  selection_amount: 5
 
-  #DAE config
-  dae:
-    #network learning rate
-    learning_rate: 0.01
-    #network max iterations
-    max_iter: 1000
-
-  #VAE config
-  vae:
-    #network learning rate
-    learning_rate: 0.01
-    #network max iterations
-    max_iter: 1000
+  #network max iterations
+  max_iter: 100
+  #network min error
+  min_error: 0.01
+  #network latent layer
+  latent_layer: 2
+  #network intermediate layers
+  intermediate_layers: [25,10]
 ...
 ```

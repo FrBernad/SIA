@@ -1,6 +1,5 @@
 import plotly.graph_objects as go
-from numpy import array, flip, reshape, where
-from numpy.linalg import norm
+from numpy import flip, reshape
 from plotly.subplots import make_subplots
 
 from algorithms.autoencoder import Autoencoder
