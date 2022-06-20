@@ -2,7 +2,7 @@ import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
-from keras.datasets import mnist
+from keras.datasets import fashion_mnist
 from scipy.stats import norm
 
 from algorithms.variational_autoencoder import VAE
@@ -11,12 +11,9 @@ from utils.config import get_config
 
 
 def VAE_solver(config_file: str):
-    print('--- WELCOME TO THE VAE SOLVER ---')
-
-    print(f'\tparsing config file...')
     config = get_config(config_file)
 
-    (x_train, y_train), (x_test, y_test) = mnist.load_data()
+    (x_train, y_train), (x_test, y_test) = fashion_mnist.load_data()
 
     x_train = x_train.astype('float32') / 255.
     x_test = x_test.astype('float32') / 255.
@@ -25,8 +22,7 @@ def VAE_solver(config_file: str):
 
     autoencoder = VAE(x_train, x_train, config)
 
-    print(f'\tTraining network...')
-    autoencoder.train(x_train, 5, 100)
+    autoencoder.train(x_train, 50, 100)
 
     x_test_encoded = autoencoder.encoder.predict(x_test, batch_size=100)[0]
     plt.figure(figsize=(6, 6))
@@ -53,22 +49,8 @@ def VAE_solver(config_file: str):
     plt.imshow(figure, cmap='Greys_r')
     plt.show()
 
-    print(f'\tFinished!')
-
 
 if __name__ == "__main__":
     arguments = parse_arguments(sys.argv[1:], 'VAE')
 
-    config_file = arguments['config_file']
-
-    try:
-        VAE_solver(config_file)
-    except FileNotFoundError as e:
-        print("File not found")
-        print(e)
-    except OSError:
-        print("Error occurred.")
-    except KeyboardInterrupt:
-        print('Program interrupted by user.')
-    except Exception as e:
-        print(e)
+    VAE_solver("../config.yaml")

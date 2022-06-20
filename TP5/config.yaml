@@ -13,7 +13,7 @@ config:
   selection_amount: 5
 
   #network max iterations
-  max_iter: 100
+  max_iter: 50
   #network min error
   min_error: 0.01
   #network latent layer

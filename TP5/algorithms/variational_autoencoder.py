@@ -30,7 +30,7 @@ class VAE:
 
     def train(self, training_set, epochs, batch_size):
         print(training_set.shape)
-        self.model.fit(training_set, training_set, epochs=epochs, batch_size=100,
+        self.model.fit(training_set, training_set, epochs=epochs, batch_size=batch_size,
                        validation_data=(training_set, training_set))
 
     def set_vae(self):
